@@ -8,6 +8,8 @@ LINE_CHANNEL_SECRET="a3cabd40aa88ddcfdeaecfabcd43dd9a"
 
 java -Dline.bot.channelSecret="$LINE_CHANNEL_SECRET" \
 	-Dline.bot.channelToken="$LINE_CHANNEL_TOKEN" $JAVA_OPTS \
-	-cp "target/jarvis-bot-0.0.1-SNAPSHOT.jar:target/libs/*" ${MAIN} --server.port=$PORT
+	-cp "target/jarvis-bot-0.0.1-SNAPSHOT.jar:target/libs/*" ${MAIN} 
+
+#--server.port=$PORT
 
 
