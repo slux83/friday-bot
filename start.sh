@@ -1,8 +1,10 @@
 #!/bin/bash
 
 PORT=50331
+MAIN="de.slux.line.jarvis.JarvisBotApplication"
+JAVA_OPTS=""
 
-java $JAVA_OPTS -cp "target/jarvis-bot-0.1.1-SNAPSHOT.jar:target/libs/*" de.slux.line.jarvis.JarvisBotApplication --server.port=$PORT
+java $JAVA_OPTS -cp "target/jarvis-bot-0.0.1-SNAPSHOT.jar:target/libs/*" ${MAIN} --server.port=$PORT
 
-#target/jarvis-bot-0.0.1-SNAPSHOT.jar
+#jarvis-bot-0.0.1-SNAPSHOT.jar
 #src/main/java/de/slux/line/jarvis/JarvisBotApplication.java
