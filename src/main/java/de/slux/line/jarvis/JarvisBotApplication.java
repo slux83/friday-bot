@@ -16,20 +16,17 @@
 
 package de.slux.line.jarvis;
 
-import org.apache.catalina.Context;
-import org.apache.catalina.connector.Connector;
-import org.apache.tomcat.util.descriptor.web.SecurityCollection;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
-import org.springframework.context.annotation.Bean;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.event.Event;
+import com.linecorp.bot.model.event.FollowEvent;
+import com.linecorp.bot.model.event.JoinEvent;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.GroupSource;
@@ -41,6 +38,7 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 @SpringBootApplication
 @LineMessageHandler
 public class JarvisBotApplication {
+	private static Logger LOG = LoggerFactory.getLogger(JarvisBotApplication.class);
 
 	private static JarvisBotApplication INSTANCE = null;
 
@@ -63,23 +61,15 @@ public class JarvisBotApplication {
 	public JarvisBotApplication(ApplicationArguments args) {
 		setInstance(this);
 
-		System.out.println("STARTED UP");
-
+		LOG.info("Jarvis BOT - APP Initialization completed");
 	}
 
 	@EventMapping
-	public TextMessage handleTextMessageEvent(
-			MessageEvent<TextMessageContent> event) {
-		System.out.println("event: " + event);
-		System.out.println("event source USER-ID="
-				+ event.getSource().getUserId());
-		System.out.println("event source SENDER_ID="
-				+ event.getSource().getSenderId());
-		System.out.println("event timestamp="
-				+ event.getTimestamp().getEpochSecond());
-		System.out.println("event reply_token=" + event.getReplyToken());
-		System.out
-				.println("event message_text=" + event.getMessage().getText());
+	public TextMessage handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
+		LOG.info("event: " + event);
+		LOG.info("event source USER-ID: " + event.getSource().getUserId());
+		LOG.info("event source SENDER_ID: " + event.getSource().getSenderId());
+		LOG.info("event message text: " + event.getMessage().getText());
 
 		String command = event.getMessage().getText().trim().toLowerCase();
 		String userId = event.getSource().getUserId();
@@ -87,14 +77,12 @@ public class JarvisBotApplication {
 			userId = event.getSource().getSenderId();
 
 		if (userId == null) {
-			System.err
-					.println("User does not have the user ID nor the sender ID. Can't do much here!");
+			LOG.error("User does not have the user ID nor the sender ID. Can't do much here!");
 			return null;
 		}
 
 		if (event.getSource() instanceof GroupSource) {
-			return handleGroupSource(command, userId, event,
-					((GroupSource) event.getSource()).getGroupId());
+			return handleGroupSource(command, userId, event, ((GroupSource) event.getSource()).getGroupId());
 		}
 
 		if (event.getSource() instanceof UserSource) {
@@ -104,26 +92,29 @@ public class JarvisBotApplication {
 		return null;
 	}
 
-	private TextMessage handleUserSource(String command, String userId,
-			MessageEvent<TextMessageContent> event) {
+	private TextMessage handleUserSource(String command, String userId, MessageEvent<TextMessageContent> event) {
 		return new TextMessage("Hello private user");
 	}
 
-	private TextMessage handleGroupSource(String command, String userId,
-			MessageEvent<TextMessageContent> event, final String groupId) {
+	private TextMessage handleGroupSource(String command, String userId, MessageEvent<TextMessageContent> event,
+			final String groupId) {
 
 		return new TextMessage("Hello group");
 	}
 
 	@EventMapping
 	public void handleDefaultMessageEvent(Event event) {
-		System.out.println("event: " + event);
-		System.out.println("event source USER-ID="
-				+ event.getSource().getUserId());
-		System.out.println("event source SENDER_ID="
-				+ event.getSource().getSenderId());
-		System.out.println("event timestamp="
-				+ event.getTimestamp().getEpochSecond());
+		LOG.info("event: " + event);
+		LOG.info("event source USER-ID=" + event.getSource().getUserId());
+		LOG.info("event source SENDER_ID=" + event.getSource().getSenderId());
+
+		if (event instanceof FollowEvent) {
+			// TODO: send welcome message to the private user
+		}
+
+		if (event instanceof JoinEvent) {
+			// TODO: send welcome message to the group
+		}
 	}
 
 	/**
@@ -134,5 +125,3 @@ public class JarvisBotApplication {
 	}
 
 }
-
-
