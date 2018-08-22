@@ -39,8 +39,10 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 import de.slux.line.jarvis.command.AbstractCommand;
+import de.slux.line.jarvis.command.DefaultCommand;
 import de.slux.line.jarvis.command.HelloGroupCommand;
 import de.slux.line.jarvis.command.HelloUserCommand;
+import de.slux.line.jarvis.command.war.WarRegisterCommand;
 
 @SpringBootApplication
 @LineMessageHandler
@@ -83,6 +85,9 @@ public class JarvisBotApplication {
 		// Event based commands
 		this.commands.add(new HelloUserCommand(this.lineMessagingClient));
 		this.commands.add(new HelloGroupCommand(this.lineMessagingClient));
+		
+		// War commands
+		this.commands.add(new WarRegisterCommand(this.lineMessagingClient));
 
 		LOG.info("Commands initialized. Total command(s): " + this.commands.size());
 	}
@@ -94,17 +99,17 @@ public class JarvisBotApplication {
 		LOG.info("event source SENDER_ID: " + event.getSource().getSenderId());
 		LOG.info("event message text: " + event.getMessage().getText());
 
-		String command = event.getMessage().getText().trim().toLowerCase();
+		String message = event.getMessage().getText().trim();
 		String userId = event.getSource().getUserId();
 		if (userId == null)
 			userId = event.getSource().getSenderId();
 
 		if (event.getSource() instanceof GroupSource) {
-			return handleGroupSource(command, userId, event, ((GroupSource) event.getSource()).getGroupId());
+			return handleGroupSource(message, userId, event, ((GroupSource) event.getSource()).getGroupId());
 		}
 
 		if (event.getSource() instanceof UserSource) {
-			return handleUserSource(command, userId, event);
+			return handleUserSource(message, userId, event);
 		}
 
 		return null;
@@ -114,10 +119,12 @@ public class JarvisBotApplication {
 		return new TextMessage("Hello private user");
 	}
 
-	private TextMessage handleGroupSource(String command, String userId, MessageEvent<TextMessageContent> event,
+	private TextMessage handleGroupSource(String message, String userId, MessageEvent<TextMessageContent> event,
 			final String groupId) {
 
-		return new TextMessage("Hello group");
+		AbstractCommand command = getCommand(message);
+		
+		return command.execute(userId, groupId, message);
 	}
 
 	@EventMapping
@@ -128,9 +135,6 @@ public class JarvisBotApplication {
 
 		AbstractCommand command = getCommand(event.getClass().getSimpleName());
 
-		if (command == null)
-			return;
-
 		command.execute(event.getSource().getUserId(), event.getSource().getSenderId(), null);
 	}
 
@@ -138,7 +142,7 @@ public class JarvisBotApplication {
 	 * Select the command that matches the text
 	 * 
 	 * @param text
-	 * @return the command or null
+	 * @return the command or {@link DefaultCommand}
 	 */
 	private AbstractCommand getCommand(String text) {
 
@@ -147,7 +151,7 @@ public class JarvisBotApplication {
 				return command;
 		}
 
-		return null;
+		return new DefaultCommand(this.lineMessagingClient);
 	}
 
 	/**

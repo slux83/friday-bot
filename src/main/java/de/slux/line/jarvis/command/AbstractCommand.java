@@ -1,6 +1,7 @@
 package de.slux.line.jarvis.command;
 
 import com.linecorp.bot.client.LineMessagingClient;
+import com.linecorp.bot.model.message.TextMessage;
 
 /**
  * Abstract command class for all the commands
@@ -9,8 +10,17 @@ import com.linecorp.bot.client.LineMessagingClient;
  */
 public abstract class AbstractCommand {
 
-	public static final long RESPONSE_TIMEOUT_MS = 10*1000;
-	
+	/**
+	 * The type of the command
+	 * 
+	 * @author Alessandro di Fazio
+	 */
+	public enum CommandType {
+		CommandTypeEvent, CommandTypeWar, CommandTypeUnknown
+	}
+
+	public static final long RESPONSE_TIMEOUT_MS = 10 * 1000;
+
 	protected LineMessagingClient messagingClient;
 
 	/**
@@ -33,11 +43,30 @@ public abstract class AbstractCommand {
 	/**
 	 * Execute this command
 	 *
-	 * @param userId - can be null
-	 * @param senderId - can't be null
+	 * @param userId
+	 *            - can be null
+	 * @param senderId
+	 *            - can't be null
 	 * @param message
 	 * @return the message to send back or null
 	 */
-	public abstract String execute(String userId, String senderId, String message);
+	public abstract TextMessage execute(String userId, String senderId, String message);
 
+	/**
+	 * Get the help for this command
+	 * @return default implementation returns null;
+	 */
+	public String getHelp() {
+		return null;
+	}
+	
+	/**
+	 * Get the command type
+	 * 
+	 * @return Default implementation returns
+	 *         {@link CommandType#CommandTypeUnknown}
+	 */
+	public CommandType getType() {
+		return CommandType.CommandTypeUnknown;
+	}
 }

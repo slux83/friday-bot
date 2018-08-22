@@ -52,7 +52,7 @@ public class HelloGroupCommand extends AbstractCommand {
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String execute(String userId, String senderId, String message) {
+	public TextMessage execute(String userId, String senderId, String message) {
 		// Push back the message to the user
 		CompletableFuture<BotApiResponse> response = super.messagingClient
 				.pushMessage(new PushMessage(senderId, new TextMessage("Hello group of friend!")));
@@ -67,6 +67,16 @@ public class HelloGroupCommand extends AbstractCommand {
 		}
 
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.slux.line.jarvis.command.AbstractCommand#getType()
+	 */
+	@Override
+	public CommandType getType() {
+		return CommandType.CommandTypeEvent;
 	}
 
 }
