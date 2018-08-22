@@ -16,6 +16,9 @@
 
 package de.slux.line.jarvis;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +28,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.event.Event;
-import com.linecorp.bot.model.event.FollowEvent;
-import com.linecorp.bot.model.event.JoinEvent;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.GroupSource;
@@ -35,11 +36,15 @@ import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
+import de.slux.line.jarvis.command.AbstractCommand;
+import de.slux.line.jarvis.command.HelloGroupCommand;
+import de.slux.line.jarvis.command.HelloUserCommand;
+
 @SpringBootApplication
 @LineMessageHandler
 public class JarvisBotApplication {
 	public static final int MAX_LINE_MESSAGE_SIZE = 1500;
-	
+
 	private static Logger LOG = LoggerFactory.getLogger(JarvisBotApplication.class);
 	private static JarvisBotApplication INSTANCE = null;
 
@@ -54,6 +59,8 @@ public class JarvisBotApplication {
 	@Autowired
 	private LineMessagingClient lineMessagingClient;
 
+	private List<AbstractCommand> commands;
+
 	public static void main(String[] args) {
 		SpringApplication.run(JarvisBotApplication.class, args);
 	}
@@ -61,6 +68,11 @@ public class JarvisBotApplication {
 	@Autowired
 	public JarvisBotApplication(ApplicationArguments args) {
 		setInstance(this);
+
+		// Initialize all commands
+		this.commands = new ArrayList<>();
+		this.commands.add(new HelloUserCommand(this.lineMessagingClient));
+		this.commands.add(new HelloGroupCommand(this.lineMessagingClient));
 
 		LOG.info("Jarvis BOT - APP Initialization completed");
 	}
@@ -109,13 +121,24 @@ public class JarvisBotApplication {
 		LOG.info("event source USER-ID=" + event.getSource().getUserId());
 		LOG.info("event source SENDER_ID=" + event.getSource().getSenderId());
 
-		if (event instanceof FollowEvent) {
-			// TODO: send welcome message to the private user
-		}
+		AbstractCommand command = getCommand(event.getClass().getSimpleName());
+		command.execute(event.getSource().getSenderId(), null, null);
+	}
 
-		if (event instanceof JoinEvent) {
-			// TODO: send welcome message to the group
+	/**
+	 * Select the command that matches the text
+	 * 
+	 * @param text
+	 * @return the command or null
+	 */
+	private AbstractCommand getCommand(String text) {
+		
+		for (AbstractCommand command : this.commands) {
+			if (command.canTrigger(text.trim()))
+				return command;
 		}
+		
+		return null;
 	}
 
 	/**
