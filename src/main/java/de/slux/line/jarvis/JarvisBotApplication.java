@@ -38,8 +38,9 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 @SpringBootApplication
 @LineMessageHandler
 public class JarvisBotApplication {
+	public static final int MAX_LINE_MESSAGE_SIZE = 1500;
+	
 	private static Logger LOG = LoggerFactory.getLogger(JarvisBotApplication.class);
-
 	private static JarvisBotApplication INSTANCE = null;
 
 	public static synchronized JarvisBotApplication getInstance() {
