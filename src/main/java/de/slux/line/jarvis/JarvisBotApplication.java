@@ -19,6 +19,8 @@ package de.slux.line.jarvis;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,12 +71,17 @@ public class JarvisBotApplication {
 	public JarvisBotApplication(ApplicationArguments args) {
 		setInstance(this);
 
+		LOG.info("Jarvis BOT - APP Initialization completed");
+	}
+
+	@PostConstruct
+	public void postConstruct() {
 		// Initialize all commands
 		this.commands = new ArrayList<>();
 		this.commands.add(new HelloUserCommand(this.lineMessagingClient));
 		this.commands.add(new HelloGroupCommand(this.lineMessagingClient));
 
-		LOG.info("Jarvis BOT - APP Initialization completed");
+		LOG.info("Commands initialized. Total command(s): " + this.commands.size());
 	}
 
 	@EventMapping
