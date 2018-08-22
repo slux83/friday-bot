@@ -69,15 +69,18 @@ public class JarvisBotApplication {
 
 	@Autowired
 	public JarvisBotApplication(ApplicationArguments args) {
-		setInstance(this);
-
 		LOG.info("Jarvis BOT - APP Initialization completed");
 	}
 
 	@PostConstruct
 	public void postConstruct() {
+		// Save the instance
+		setInstance(this);
+
 		// Initialize all commands
 		this.commands = new ArrayList<>();
+		
+		// Event based commands
 		this.commands.add(new HelloUserCommand(this.lineMessagingClient));
 		this.commands.add(new HelloGroupCommand(this.lineMessagingClient));
 
@@ -95,11 +98,6 @@ public class JarvisBotApplication {
 		String userId = event.getSource().getUserId();
 		if (userId == null)
 			userId = event.getSource().getSenderId();
-
-		if (userId == null) {
-			LOG.error("User does not have the user ID nor the sender ID. Can't do much here!");
-			return null;
-		}
 
 		if (event.getSource() instanceof GroupSource) {
 			return handleGroupSource(command, userId, event, ((GroupSource) event.getSource()).getGroupId());
