@@ -122,7 +122,11 @@ public class JarvisBotApplication {
 		LOG.info("event source SENDER_ID=" + event.getSource().getSenderId());
 
 		AbstractCommand command = getCommand(event.getClass().getSimpleName());
-		command.execute(event.getSource().getSenderId(), null, null);
+
+		if (command == null)
+			return;
+
+		command.execute(event.getSource().getUserId(), event.getSource().getSenderId(), null);
 	}
 
 	/**
@@ -132,12 +136,12 @@ public class JarvisBotApplication {
 	 * @return the command or null
 	 */
 	private AbstractCommand getCommand(String text) {
-		
+
 		for (AbstractCommand command : this.commands) {
 			if (command.canTrigger(text.trim()))
 				return command;
 		}
-		
+
 		return null;
 	}
 
