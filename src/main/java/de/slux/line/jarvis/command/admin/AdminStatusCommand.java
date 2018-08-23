@@ -121,7 +121,7 @@ public class AdminStatusCommand extends AbstractCommand {
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + "<(maintenance|operational)?>]\n");
+		sb.append("[" + CMD_PREFIX + " <(maintenance|operational)?>]\n");
 		sb.append("Prints the current status of JARVIS. Set JARVIS new status (maintenance|operational)");
 
 		return sb.toString();

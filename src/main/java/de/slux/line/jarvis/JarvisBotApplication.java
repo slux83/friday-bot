@@ -139,10 +139,6 @@ public class JarvisBotApplication {
 		LOG.info("event message text: " + event.getMessage().getText());
 		this.incomingMsgCounter.incrementAndGet();
 		
-		if (!this.isOperational.get()) {
-			return new TextMessage("Sorry, JARVIS is currently in standby for scheduled maintenance.");
-		}
-		
 		String message = event.getMessage().getText().trim();
 		String userId = event.getSource().getUserId();
 		
@@ -193,6 +189,10 @@ public class JarvisBotApplication {
 
 		AbstractCommand command = getCommand(message);
 
+		if (!this.isOperational.get() && !(command instanceof DefaultCommand)) {
+			return new TextMessage("Sorry, JARVIS is currently in standby for scheduled maintenance.");
+		}
+		
 		return command.execute(userId, groupId, message);
 	}
 
@@ -203,7 +203,7 @@ public class JarvisBotApplication {
 		LOG.info("event source SENDER_ID=" + event.getSource().getSenderId());
 
 		AbstractCommand command = getCommand(event.getClass().getSimpleName());
-
+		
 		command.execute(event.getSource().getUserId(), event.getSource().getSenderId(), null);
 	}
 
