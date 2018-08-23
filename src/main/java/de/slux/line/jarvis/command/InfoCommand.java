@@ -55,7 +55,7 @@ public class InfoCommand extends AbstractCommand {
 		sb.append(JarvisBotApplication.JARVIS_VERSION);
 		sb.append("\n");
 		sb.append("Author: slux83\n");
-		sb.append("Issues tracker: https://tinyurl.com/y7xlnb85\n\n");
+		sb.append("Issues tracker: https://github.com/slux83/jarvis-bot/issues\n\n");
 		sb.append("Please cosider a small donation if you want to support the JARVIS Bot development!\n");
 		sb.append("JARVIS Bot is hosted on a dedicated server and it has some running costs.\n\n");
 		sb.append("PAYPAL: ");
