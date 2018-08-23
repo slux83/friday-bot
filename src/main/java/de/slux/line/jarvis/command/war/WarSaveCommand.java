@@ -61,11 +61,11 @@ public class WarSaveCommand extends AbstractCommand {
 			WarReportModel warModel = new WarReportModel();
 			List<String> argsAsList = super.extractArgs(message);
 
-			if (argsAsList.size() < 4)
+			if (argsAsList.size() < 3)
 				return new TextMessage("Please specify the opponent alliance tag");
 
 			StringBuilder allyTagBuilder = new StringBuilder();
-			for (int i = 3; i < argsAsList.size(); ++i) {
+			for (int i = 2; i < argsAsList.size(); ++i) {
 				allyTagBuilder.append(argsAsList.get(i));
 				allyTagBuilder.append(" ");
 			}
