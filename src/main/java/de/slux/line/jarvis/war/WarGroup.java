@@ -66,7 +66,7 @@ public class WarGroup {
 
 		return report.toString();
 	}
-
+	
 	/**
 	 * Calculate the current death report
 	 * 

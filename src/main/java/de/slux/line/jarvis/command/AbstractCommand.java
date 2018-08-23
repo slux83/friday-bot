@@ -26,7 +26,7 @@ public abstract class AbstractCommand {
 	 * @author Alessandro di Fazio
 	 */
 	public enum CommandType {
-		CommandTypeEvent, CommandTypeWar, CommandTypeUnknown, CommandTypeUtility
+		CommandTypeEvent, CommandTypeWar, CommandTypeUnknown, CommandTypeUtility, CommandTypeAdmin
 	}
 
 	public static final long RESPONSE_TIMEOUT_MS = 10 * 1000;

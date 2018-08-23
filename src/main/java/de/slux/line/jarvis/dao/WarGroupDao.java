@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author adfazio
@@ -22,6 +24,8 @@ public class WarGroupDao {
 
 	private static final String UPDATE_DATA_STATEMENT = "UPDATE war_group SET group_name = ? WHERE group_id = ?";
 
+	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name FROM war_group";
+	
 	public WarGroupDao(Connection conn) {
 		this.conn = conn;
 	}
@@ -141,5 +145,51 @@ public class WarGroupDao {
 		}
 
 		return key;
+	}
+	
+	/**
+	 * get all the uuid of the active groups
+	 * 
+	 * @return the map of groups (with key=guid and value=name)
+	 * @throws SQLException
+	 */
+	public Map<String, String> getAll() throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Map<String, String> groups = new HashMap<>();
+		try {
+
+			stmt = conn.prepareStatement(RETRIEVE_ALL_DATA_STATEMENT);
+			rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				String guid = rs.getString("group_id");
+				String groupName = rs.getString("group_name");
+				groupName = new String(Base64.getDecoder().decode(groupName));
+				
+				groups.put(guid, groupName);
+			}
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return groups;
 	}
 }

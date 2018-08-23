@@ -44,6 +44,8 @@ import de.slux.line.jarvis.command.HelloGroupCommand;
 import de.slux.line.jarvis.command.HelloUserCommand;
 import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.command.InfoCommand;
+import de.slux.line.jarvis.command.AbstractCommand.CommandType;
+import de.slux.line.jarvis.command.admin.AdminBroadcastCommand;
 import de.slux.line.jarvis.command.war.WarDeleteCommand;
 import de.slux.line.jarvis.command.war.WarHistoryCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
@@ -61,6 +63,7 @@ public class JarvisBotApplication {
 
 	private static Logger LOG = LoggerFactory.getLogger(JarvisBotApplication.class);
 	private static JarvisBotApplication INSTANCE = null;
+	public static final String SLUX_ID = "Ufea80d366e42a0e4b7e3d228ed133e89";
 
 	public static synchronized JarvisBotApplication getInstance() {
 		return INSTANCE;
@@ -110,6 +113,9 @@ public class JarvisBotApplication {
 		this.commands.add(new WarDeleteCommand(this.lineMessagingClient));
 		this.commands.add(new WarResetCommand(this.lineMessagingClient));
 
+		// Admin commands
+		this.commands.add(new AdminBroadcastCommand(this.lineMessagingClient));
+
 		LOG.info("Commands initialized. Total command(s): " + this.commands.size());
 	}
 
@@ -136,10 +142,34 @@ public class JarvisBotApplication {
 		return null;
 	}
 
-	private TextMessage handleUserSource(String command, String userId, MessageEvent<TextMessageContent> event) {
-		return new TextMessage("Hello private user");
+	/**
+	 * Handle a private message
+	 * 
+	 * @param message
+	 * @param userId
+	 * @param event
+	 * @return the text to send back to the user
+	 */
+	private TextMessage handleUserSource(String message, String userId, MessageEvent<TextMessageContent> event) {
+
+		if (SLUX_ID.equals(userId)) {
+			AbstractCommand command = getAdminCommand(message);
+
+			return command.execute(userId, null, message);
+		}
+
+		return null;
 	}
 
+	/**
+	 * Handle a group command
+	 * 
+	 * @param message
+	 * @param userId
+	 * @param event
+	 * @param groupId
+	 * @return the text to send back to the user
+	 */
 	private TextMessage handleGroupSource(String message, String userId, MessageEvent<TextMessageContent> event,
 			final String groupId) {
 
@@ -169,6 +199,22 @@ public class JarvisBotApplication {
 
 		for (AbstractCommand command : this.commands) {
 			if (command.canTrigger(text.trim()))
+				return command;
+		}
+
+		return new DefaultCommand(this.lineMessagingClient);
+	}
+
+	/**
+	 * Select the admin command that matches the text
+	 * 
+	 * @param text
+	 * @return the command or {@link DefaultCommand}
+	 */
+	private AbstractCommand getAdminCommand(String text) {
+
+		for (AbstractCommand command : this.commands) {
+			if (command.getType().equals(CommandType.CommandTypeAdmin) && command.canTrigger(text.trim()))
 				return command;
 		}
 

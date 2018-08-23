@@ -74,6 +74,10 @@ public class WarTest {
 		assertNotEquals(-1, group2Key);
 		assertNotEquals(-1, group3Key);
 
+		Map<String, String> groups = this.warModel.getAllGroups();
+		assertFalse(groups.isEmpty());
+		System.out.println(groups);
+		
 		// Group 1 reports
 		this.warModel.addDeath(GROUP1_ID, 1, 10, "Modok", "Slux");
 		this.warModel.addDeath(GROUP1_ID, 2, 13, "SIM", "Slux");

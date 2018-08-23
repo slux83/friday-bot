@@ -54,6 +54,7 @@ public class HelloGroupCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		// Push back the message to the user
+		//FIXME: add a proper message here
 		CompletableFuture<BotApiResponse> response = super.messagingClient
 				.pushMessage(new PushMessage(senderId, new TextMessage("Hello group of friend!")));
 

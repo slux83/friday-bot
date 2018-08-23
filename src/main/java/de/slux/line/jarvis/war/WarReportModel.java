@@ -23,8 +23,7 @@ import de.slux.line.jarvis.dao.WarHistoryDao;
 public class WarReportModel {
 	public static final int WAR_POINTS_LOST_PER_DEATH = 80;
 	public static final int WAR_POINTS_LOST_CAP = WAR_POINTS_LOST_PER_DEATH * 3;
-	public static final SimpleDateFormat SDF = new SimpleDateFormat(
-			"yyyy-MM-dd");
+	public static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
 
 	/**
 	 * Ctor
@@ -44,11 +43,25 @@ public class WarReportModel {
 
 		Connection conn = DbConnectionPool.getConnection();
 
+		//FIXME: replace all sysouts
 		System.out.println("Connection to the DB valid");
 
 		WarDeathDao dao = new WarDeathDao(conn);
 
 		dao.clearData(groupKey);
+	}
+
+	/**
+	 * Get all the groups
+	 * @return the map of groups
+	 * @throws Exception
+	 */
+	public Map<String, String> getAllGroups() throws Exception {
+		Connection conn = DbConnectionPool.getConnection();
+
+		WarGroupDao dao = new WarGroupDao(conn);
+		
+		return dao.getAll();
 	}
 
 	/**
@@ -79,8 +92,7 @@ public class WarReportModel {
 	 * @throws WarDaoUnregisteredException
 	 *             if the group is not registered
 	 */
-	public void addDeath(String groupId, int deaths, int node,
-			String champName, String userName) throws Exception {
+	public void addDeath(String groupId, int deaths, int node, String champName, String userName) throws Exception {
 		int groupKey = checkGroupRegistration(groupId);
 
 		Connection conn = DbConnectionPool.getConnection();
@@ -234,8 +246,7 @@ public class WarReportModel {
 		Map<String, WarGroup> history = getHistorySummary(groupId, c.getTime());
 
 		if (history.containsKey(allianceTag))
-			throw new WarDaoDuplicatedAllianceTag("The alliance " + allianceTag
-					+ " has been already saved today");
+			throw new WarDaoDuplicatedAllianceTag("The alliance " + allianceTag + " has been already saved today");
 
 		Connection conn = DbConnectionPool.getConnection();
 
@@ -270,7 +281,7 @@ public class WarReportModel {
 	public List<String> getHistoryText(String groupId) throws Exception {
 		Map<Timestamp, String> history = getHistory(groupId);
 		List<String> outcome = new ArrayList<String>();
-		
+
 		StringBuilder sb = new StringBuilder("*** WAR HISTORY ***\n");
 
 		for (Map.Entry<Timestamp, String> entry : history.entrySet()) {
@@ -278,7 +289,7 @@ public class WarReportModel {
 				outcome.add(sb.toString());
 				sb.setLength(0);
 			}
-			
+
 			sb.append("\n");
 			sb.append(SDF.format(new Date(entry.getKey().getTime())));
 			sb.append(" : ");
@@ -289,7 +300,7 @@ public class WarReportModel {
 			sb.append("\nNo records found.");
 
 		outcome.add(sb.toString());
-		
+
 		return outcome;
 
 	}
@@ -302,8 +313,7 @@ public class WarReportModel {
 	 * @return the war groups for the day (key is the alliance tag)
 	 * @throws Exception
 	 */
-	public Map<String, WarGroup> getHistorySummary(String groupId, Date day)
-			throws Exception {
+	public Map<String, WarGroup> getHistorySummary(String groupId, Date day) throws Exception {
 
 		int groupKey = checkGroupRegistration(groupId);
 
@@ -319,10 +329,10 @@ public class WarReportModel {
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);
-		
+
 		return dao.getAllData(groupKey, new Timestamp(c.getTimeInMillis()));
 	}
-	
+
 	/**
 	 * Delete a given day/ally from the history
 	 * 
@@ -341,6 +351,6 @@ public class WarReportModel {
 
 		WarHistoryDao dao = new WarHistoryDao(conn);
 
-		return dao.deleteData(groupKey, allianceTag, date);	
+		return dao.deleteData(groupKey, allianceTag, date);
 	}
 }
