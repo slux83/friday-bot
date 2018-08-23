@@ -3,6 +3,8 @@
  */
 package de.slux.line.jarvis.command.war;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
+import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTag;
 import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
 import de.slux.line.jarvis.war.WarReportModel;
 
@@ -19,16 +22,16 @@ import de.slux.line.jarvis.war.WarReportModel;
  * 
  * @author slux
  */
-public class WarResetCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis reset";
-	private static Logger LOG = LoggerFactory.getLogger(WarResetCommand.class);
+public class WarSaveCommand extends AbstractCommand {
+	public static final String CMD_PREFIX = "jarvis save";
+	private static Logger LOG = LoggerFactory.getLogger(WarSaveCommand.class);
 
 	/**
 	 * Ctor
 	 * 
 	 * @param messagingClient
 	 */
-	public WarResetCommand(LineMessagingClient messagingClient) {
+	public WarSaveCommand(LineMessagingClient messagingClient) {
 		super(messagingClient);
 	}
 
@@ -52,17 +55,35 @@ public class WarResetCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
+		String allyTag = "";
 		try {
-			new WarReportModel().resetFor(senderId);
+			// Get the summary of a specific day
+			WarReportModel warModel = new WarReportModel();
+			List<String> argsAsList = super.extractArgs(message);
+
+			if (argsAsList.size() < 4)
+				return new TextMessage("Please specify the opponent alliance tag");
+
+			StringBuilder allyTagBuilder = new StringBuilder();
+			for (int i = 3; i < argsAsList.size(); ++i) {
+				allyTagBuilder.append(argsAsList.get(i));
+				allyTagBuilder.append(" ");
+			}
+
+			allyTag = allyTagBuilder.toString().trim();
+			warModel.saveWar(senderId, allyTag);
+			return new TextMessage("War reports against '" + allyTag + "' saved successfully");
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 					+ "' for info on how to register your chat room");
+		} catch (WarDaoDuplicatedAllianceTag e) {
+			return new TextMessage(
+					"Error: the alliance '" + allyTag + "' has been already registered today. Use the command '"
+							+ WarDeleteCommand.CMD_PREFIX + "' to delete the previeus one");
 		} catch (Exception e) {
-			LOG.error("Unexpected error: " + e, e);
+			LOG.error("Unexpected exception: " + e, e);
 			return new TextMessage("Unexpected error: " + e);
 		}
-
-		return new TextMessage("War reports cleared");
 	}
 
 	/*
@@ -84,8 +105,8 @@ public class WarResetCommand extends AbstractCommand {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[" + CMD_PREFIX + "]\n");
-		sb.append("Resets the report of the current war. ");
-		sb.append("Make sure you save it using '" + WarSaveCommand.CMD_PREFIX + "' before using this command.");
+		sb.append("Saves the current reports in the archive for future reference.\n");
+		sb.append("Use this command only after the war has ended");
 
 		return sb.toString();
 	}

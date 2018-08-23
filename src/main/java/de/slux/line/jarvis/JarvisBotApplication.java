@@ -43,9 +43,12 @@ import de.slux.line.jarvis.command.DefaultCommand;
 import de.slux.line.jarvis.command.HelloGroupCommand;
 import de.slux.line.jarvis.command.HelloUserCommand;
 import de.slux.line.jarvis.command.HelpCommand;
+import de.slux.line.jarvis.command.war.WarDeleteCommand;
+import de.slux.line.jarvis.command.war.WarHistoryCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
 import de.slux.line.jarvis.command.war.WarReportDeathCommand;
 import de.slux.line.jarvis.command.war.WarResetCommand;
+import de.slux.line.jarvis.command.war.WarSaveCommand;
 import de.slux.line.jarvis.command.war.WarSummaryDeathCommand;
 import de.slux.line.jarvis.command.war.WarUndoDeathCommand;
 
@@ -99,6 +102,9 @@ public class JarvisBotApplication {
 		this.commands.add(new WarReportDeathCommand(this.lineMessagingClient));
 		this.commands.add(new WarUndoDeathCommand(this.lineMessagingClient));
 		this.commands.add(new WarSummaryDeathCommand(this.lineMessagingClient));
+		this.commands.add(new WarSaveCommand(this.lineMessagingClient));
+		this.commands.add(new WarHistoryCommand(this.lineMessagingClient));
+		this.commands.add(new WarDeleteCommand(this.lineMessagingClient));
 		this.commands.add(new WarResetCommand(this.lineMessagingClient));
 
 		LOG.info("Commands initialized. Total command(s): " + this.commands.size());
