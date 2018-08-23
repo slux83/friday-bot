@@ -31,11 +31,18 @@ public class TestCommand {
 		TextMessageContent message = new TextMessageContent("001", AdminStatusCommand.CMD_PREFIX);
 		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
 				timestamp);
-		
-		jarvis.getIncomingMsgCounter().set(1);
-		Thread.sleep(60000);
+
+		jarvis.getIncomingMsgCounter().set(10);
+		Thread.sleep(1000);
 		TextMessage response = jarvis.handleTextMessageEvent(event);
 
 		System.out.println(response);
+
+		message = new TextMessageContent("001", AdminStatusCommand.CMD_PREFIX + " fake foo bar");
+		event = new MessageEvent<TextMessageContent>("reply-token", source, message, timestamp);
+		response = jarvis.handleTextMessageEvent(event);
+		
+		System.out.println(response);
+		
 	}
 }

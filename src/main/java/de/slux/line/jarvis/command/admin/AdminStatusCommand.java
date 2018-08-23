@@ -56,7 +56,7 @@ public class AdminStatusCommand extends AbstractCommand {
 		
 		// Check if we need to change the status
 		List<String> args = super.extractArgs(message);
-		if (args.size() == 3) {
+		if (args.size() > 2) {
 			String newStatus = args.get(2).trim();
 			
 			if (newStatus.equalsIgnoreCase("operational")) {
