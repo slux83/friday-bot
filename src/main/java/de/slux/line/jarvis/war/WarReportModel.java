@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.slux.line.jarvis.JarvisBotApplication;
 import de.slux.line.jarvis.dao.DbConnectionPool;
 import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTag;
@@ -21,6 +24,8 @@ import de.slux.line.jarvis.dao.WarHistoryDao;
  * @author slux
  */
 public class WarReportModel {
+	private static Logger LOG = LoggerFactory.getLogger(WarReportModel.class);
+	
 	public static final int WAR_POINTS_LOST_PER_DEATH = 80;
 	public static final int WAR_POINTS_LOST_CAP = WAR_POINTS_LOST_PER_DEATH * 3;
 	public static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
@@ -43,8 +48,7 @@ public class WarReportModel {
 
 		Connection conn = DbConnectionPool.getConnection();
 
-		//FIXME: replace all sysouts
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarDeathDao dao = new WarDeathDao(conn);
 
@@ -74,7 +78,7 @@ public class WarReportModel {
 	public void addNewGroup(String groupId, String groupName) throws Exception {
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarGroupDao dao = new WarGroupDao(conn);
 
@@ -97,7 +101,7 @@ public class WarReportModel {
 
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarDeathDao dao = new WarDeathDao(conn);
 
@@ -146,7 +150,7 @@ public class WarReportModel {
 	public WarGroup getReportModel(int groupKey) throws Exception {
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarDeathDao dao = new WarDeathDao(conn);
 
@@ -168,7 +172,7 @@ public class WarReportModel {
 
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarDeathDao dao = new WarDeathDao(conn);
 
@@ -200,7 +204,7 @@ public class WarReportModel {
 	public int getKeyOfGroup(String groupId) throws Exception {
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarGroupDao dao = new WarGroupDao(conn);
 
@@ -217,7 +221,7 @@ public class WarReportModel {
 	public void register(String groupId, String groupName) throws Exception {
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarGroupDao dao = new WarGroupDao(conn);
 
@@ -250,7 +254,7 @@ public class WarReportModel {
 
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarHistoryDao dao = new WarHistoryDao(conn);
 
@@ -270,7 +274,7 @@ public class WarReportModel {
 
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarHistoryDao dao = new WarHistoryDao(conn);
 
@@ -319,7 +323,7 @@ public class WarReportModel {
 
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarHistoryDao dao = new WarHistoryDao(conn);
 
@@ -347,7 +351,7 @@ public class WarReportModel {
 
 		Connection conn = DbConnectionPool.getConnection();
 
-		System.out.println("Connection to the DB valid");
+		LOG.debug("Connection to the DB valid");
 
 		WarHistoryDao dao = new WarHistoryDao(conn);
 

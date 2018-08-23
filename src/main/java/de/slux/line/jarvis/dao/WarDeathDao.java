@@ -9,12 +9,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Base64;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.slux.line.jarvis.war.WarGroup;
 
 /**
  * @author adfazio
  */
 public class WarDeathDao {
+	private static Logger LOG = LoggerFactory.getLogger(WarDeathDao.class);
+
+	
 	private Connection conn;
 
 	private static final String ADD_DATA_STATEMENT = "INSERT INTO war_death (group_id, node, num_deaths, champion, player) VALUES(?, ?, ?, ?, ?)";
@@ -68,7 +74,7 @@ public class WarDeathDao {
 			}
 		}
 
-		System.out.println("Data stored successfully: " + deaths + ", " + node + " (" + champName + ")");
+		LOG.info("Data stored successfully: " + deaths + ", " + node + " (" + champName + ")");
 	}
 
 	/**
@@ -135,7 +141,7 @@ public class WarDeathDao {
 			stmt = conn.prepareStatement(DELETE_DATA_BY_GROUP_STATEMENT);
 			stmt.setInt(1, groupKey);
 			int deletedRows = stmt.executeUpdate();
-			System.out.println("Deleted " + deletedRows + " report(s) for groupkey=" + groupKey);
+			LOG.info("Deleted " + deletedRows + " report(s) for groupkey=" + groupKey);
 		} finally {
 			try {
 				if (stmt != null)
@@ -181,7 +187,7 @@ public class WarDeathDao {
 			stmt = conn.prepareStatement(DELETE_DATA_BY_ID_STATEMENT);
 			stmt.setInt(1, latestId);
 			int deletedRows = stmt.executeUpdate();
-			System.out.println("Delete latest inserted row of groupKey=" + groupKey + ", id: " + latestId
+			LOG.info("Delete latest inserted row of groupKey=" + groupKey + ", id: " + latestId
 					+ ". Effected rows: " + deletedRows);
 		} finally {
 			try {

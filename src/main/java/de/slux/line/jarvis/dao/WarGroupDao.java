@@ -12,10 +12,15 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author adfazio
  */
 public class WarGroupDao {
+	private static Logger LOG = LoggerFactory.getLogger(WarGroupDao.class);
+			
 	private Connection conn;
 
 	private static final String ADD_DATA_STATEMENT = "INSERT INTO war_group (group_id, group_name) VALUES(?, ?)";
@@ -48,7 +53,7 @@ public class WarGroupDao {
 
 		} catch (SQLIntegrityConstraintViolationException ex) {
 			// The group already exists
-			System.out.println("WarGroupDao.storeData() name needs to be updated: " + ex);
+			LOG.info("WarGroupDao.storeData() name needs to be updated: " + ex);
 			updateGroup(groupId, groupName);
 		} finally {
 			try {
@@ -65,7 +70,7 @@ public class WarGroupDao {
 			}
 		}
 
-		System.out.println("Data stored successfully: " + groupId + " (" + groupName + ")");
+		LOG.info("Data stored successfully: " + groupId + " (" + groupName + ")");
 	}
 
 	/**
@@ -98,7 +103,7 @@ public class WarGroupDao {
 			}
 		}
 
-		System.out.println("Data updated successfully: " + groupId + " (" + groupName + ")");
+		LOG.info("Data updated successfully: " + groupId + " (" + groupName + ")");
 	}
 
 	/**

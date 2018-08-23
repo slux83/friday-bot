@@ -13,12 +13,17 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.slux.line.jarvis.war.WarGroup;
 
 /**
  * @author adfazio
  */
 public class WarHistoryDao {
+	private static Logger LOG = LoggerFactory.getLogger(WarHistoryDao.class);
+	
 	private Connection conn;
 
 	private static final String ADD_DATA_STATEMENT = "INSERT INTO war_history (group_id, node, num_deaths, champion, player, opponent_tag, war_date) "
@@ -63,7 +68,7 @@ public class WarHistoryDao {
 			stmt.setString(3, allianceTag);
 			deletedEntries = stmt.executeUpdate();
 			
-			System.out.println("Deleted " + deletedEntries + " in history for " + allianceTag + " on " + timestamp);
+			LOG.info("Deleted " + deletedEntries + " in history for " + allianceTag + " on " + timestamp);
 
 		} finally {
 			try {
@@ -232,7 +237,7 @@ public class WarHistoryDao {
 			}
 		}
 
-		System.out.println("Data stored successfully: " + allianceTag + ", "
+		LOG.info("Data stored successfully: " + allianceTag + ", "
 				+ timestamp);
 	}
 
