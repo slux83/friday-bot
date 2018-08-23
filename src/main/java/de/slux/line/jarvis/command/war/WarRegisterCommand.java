@@ -3,6 +3,8 @@
  */
 package de.slux.line.jarvis.command.war;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +52,18 @@ public class WarRegisterCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
-		String arg = message.replace(CMD_PREFIX, "");
+		List<String> args = super.extractArgs(message);
+
+		if (args.size() < 3) {
+			return new TextMessage("Please specify your group name. E.g. DM-BG3");
+		}
+
+		// Remove prefix
+		args.remove(0);
+		args.remove(0); 
+		String arg = String.join(" ", args);
+		
 		try {
-			if (arg.trim().isEmpty()) {
-				return new TextMessage("Please specify your group name. E.g. DM-BG3");
-			}
 			WarReportModel warModel = new WarReportModel();
 			warModel.register(senderId, arg.trim());
 		} catch (Exception e) {
