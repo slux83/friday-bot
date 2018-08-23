@@ -85,7 +85,8 @@ public class WarRegisterCommand extends AbstractCommand {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[" + CMD_PREFIX + " <ALLYTAG-BG>]\n");
-		sb.append("Register this chat group for Jarvis war tools\n");
+		sb.append("Register this chat group for Jarvis war tools. ");
+		sb.append("Use this command later on to modify the name if needed\n");
 		sb.append("Example " + CMD_PREFIX + " 4Loki-BG1");
 
 		return sb.toString();

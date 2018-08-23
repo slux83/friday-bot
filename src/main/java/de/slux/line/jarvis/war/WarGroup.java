@@ -57,7 +57,7 @@ public class WarGroup {
 	 * @return string that describes the report
 	 */
 	public String getReport() {
-		StringBuilder report = new StringBuilder("=== WAR DEATH REPORT ===");
+		StringBuilder report = new StringBuilder("*** WAR DEATH REPORT ***");
 
 		TotalDeathReport totDeathReport = calculateDeathReport();
 
@@ -106,7 +106,7 @@ public class WarGroup {
 	public List<String> getSummaryText() {
 		List<String> outcome = new ArrayList<String>();
 		
-		StringBuilder sb = new StringBuilder("=== WAR DEATH SUMMARY ===\n");
+		StringBuilder sb = new StringBuilder("*** WAR DEATH SUMMARY ***\n");
 
 		List<WarDeath> reports = getDeathReports();
 		Collections.sort(reports, new Comparator<WarDeath>() {

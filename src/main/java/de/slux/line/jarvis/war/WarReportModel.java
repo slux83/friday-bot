@@ -271,7 +271,7 @@ public class WarReportModel {
 		Map<Timestamp, String> history = getHistory(groupId);
 		List<String> outcome = new ArrayList<String>();
 		
-		StringBuilder sb = new StringBuilder("=== WAR HISTORY ===\n");
+		StringBuilder sb = new StringBuilder("*** WAR HISTORY ***\n");
 
 		for (Map.Entry<Timestamp, String> entry : history.entrySet()) {
 			if (sb.length() > JarvisBotApplication.MAX_LINE_MESSAGE_SIZE) {
