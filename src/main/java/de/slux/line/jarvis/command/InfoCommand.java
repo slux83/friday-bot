@@ -18,6 +18,7 @@ public class InfoCommand extends AbstractCommand {
 	
 	// Replace $GUID with the groupID
 	private static final String PAYPAL_LINK = "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=slux83@gmail.com&lc=US&item_name=jarvis%3A$GUID&no_note=0&cn=&currency_code=USD&amount=5.00&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted";
+	private static final String JARVIS_USERS_LINE_GROUP_LINK = "https://line.me/R/ti/g/oNF5Riui79";
 
 	/**
 	 * Ctor
@@ -49,8 +50,10 @@ public class InfoCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		StringBuilder sb = new StringBuilder("*** J.A.R.V.I.S. MCOC Line Bot ***\n\n");
-
-		// Version
+		sb.append("JARVIS Bot Line users group: ");
+		sb.append(JARVIS_USERS_LINE_GROUP_LINK);
+		sb.append("\n");
+		sb.append("You can join the LINE group of JARVIS users to ask for help and play with the Bot.\n\n");
 		sb.append("Version: ");
 		sb.append(JarvisBotApplication.JARVIS_VERSION);
 		sb.append("\n");
