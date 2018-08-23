@@ -43,7 +43,7 @@ public class WarSaveCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.equalsIgnoreCase(CMD_PREFIX);
+		return message.toLowerCase().startsWith(CMD_PREFIX);
 	}
 
 	/*
@@ -104,7 +104,7 @@ public class WarSaveCommand extends AbstractCommand {
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + "]\n");
+		sb.append("[" + CMD_PREFIX + " <ally_tag>]\n");
 		sb.append("Saves the current reports in the archive for future reference.\n");
 		sb.append("Use this command only after the war has ended");
 

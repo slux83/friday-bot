@@ -43,6 +43,7 @@ import de.slux.line.jarvis.command.DefaultCommand;
 import de.slux.line.jarvis.command.HelloGroupCommand;
 import de.slux.line.jarvis.command.HelloUserCommand;
 import de.slux.line.jarvis.command.HelpCommand;
+import de.slux.line.jarvis.command.InfoCommand;
 import de.slux.line.jarvis.command.war.WarDeleteCommand;
 import de.slux.line.jarvis.command.war.WarHistoryCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
@@ -55,6 +56,7 @@ import de.slux.line.jarvis.command.war.WarUndoDeathCommand;
 @SpringBootApplication
 @LineMessageHandler
 public class JarvisBotApplication {
+	public static String JARVIS_VERSION = "0.0.1-beta1";
 	public static final int MAX_LINE_MESSAGE_SIZE = 1500;
 
 	private static Logger LOG = LoggerFactory.getLogger(JarvisBotApplication.class);
@@ -96,6 +98,7 @@ public class JarvisBotApplication {
 
 		// Utility commands
 		this.commands.add(new HelpCommand(this.lineMessagingClient));
+		this.commands.add(new InfoCommand(this.lineMessagingClient));
 
 		// War commands
 		this.commands.add(new WarRegisterCommand(this.lineMessagingClient));
