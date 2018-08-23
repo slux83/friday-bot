@@ -45,6 +45,9 @@ import de.slux.line.jarvis.command.HelloUserCommand;
 import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
 import de.slux.line.jarvis.command.war.WarReportDeathCommand;
+import de.slux.line.jarvis.command.war.WarResetCommand;
+import de.slux.line.jarvis.command.war.WarSummaryDeathCommand;
+import de.slux.line.jarvis.command.war.WarUndoDeathCommand;
 
 @SpringBootApplication
 @LineMessageHandler
@@ -94,6 +97,9 @@ public class JarvisBotApplication {
 		// War commands
 		this.commands.add(new WarRegisterCommand(this.lineMessagingClient));
 		this.commands.add(new WarReportDeathCommand(this.lineMessagingClient));
+		this.commands.add(new WarUndoDeathCommand(this.lineMessagingClient));
+		this.commands.add(new WarSummaryDeathCommand(this.lineMessagingClient));
+		this.commands.add(new WarResetCommand(this.lineMessagingClient));
 
 		LOG.info("Commands initialized. Total command(s): " + this.commands.size());
 	}

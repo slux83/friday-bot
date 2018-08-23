@@ -13,6 +13,7 @@ import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.command.AbstractCommand;
+import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
 import de.slux.line.jarvis.war.WarReportModel;
 
@@ -94,14 +95,14 @@ public class WarReportDeathCommand extends AbstractCommand {
 		argsAsList.remove(0);
 		String champName = String.join(" ", argsAsList.toArray(new String[] {}));
 		String userName = super.getUserName(senderId, userId);
-		
+
 		try {
 			WarReportModel warModel = new WarReportModel();
 			warModel.addDeath(senderId, deaths, node, champName.trim(), userName);
 			return new TextMessage(warModel.getReport(senderId));
 		} catch (WarDaoUnregisteredException e) {
-			return new TextMessage("This group is unregistered! Please use '"
-					+ /* FIXME place constant */ "jarvis help" + "' for info on how to register your chat room");
+			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
+					+ "' for info on how to register your chat room");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new TextMessage("Unexpected error: " + e);
