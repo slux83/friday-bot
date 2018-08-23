@@ -87,13 +87,12 @@ public class AdminBroadcastCommand extends AbstractCommand {
 				PushMessage pushMessage = new PushMessage(group.getKey(), new TextMessage(bcastMessage));
 				CompletableFuture<BotApiResponse> response = super.messagingClient.pushMessage(pushMessage);
 
-				BotApiResponse apiResponse = response.get();
-				// FIXME: change this to debug and understand what we get from
-				// that response
-				LOG.info("Response = " + apiResponse);
+				// It will throw an exception if the bot is not any longer in the
+				// chat room
+				response.get();
 				totalSent++;
 			} catch (Exception e) {
-				LOG.error("Cannot push message to group " + group + ". Reason: " + e);
+				LOG.warn("Cannot push message to group " + group + ". Reason: " + e);
 			}
 		}
 
