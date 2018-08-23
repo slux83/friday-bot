@@ -42,7 +42,9 @@ import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.DefaultCommand;
 import de.slux.line.jarvis.command.HelloGroupCommand;
 import de.slux.line.jarvis.command.HelloUserCommand;
+import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
+import de.slux.line.jarvis.command.war.WarReportDeathCommand;
 
 @SpringBootApplication
 @LineMessageHandler
@@ -79,15 +81,19 @@ public class JarvisBotApplication {
 		// Save the instance
 		setInstance(this);
 
-		// Initialize all commands
+		// Initialise all commands (the order is important for the help)
 		this.commands = new ArrayList<>();
-		
-		// Event based commands
+
+		// Event based commands (not part of the help)
 		this.commands.add(new HelloUserCommand(this.lineMessagingClient));
 		this.commands.add(new HelloGroupCommand(this.lineMessagingClient));
-		
+
+		// Utility commands
+		this.commands.add(new HelpCommand(this.lineMessagingClient));
+
 		// War commands
 		this.commands.add(new WarRegisterCommand(this.lineMessagingClient));
+		this.commands.add(new WarReportDeathCommand(this.lineMessagingClient));
 
 		LOG.info("Commands initialized. Total command(s): " + this.commands.size());
 	}
@@ -123,7 +129,7 @@ public class JarvisBotApplication {
 			final String groupId) {
 
 		AbstractCommand command = getCommand(message);
-		
+
 		return command.execute(userId, groupId, message);
 	}
 
@@ -159,6 +165,15 @@ public class JarvisBotApplication {
 	 */
 	public LineMessagingClient getLineMessagingClient() {
 		return this.lineMessagingClient;
+	}
+
+	/**
+	 * Get the commands
+	 * 
+	 * @return the commands
+	 */
+	public List<AbstractCommand> getCommands() {
+		return this.commands;
 	}
 
 }

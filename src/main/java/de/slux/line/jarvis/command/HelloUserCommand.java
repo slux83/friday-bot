@@ -16,8 +16,6 @@ import com.linecorp.bot.model.event.FollowEvent;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.response.BotApiResponse;
 
-import de.slux.line.jarvis.command.AbstractCommand.CommandType;
-
 /**
  * This command is triggered when the user adds the BOT as friend (follow)
  * 
