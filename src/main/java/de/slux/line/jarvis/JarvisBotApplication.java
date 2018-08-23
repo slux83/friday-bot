@@ -17,7 +17,10 @@
 package de.slux.line.jarvis;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PostConstruct;
 
@@ -39,13 +42,15 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 import de.slux.line.jarvis.command.AbstractCommand;
+import de.slux.line.jarvis.command.AbstractCommand.CommandType;
 import de.slux.line.jarvis.command.DefaultCommand;
 import de.slux.line.jarvis.command.HelloGroupCommand;
 import de.slux.line.jarvis.command.HelloUserCommand;
 import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.command.InfoCommand;
-import de.slux.line.jarvis.command.AbstractCommand.CommandType;
 import de.slux.line.jarvis.command.admin.AdminBroadcastCommand;
+import de.slux.line.jarvis.command.admin.AdminHelpCommand;
+import de.slux.line.jarvis.command.admin.AdminStatusCommand;
 import de.slux.line.jarvis.command.war.WarDeleteCommand;
 import de.slux.line.jarvis.command.war.WarHistoryCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
@@ -75,7 +80,9 @@ public class JarvisBotApplication {
 
 	@Autowired
 	private LineMessagingClient lineMessagingClient;
-
+	private Date startup;
+	private AtomicLong incomingMsgCounter;
+	private AtomicBoolean isOperational;
 	private List<AbstractCommand> commands;
 
 	public static void main(String[] args) {
@@ -91,6 +98,9 @@ public class JarvisBotApplication {
 	public void postConstruct() {
 		// Save the instance
 		setInstance(this);
+		this.startup = new Date();
+		this.incomingMsgCounter = new AtomicLong();
+		this.isOperational = new AtomicBoolean(true);
 
 		// Initialise all commands (the order is important for the help)
 		this.commands = new ArrayList<>();
@@ -114,7 +124,9 @@ public class JarvisBotApplication {
 		this.commands.add(new WarResetCommand(this.lineMessagingClient));
 
 		// Admin commands
+		this.commands.add(new AdminHelpCommand(this.lineMessagingClient));
 		this.commands.add(new AdminBroadcastCommand(this.lineMessagingClient));
+		this.commands.add(new AdminStatusCommand(this.lineMessagingClient));
 
 		LOG.info("Commands initialized. Total command(s): " + this.commands.size());
 	}
@@ -125,9 +137,15 @@ public class JarvisBotApplication {
 		LOG.info("event source USER-ID: " + event.getSource().getUserId());
 		LOG.info("event source SENDER_ID: " + event.getSource().getSenderId());
 		LOG.info("event message text: " + event.getMessage().getText());
-
+		this.incomingMsgCounter.incrementAndGet();
+		
+		if (!this.isOperational.get()) {
+			return new TextMessage("Sorry, JARVIS is currently in standby for scheduled maintenance.");
+		}
+		
 		String message = event.getMessage().getText().trim();
 		String userId = event.getSource().getUserId();
+		
 		if (userId == null)
 			userId = event.getSource().getSenderId();
 
@@ -237,4 +255,26 @@ public class JarvisBotApplication {
 		return this.commands;
 	}
 
+	/**
+	 * @return the startup
+	 */
+	public Date getStartup() {
+		return startup;
+	}
+
+	/**
+	 * @return the incomingMsgCounter as long
+	 */
+	public long getIncomingMsgCounter() {
+		return incomingMsgCounter.get();
+	}
+
+	/**
+	 * @return the isOperational
+	 */
+	public AtomicBoolean getIsOperational() {
+		return isOperational;
+	}
+	
+	
 }
