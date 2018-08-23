@@ -265,8 +265,8 @@ public class JarvisBotApplication {
 	/**
 	 * @return the incomingMsgCounter as long
 	 */
-	public long getIncomingMsgCounter() {
-		return incomingMsgCounter.get();
+	public AtomicLong getIncomingMsgCounter() {
+		return incomingMsgCounter;
 	}
 
 	/**

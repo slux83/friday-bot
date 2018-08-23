@@ -24,7 +24,7 @@ import de.slux.line.jarvis.war.WarReportModel;
 public class AdminStatusCommand extends AbstractCommand {
 	public static final String CMD_PREFIX = "jarvis status";
 	private static Logger LOG = LoggerFactory.getLogger(AdminStatusCommand.class);
-	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.000"); 
+	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00"); 
 	/**
 	 * Ctor
 	 * 
@@ -76,7 +76,7 @@ public class AdminStatusCommand extends AbstractCommand {
 		sb.append("Status: ");
 		sb.append(JarvisBotApplication.getInstance().getIsOperational().get()? "OPERATIONAL" : "MAINTENANCE");
 		sb.append("\n");
-		long msgCounter = JarvisBotApplication.getInstance().getIncomingMsgCounter();
+		long msgCounter = JarvisBotApplication.getInstance().getIncomingMsgCounter().get();
 		long startupMs = JarvisBotApplication.getInstance().getStartup().getTime();
 		long nowMs = System.currentTimeMillis();
 		long msDiff = Math.abs(nowMs - startupMs);

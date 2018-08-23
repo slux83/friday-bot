@@ -1,0 +1,41 @@
+/**
+ * 
+ */
+package de.slux.line.jarvis.test.command;
+
+import java.time.Instant;
+
+import org.junit.Test;
+
+import com.linecorp.bot.model.event.MessageEvent;
+import com.linecorp.bot.model.event.message.TextMessageContent;
+import com.linecorp.bot.model.event.source.Source;
+import com.linecorp.bot.model.event.source.UserSource;
+import com.linecorp.bot.model.message.TextMessage;
+
+import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.command.admin.AdminStatusCommand;
+
+/**
+ * @author slux
+ */
+public class TestCommand {
+
+	@Test
+	public void testAdminStatusCommand() throws Exception {
+		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		jarvis.postConstruct();
+
+		Source source = new UserSource(JarvisBotApplication.SLUX_ID);
+		Instant timestamp = Instant.now();
+		TextMessageContent message = new TextMessageContent("001", AdminStatusCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
+				timestamp);
+		
+		jarvis.getIncomingMsgCounter().set(1);
+		Thread.sleep(60000);
+		TextMessage response = jarvis.handleTextMessageEvent(event);
+
+		System.out.println(response);
+	}
+}
