@@ -3,11 +3,6 @@
  */
 package de.slux.line.jarvis.command;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
 
@@ -61,8 +56,9 @@ public class InfoCommand extends AbstractCommand {
 		sb.append("\n");
 		sb.append("Author: slux83\n");
 		sb.append("Issues tracker: https://tinyurl.com/y7xlnb85\n\n");
-		sb.append("Donate please if you want to support!\n");
-		sb.append("JARVIS bot is hosted on a dedicated server and it has some costs to run it.\n");
+		sb.append("Please cosider a small donation if you want to support the JARVIS Bot development!\n");
+		sb.append("JARVIS Bot is hosted on a dedicated server and it has some running costs.\n\n");
+		sb.append("PAYPAL: ");
 		sb.append(PAYPAL_LINK.replace("$GUID", senderId));
 		sb.append("\n");
 
