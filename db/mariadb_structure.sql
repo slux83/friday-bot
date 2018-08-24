@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `war_death` (
   PRIMARY KEY (`id`),
   KEY `FK_war_death_war_group` (`group_id`),
   CONSTRAINT `FK_war_death_war_group` FOREIGN KEY (`group_id`) REFERENCES `war_group` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=145 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for table jarvis.war_group
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `war_group` (
   `group_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `group_id` (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for table jarvis.war_history
@@ -53,7 +53,30 @@ CREATE TABLE IF NOT EXISTS `war_history` (
   PRIMARY KEY (`id`),
   KEY `FK_war_history_war_group` (`group_id`),
   CONSTRAINT `FK_war_history_war_group` FOREIGN KEY (`group_id`) REFERENCES `war_group` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- Data exporting was unselected.
+-- Dumping structure for table jarvis.war_placement
+CREATE TABLE IF NOT EXISTS `war_placement` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `summoner_id` int(11) NOT NULL DEFAULT 0,
+  `node` int(11) NOT NULL DEFAULT 0,
+  `champ` varchar(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `FK_war_placement_war_summoner` (`summoner_id`),
+  CONSTRAINT `FK_war_placement_war_summoner` FOREIGN KEY (`summoner_id`) REFERENCES `war_summoner` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+-- Dumping structure for table jarvis.war_summoner
+CREATE TABLE IF NOT EXISTS `war_summoner` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) NOT NULL DEFAULT 0,
+  `name` varchar(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `FK_war_summoner_war_group` (`group_id`),
+  CONSTRAINT `FK_war_summoner_war_group` FOREIGN KEY (`group_id`) REFERENCES `war_group` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
