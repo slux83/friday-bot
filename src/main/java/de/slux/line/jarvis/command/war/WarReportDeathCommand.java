@@ -23,9 +23,9 @@ import de.slux.line.jarvis.war.WarReportModel;
  * @author slux
  */
 public class WarReportDeathCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis report";
-	public static final String CMD_PREFIX_1 = "jarvis";
-	public static final String CMD_PREFIX_2 = "report";
+	public static final String CMD_PREFIX = "jarvis death";
+	public static final String CMD_PREFIX_1 = CMD_PREFIX.split(" ")[0];
+	public static final String CMD_PREFIX_2 = CMD_PREFIX.split(" ")[1];
 	private static Logger LOG = LoggerFactory.getLogger(WarReportDeathCommand.class);
 
 	/**
