@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WarGroupDao {
 	private static Logger LOG = LoggerFactory.getLogger(WarGroupDao.class);
-			
+
 	private Connection conn;
 
 	private static final String ADD_DATA_STATEMENT = "INSERT INTO war_group (group_id, group_name) VALUES(?, ?)";
@@ -30,7 +30,7 @@ public class WarGroupDao {
 	private static final String UPDATE_DATA_STATEMENT = "UPDATE war_group SET group_name = ? WHERE group_id = ?";
 
 	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name FROM war_group";
-	
+
 	public WarGroupDao(Connection conn) {
 		this.conn = conn;
 	}
@@ -151,7 +151,7 @@ public class WarGroupDao {
 
 		return key;
 	}
-	
+
 	/**
 	 * get all the uuid of the active groups
 	 * 
@@ -171,7 +171,7 @@ public class WarGroupDao {
 				String guid = rs.getString("group_id");
 				String groupName = rs.getString("group_name");
 				groupName = new String(Base64.getDecoder().decode(groupName));
-				
+
 				groups.put(guid, groupName);
 			}
 		} finally {

@@ -54,9 +54,9 @@ public class HelloGroupCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		// Push back the message to the user
-		//FIXME: add a proper message here
+		// FIXME: add a proper message here
 		CompletableFuture<BotApiResponse> response = super.messagingClient
-				.pushMessage(new PushMessage(senderId, new TextMessage("Hello group of friend!")));
+		        .pushMessage(new PushMessage(senderId, new TextMessage("Hello group of friend!")));
 
 		try {
 			response.get(AbstractCommand.RESPONSE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
@@ -64,7 +64,7 @@ public class HelloGroupCommand extends AbstractCommand {
 			LOG.warn("Timeout exceeded for " + this.getClass().getSimpleName() + " command: " + e);
 		} catch (Exception e) {
 			LOG.error("Unknown error when getting the response of the " + this.getClass().getSimpleName() + " command",
-					e);
+			        e);
 		}
 
 		return null;

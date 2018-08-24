@@ -93,7 +93,7 @@ public class WarDeath {
 	@Override
 	public String toString() {
 		return "WarDeathReport [nodeNumber=" + nodeNumber + ", nodeDeaths=" + nodeDeaths + ", champName=" + champName
-				+ "]";
+		        + "]";
 	}
 
 }

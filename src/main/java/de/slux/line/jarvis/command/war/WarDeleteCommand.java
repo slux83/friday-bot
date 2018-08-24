@@ -80,17 +80,17 @@ public class WarDeleteCommand extends AbstractCommand {
 
 			if (outcome) {
 				return new TextMessage(
-						"War against '" + allyTag + "' on " + day + " has been deleted from the history");
+				        "War against '" + allyTag + "' on " + day + " has been deleted from the history");
 			} else {
 				return new TextMessage(
-						"Could not find any war against '" + allyTag + "' on " + day + ". Please try again");
+				        "Could not find any war against '" + allyTag + "' on " + day + ". Please try again");
 			}
 		} catch (ParseException e) {
 			return new TextMessage(
-					"Incorrect date syntax.\nPlease use the following pattern: " + WarReportModel.SDF.toPattern());
+			        "Incorrect date syntax.\nPlease use the following pattern: " + WarReportModel.SDF.toPattern());
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-					+ "' for info on how to register your chat room");
+			        + "' for info on how to register your chat room");
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);
 			return new TextMessage("Unexpected error: " + e);

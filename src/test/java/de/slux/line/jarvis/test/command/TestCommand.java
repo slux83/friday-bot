@@ -32,7 +32,7 @@ public class TestCommand {
 		Instant timestamp = Instant.now();
 		TextMessageContent message = new TextMessageContent("001", AdminStatusCommand.CMD_PREFIX);
 		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
-				timestamp);
+		        timestamp);
 
 		jarvis.getIncomingMsgCounter().set(10);
 		Thread.sleep(1000);
@@ -48,7 +48,7 @@ public class TestCommand {
 
 		// 16 secs day
 		System.out.println(AdminStatusCommand.calculateUptime(1000 * 16));
-		
+
 		// 1 day
 		System.out.println(AdminStatusCommand.calculateUptime(1000 * 60 * 60 * 24));
 
@@ -60,11 +60,11 @@ public class TestCommand {
 
 		// 10 day and 1h and 12 min
 		System.out.println(
-				AdminStatusCommand.calculateUptime(((1000 * 60 * 60 * 24 * 10) + 1000 * 60 * 60) + 1000 * 60 * 12));
+		        AdminStatusCommand.calculateUptime(((1000 * 60 * 60 * 24 * 10) + 1000 * 60 * 60) + 1000 * 60 * 12));
 
 		// 10 day and 1h and 12 min and 40 secs
 		System.out.println(AdminStatusCommand
-				.calculateUptime((((1000 * 60 * 60 * 24 * 10) + 1000 * 60 * 60) + 1000 * 60 * 12) + 1000 * 40));
+		        .calculateUptime((((1000 * 60 * 60 * 24 * 10) + 1000 * 60 * 60) + 1000 * 60 * 12) + 1000 * 40));
 
 	}
 
@@ -77,7 +77,7 @@ public class TestCommand {
 		Instant timestamp = Instant.now();
 		TextMessageContent message = new TextMessageContent("001", InfoCommand.CMD_PREFIX);
 		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
-				timestamp);
+		        timestamp);
 
 		TextMessage response = jarvis.handleTextMessageEvent(event);
 

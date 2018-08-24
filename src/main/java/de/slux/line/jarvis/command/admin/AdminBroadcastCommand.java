@@ -87,7 +87,8 @@ public class AdminBroadcastCommand extends AbstractCommand {
 				PushMessage pushMessage = new PushMessage(group.getKey(), new TextMessage(bcastMessage));
 				CompletableFuture<BotApiResponse> response = super.messagingClient.pushMessage(pushMessage);
 
-				// It will throw an exception if the bot is not any longer in the
+				// It will throw an exception if the bot is not any longer in
+				// the
 				// chat room
 				response.get();
 				totalSent++;

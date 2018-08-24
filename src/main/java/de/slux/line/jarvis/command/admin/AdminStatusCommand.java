@@ -108,7 +108,7 @@ public class AdminStatusCommand extends AbstractCommand {
 		LOG.info("Messages/sec: " + DECIMAL_FORMAT.format(msgSec));
 		LOG.info("Total groups: " + groupCounter);
 		LOG.info("Status: "
-				+ (JarvisBotApplication.getInstance().getIsOperational().get() ? "OPERATIONAL" : "MAINTENANCE"));
+		        + (JarvisBotApplication.getInstance().getIsOperational().get() ? "OPERATIONAL" : "MAINTENANCE"));
 
 		return new TextMessage(sb.toString());
 	}
@@ -138,7 +138,7 @@ public class AdminStatusCommand extends AbstractCommand {
 		long elapsedSeconds = timeMilli / secondsInMilli;
 
 		return String.format("%d days, %d hours, %d mins, %d secs", elapsedDays, elapsedHours, elapsedMinutes,
-				elapsedSeconds);
+		        elapsedSeconds);
 	}
 
 	/*

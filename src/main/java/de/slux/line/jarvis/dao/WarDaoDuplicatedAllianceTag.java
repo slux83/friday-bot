@@ -48,8 +48,8 @@ public class WarDaoDuplicatedAllianceTag extends Exception {
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public WarDaoDuplicatedAllianceTag(String message, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
+	public WarDaoDuplicatedAllianceTag(String message, Throwable cause, boolean enableSuppression,
+	        boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 

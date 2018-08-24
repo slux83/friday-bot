@@ -66,7 +66,7 @@ public class WarGroup {
 
 		return report.toString();
 	}
-	
+
 	/**
 	 * Calculate the current death report
 	 * 
@@ -82,7 +82,7 @@ public class WarGroup {
 				totalDeathsPerNode.put(wdr.getNodeNumber(), 0);
 
 			totalDeathsPerNode.put(wdr.getNodeNumber(),
-					wdr.getNodeDeaths() + totalDeathsPerNode.get(wdr.getNodeNumber()));
+			        wdr.getNodeDeaths() + totalDeathsPerNode.get(wdr.getNodeNumber()));
 		}
 
 		for (Integer deaths : totalDeathsPerNode.values()) {
@@ -105,7 +105,7 @@ public class WarGroup {
 	 */
 	public List<String> getSummaryText() {
 		List<String> outcome = new ArrayList<String>();
-		
+
 		StringBuilder sb = new StringBuilder("*** WAR DEATH SUMMARY ***\n");
 
 		List<WarDeath> reports = getDeathReports();
@@ -118,13 +118,13 @@ public class WarGroup {
 		});
 
 		for (WarDeath wd : reports) {
-			
+
 			if (sb.length() > JarvisBotApplication.MAX_LINE_MESSAGE_SIZE) {
 				// We need to split it and clear
 				outcome.add(sb.toString());
 				sb.setLength(0);
 			}
-			
+
 			sb.append("Node: ");
 			sb.append(wd.getNodeNumber());
 			sb.append("\nTotal Deaths: ");
@@ -141,7 +141,7 @@ public class WarGroup {
 
 		sb.append("\n");
 		sb.append(getReport());
-		
+
 		outcome.add(sb.toString());
 
 		return outcome;

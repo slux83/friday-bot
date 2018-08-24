@@ -12,7 +12,7 @@ import com.linecorp.bot.model.message.TextMessage;
  * @author slux
  */
 public class DefaultCommand extends AbstractCommand {
-	
+
 	/**
 	 * Ctor
 	 * 

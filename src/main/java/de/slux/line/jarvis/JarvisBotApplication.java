@@ -1,17 +1,17 @@
 /*
  * Copyright 2016 LINE Corporation
  *
- * LINE Corporation licenses this file to you under the Apache License,
- * version 2.0 (the "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at:
+ * LINE Corporation licenses this file to you under the Apache License, version
+ * 2.0 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package de.slux.line.jarvis;
@@ -138,10 +138,10 @@ public class JarvisBotApplication {
 		LOG.info("event source SENDER_ID: " + event.getSource().getSenderId());
 		LOG.info("event message text: " + event.getMessage().getText());
 		this.incomingMsgCounter.incrementAndGet();
-		
+
 		String message = event.getMessage().getText().trim();
 		String userId = event.getSource().getUserId();
-		
+
 		if (userId == null)
 			userId = event.getSource().getSenderId();
 
@@ -185,14 +185,14 @@ public class JarvisBotApplication {
 	 * @return the text to send back to the user
 	 */
 	private TextMessage handleGroupSource(String message, String userId, MessageEvent<TextMessageContent> event,
-			final String groupId) {
+	        final String groupId) {
 
 		AbstractCommand command = getCommand(message);
 
 		if (!this.isOperational.get() && !(command instanceof DefaultCommand)) {
 			return new TextMessage("Sorry, JARVIS is currently in standby for scheduled maintenance.");
 		}
-		
+
 		return command.execute(userId, groupId, message);
 	}
 
@@ -203,7 +203,7 @@ public class JarvisBotApplication {
 		LOG.info("event source SENDER_ID=" + event.getSource().getSenderId());
 
 		AbstractCommand command = getCommand(event.getClass().getSimpleName());
-		
+
 		command.execute(event.getSource().getUserId(), event.getSource().getSenderId(), null);
 	}
 
@@ -275,6 +275,5 @@ public class JarvisBotApplication {
 	public AtomicBoolean getIsOperational() {
 		return isOperational;
 	}
-	
-	
+
 }

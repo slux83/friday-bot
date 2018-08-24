@@ -25,7 +25,7 @@ import de.slux.line.jarvis.dao.WarHistoryDao;
  */
 public class WarReportModel {
 	private static Logger LOG = LoggerFactory.getLogger(WarReportModel.class);
-	
+
 	public static final int WAR_POINTS_LOST_PER_DEATH = 80;
 	public static final int WAR_POINTS_LOST_CAP = WAR_POINTS_LOST_PER_DEATH * 3;
 	public static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
@@ -57,6 +57,7 @@ public class WarReportModel {
 
 	/**
 	 * Get all the groups
+	 * 
 	 * @return the map of groups
 	 * @throws Exception
 	 */
@@ -64,7 +65,7 @@ public class WarReportModel {
 		Connection conn = DbConnectionPool.getConnection();
 
 		WarGroupDao dao = new WarGroupDao(conn);
-		
+
 		return dao.getAll();
 	}
 

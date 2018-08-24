@@ -105,7 +105,7 @@ public abstract class AbstractCommand {
 	 */
 	protected String getUserName(String groupId, String userId) {
 		CompletableFuture<UserProfileResponse> userProfileFuture = this.messagingClient.getGroupMemberProfile(groupId,
-				userId);
+		        userId);
 
 		UserProfileResponse userProfile = null;
 		String userName = "unknown_" + userId.substring(userId.length() - 10);

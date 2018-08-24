@@ -60,9 +60,9 @@ public class WarRegisterCommand extends AbstractCommand {
 
 		// Remove prefix
 		args.remove(0);
-		args.remove(0); 
+		args.remove(0);
 		String arg = String.join(" ", args);
-		
+
 		try {
 			WarReportModel warModel = new WarReportModel();
 			warModel.register(senderId, arg.trim());

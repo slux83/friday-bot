@@ -75,11 +75,11 @@ public class WarSaveCommand extends AbstractCommand {
 			return new TextMessage("War reports against '" + allyTag + "' saved successfully");
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-					+ "' for info on how to register your chat room");
+			        + "' for info on how to register your chat room");
 		} catch (WarDaoDuplicatedAllianceTag e) {
 			return new TextMessage(
-					"Error: the alliance '" + allyTag + "' has been already registered today. Use the command '"
-							+ WarDeleteCommand.CMD_PREFIX + "' to delete the previeus one");
+			        "Error: the alliance '" + allyTag + "' has been already registered today. Use the command '"
+			                + WarDeleteCommand.CMD_PREFIX + "' to delete the previeus one");
 		} catch (Exception e) {
 			LOG.error("Unexpected exception: " + e, e);
 			return new TextMessage("Unexpected error: " + e);

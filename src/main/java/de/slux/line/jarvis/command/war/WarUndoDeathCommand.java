@@ -58,7 +58,7 @@ public class WarUndoDeathCommand extends AbstractCommand {
 			return new TextMessage(warModel.getReport(senderId));
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-					+ "' for info on how to register your chat room");
+			        + "' for info on how to register your chat room");
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);
 			return new TextMessage("Unexpected error: " + e);

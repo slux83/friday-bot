@@ -23,25 +23,25 @@ import de.slux.line.jarvis.war.WarGroup;
  */
 public class WarHistoryDao {
 	private static Logger LOG = LoggerFactory.getLogger(WarHistoryDao.class);
-	
+
 	private Connection conn;
 
 	private static final String ADD_DATA_STATEMENT = "INSERT INTO war_history (group_id, node, num_deaths, champion, player, opponent_tag, war_date) "
-			+ "(SELECT group_id, node, num_deaths, champion, player, TO_BASE64(?), ? FROM war_death where group_id = ?)";
+	        + "(SELECT group_id, node, num_deaths, champion, player, TO_BASE64(?), ? FROM war_death where group_id = ?)";
 
 	private static final String GET_ALL_DATA = "SELECT war_date, FROM_BASE64(opponent_tag) AS ally_tag FROM war_history "
-			+ "WHERE group_id = ? GROUP BY war_date, ally_tag ORDER BY war_date";
+	        + "WHERE group_id = ? GROUP BY war_date, ally_tag ORDER BY war_date";
 
 	private static final String GET_DAILY_DATA = "SELECT FROM_BASE64(opponent_tag) AS ally_tag, node, num_deaths, "
-			+ "FROM_BASE64(champion) AS champ, FROM_BASE64(player) AS player_name "
-			+ "FROM war_history WHERE group_id = ? AND war_date = ?";
-	
+	        + "FROM_BASE64(champion) AS champ, FROM_BASE64(player) AS player_name "
+	        + "FROM war_history WHERE group_id = ? AND war_date = ?";
+
 	private static final String DELETE_DATA = "DELETE FROM war_history WHERE group_id = ? AND war_date = ? AND opponent_tag = TO_BASE64(?)";
 
 	public WarHistoryDao(Connection conn) {
 		this.conn = conn;
 	}
-	
+
 	/**
 	 * Remove data from the history
 	 * 
@@ -67,7 +67,7 @@ public class WarHistoryDao {
 			stmt.setTimestamp(2, timestamp);
 			stmt.setString(3, allianceTag);
 			deletedEntries = stmt.executeUpdate();
-			
+
 			LOG.info("Deleted " + deletedEntries + " in history for " + allianceTag + " on " + timestamp);
 
 		} finally {
@@ -87,13 +87,13 @@ public class WarHistoryDao {
 
 		return (deletedEntries > 0);
 	}
-	
+
 	/**
 	 * get all the history for a particular day
 	 * 
 	 * @param groupKey
 	 * @param warDate
-	 * @return map where key=ally_tag 
+	 * @return map where key=ally_tag
 	 * @throws SQLException
 	 */
 	public Map<String, WarGroup> getAllData(int groupKey, Timestamp warDate) throws SQLException {
@@ -113,12 +113,12 @@ public class WarHistoryDao {
 				int numDeaths = rs.getInt("num_deaths");
 				String champ = rs.getString("champ");
 				String player = rs.getString("player_name");
-				
+
 				if (!outcome.containsKey(allianceName)) {
 					WarGroup warGroup = new WarGroup();
 					outcome.put(allianceName, warGroup);
 				}
-				
+
 				outcome.get(allianceName).addDeath(numDeaths, node, champ, player);
 			}
 		} finally {
@@ -237,8 +237,7 @@ public class WarHistoryDao {
 			}
 		}
 
-		LOG.info("Data stored successfully: " + allianceTag + ", "
-				+ timestamp);
+		LOG.info("Data stored successfully: " + allianceTag + ", " + timestamp);
 	}
 
 }

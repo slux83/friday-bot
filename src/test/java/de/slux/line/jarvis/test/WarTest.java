@@ -57,8 +57,7 @@ public class WarTest {
 
 	@Test(expected = WarDaoUnregisteredException.class)
 	public void testUnregisteredOperation() throws Exception {
-		this.warModel.addDeath("test_group_dummy", 1, 1, "champName",
-				"userName");
+		this.warModel.addDeath("test_group_dummy", 1, 1, "champName", "userName");
 	}
 
 	@Test
@@ -77,7 +76,7 @@ public class WarTest {
 		Map<String, String> groups = this.warModel.getAllGroups();
 		assertFalse(groups.isEmpty());
 		System.out.println(groups);
-		
+
 		// Group 1 reports
 		this.warModel.addDeath(GROUP1_ID, 1, 10, "Modok", "Slux");
 		this.warModel.addDeath(GROUP1_ID, 2, 13, "SIM", "Slux");
@@ -98,10 +97,10 @@ public class WarTest {
 		this.warModel.addDeath(GROUP2_ID, 2, 54, "Dormammu", "Diffy");
 
 		// Group 3 reports are huge
-		for (int i=1; i<56; i++) {
+		for (int i = 1; i < 56; i++) {
 			this.warModel.addDeath(GROUP3_ID, 1, i, "Champ_" + i, "User_" + i);
 		}
-		
+
 		// Test UNDO
 		this.warModel.addDeath(GROUP1_ID, 1, 100, "wrong1", "someone1");
 		this.warModel.addDeath(GROUP1_ID, 1, 100, "wrong2", "someone2");
@@ -138,12 +137,12 @@ public class WarTest {
 		List<String> bg3summary = this.warModel.getSummary(GROUP3_ID);
 		System.out.println("HUGE SUMMARY:\n" + bg3summary);
 		Assert.assertTrue(bg3summary.size() > 1);
-		
+
 		this.warModel.saveWar(GROUP1_ID, "ISO8A");
 
 		this.warModel.saveWar(GROUP2_ID, "DH");
 		this.warModel.saveWar(GROUP2_ID, "DH-DM");
-		
+
 		this.warModel.saveWar(GROUP3_ID, "BRAE");
 
 		try {
@@ -154,23 +153,23 @@ public class WarTest {
 		}
 		System.out.println(this.warModel.getHistoryText(GROUP1_ID));
 		System.out.println(this.warModel.getHistoryText(GROUP2_ID));
-		
+
 		List<String> bg3History = this.warModel.getHistoryText(GROUP3_ID);
 		System.out.println("HUGE HISTORY:\n" + bg3History);
 		Assert.assertTrue(bg3History.size() > 0);
-		
+
 		Map<String, WarGroup> historyToday = this.warModel.getHistorySummary(GROUP1_ID, new Date());
 		for (Entry<String, WarGroup> entry : historyToday.entrySet()) {
 			System.out.println("ALLY " + entry.getKey());
 			System.out.println(entry.getValue().getSummaryText());
 		}
-		
+
 		assertTrue(this.warModel.deleteHistoryEntries(GROUP1_ID, "ISO8A", new Date()));
-		
+
 		assertTrue(this.warModel.deleteHistoryEntries(GROUP2_ID, "DH", new Date()));
 		assertTrue(this.warModel.deleteHistoryEntries(GROUP2_ID, "DH-DM", new Date()));
 		assertFalse(this.warModel.deleteHistoryEntries(GROUP2_ID, "FAKE", new Date()));
-		
+
 		historyToday = this.warModel.getHistorySummary(GROUP1_ID, new Date());
 		for (Entry<String, WarGroup> entry : historyToday.entrySet()) {
 			System.out.println("ALLY " + entry.getKey());

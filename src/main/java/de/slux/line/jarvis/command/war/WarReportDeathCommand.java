@@ -63,7 +63,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 		for (Iterator<String> iterator = argsAsList.iterator(); iterator.hasNext();) {
 			String string = iterator.next();
 			if (string.trim().isEmpty() || string.trim().equalsIgnoreCase(CMD_PREFIX_1)
-					|| string.trim().equalsIgnoreCase(CMD_PREFIX_2)) {
+			        || string.trim().equalsIgnoreCase(CMD_PREFIX_2)) {
 				// Remove the current element from the iterator and the
 				// list.
 				iterator.remove();
@@ -72,7 +72,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 		LOG.debug("war args after clean up: " + argsAsList);
 		if (argsAsList.size() < 3) {
 			return new TextMessage(
-					"Incorrect syntax. Please use the following:\n" + CMD_PREFIX + " <deaths> <node> <champ>");
+			        "Incorrect syntax. Please use the following:\n" + CMD_PREFIX + " <deaths> <node> <champ>");
 		}
 
 		int deaths = -1;
@@ -80,7 +80,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 			deaths = Integer.parseInt(argsAsList.get(0).trim());
 		} catch (NumberFormatException e) {
 			return new TextMessage("Number expected for <deaths>. Please use the following:\n" + CMD_PREFIX
-					+ " <deaths> <node> <champ>");
+			        + " <deaths> <node> <champ>");
 		}
 
 		int node = -1;
@@ -88,7 +88,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 			node = Integer.parseInt(argsAsList.get(1).trim());
 		} catch (NumberFormatException e) {
 			return new TextMessage("Number expected for <node>. Please use the following:\n" + CMD_PREFIX
-					+ " <deaths> <node> <champ>");
+			        + " <deaths> <node> <champ>");
 		}
 
 		argsAsList.remove(0);
@@ -102,7 +102,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 			return new TextMessage(warModel.getReport(senderId));
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-					+ "' for info on how to register your chat room");
+			        + "' for info on how to register your chat room");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new TextMessage("Unexpected error: " + e);

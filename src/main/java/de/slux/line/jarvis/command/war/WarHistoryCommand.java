@@ -73,7 +73,7 @@ public class WarHistoryCommand extends AbstractCommand {
 				}
 			} catch (WarDaoUnregisteredException e) {
 				return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-						+ "' for info on how to register your chat room");
+				        + "' for info on how to register your chat room");
 			} catch (Exception e) {
 				LOG.error("Unexpected error: " + e, e);
 				return new TextMessage("Unexpected error: " + e);
@@ -95,7 +95,7 @@ public class WarHistoryCommand extends AbstractCommand {
 					List<String> summaryText = historyEntry.getValue().getSummaryText();
 					// We gotta push multiple messages
 					PushMessage pushMessage = new PushMessage(senderId, new TextMessage(
-							"*** " + day.trim() + " - " + historyEntry.getKey() + " ***\n\n" + summaryText.get(0)));
+					        "*** " + day.trim() + " - " + historyEntry.getKey() + " ***\n\n" + summaryText.get(0)));
 					CompletableFuture<BotApiResponse> outcome = super.messagingClient.pushMessage(pushMessage);
 					outcome.get();
 
@@ -107,16 +107,16 @@ public class WarHistoryCommand extends AbstractCommand {
 
 			} catch (ParseException e) {
 				return new TextMessage("Incorrect date syntax.\nPlease use the following date pattern: "
-						+ WarReportModel.SDF.toPattern());
+				        + WarReportModel.SDF.toPattern());
 			} catch (WarDaoUnregisteredException e) {
 				return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-						+ "' for info on how to register your chat room");
+				        + "' for info on how to register your chat room");
 			} catch (Exception e) {
 				LOG.error("Unexpected error: " + e, e);
 				return new TextMessage("Unexpected error: " + e);
-			}	
+			}
 		}
-		
+
 		return null;
 	}
 
