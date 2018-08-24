@@ -206,6 +206,7 @@ public class WarHistoryDao {
 	 * @throws SQLException
 	 */
 	public void storeData(int groupKey, String allianceTag) throws SQLException {
+		// TODO: delete wars saved older than 24 (absolute number of saved wars)
 		PreparedStatement stmt = null;
 		Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(System.currentTimeMillis());
