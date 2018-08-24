@@ -43,11 +43,31 @@ public class TestCommand {
 		message = new TextMessageContent("001", AdminStatusCommand.CMD_PREFIX + " fake foo bar");
 		event = new MessageEvent<TextMessageContent>("reply-token", source, message, timestamp);
 		response = jarvis.handleTextMessageEvent(event);
-		
+
 		System.out.println(response);
+
+		// 16 secs day
+		System.out.println(AdminStatusCommand.calculateUptime(1000 * 16));
 		
+		// 1 day
+		System.out.println(AdminStatusCommand.calculateUptime(1000 * 60 * 60 * 24));
+
+		// 10 day
+		System.out.println(AdminStatusCommand.calculateUptime(1000 * 60 * 60 * 24 * 10));
+
+		// 10 day and 1h
+		System.out.println(AdminStatusCommand.calculateUptime((1000 * 60 * 60 * 24 * 10) + 1000 * 60 * 60));
+
+		// 10 day and 1h and 12 min
+		System.out.println(
+				AdminStatusCommand.calculateUptime(((1000 * 60 * 60 * 24 * 10) + 1000 * 60 * 60) + 1000 * 60 * 12));
+
+		// 10 day and 1h and 12 min and 40 secs
+		System.out.println(AdminStatusCommand
+				.calculateUptime((((1000 * 60 * 60 * 24 * 10) + 1000 * 60 * 60) + 1000 * 60 * 12) + 1000 * 40));
+
 	}
-	
+
 	@Test
 	public void testInfoCommand() throws Exception {
 		JarvisBotApplication jarvis = new JarvisBotApplication(null);
@@ -61,6 +81,6 @@ public class TestCommand {
 
 		TextMessage response = jarvis.handleTextMessageEvent(event);
 
-		System.out.println(response);		
+		System.out.println(response);
 	}
 }
