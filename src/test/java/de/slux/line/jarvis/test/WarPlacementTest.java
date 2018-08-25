@@ -3,7 +3,9 @@
  */
 package de.slux.line.jarvis.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Map;
 
@@ -14,8 +16,11 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import de.slux.line.jarvis.dao.DbConnectionPool;
+import de.slux.line.jarvis.dao.exception.GenericDaoException;
+import de.slux.line.jarvis.dao.exception.SummonerNotFoundException;
 import de.slux.line.jarvis.dao.war.WarSummonerDao;
 import de.slux.line.jarvis.data.war.WarSummoner;
+import de.slux.line.jarvis.data.war.WarSummonerPlacement;
 import de.slux.line.jarvis.logic.war.WarReportModel;
 
 /**
@@ -63,6 +68,39 @@ public class WarPlacementTest {
 		Map<Integer, WarSummoner> summoners = dao.getAll(this.group1Key);
 		Assert.assertEquals(3, summoners.size());
 		System.out.println(summoners);
+
+		// Test some placement edit
+		dao = new WarSummonerDao(DbConnectionPool.getConnection());
+		dao.editPlacement(this.group1Key, 1, 'C', 55, "5* dupe Medusa");
+
+		dao = new WarSummonerDao(DbConnectionPool.getConnection());
+		summoners = dao.getAll(this.group1Key);
+		assertNotNull(summoners.get(1));
+		assertNotNull(summoners.get(1).getPlacements().get('C'));
+		WarSummonerPlacement placement = summoners.get(1).getPlacements().get('C');
+		assertEquals(Integer.valueOf(55), placement.getNode());
+		assertEquals("5* dupe Medusa", placement.getChampion());
+
+		// Test summoner not found
+		try {
+			dao = new WarSummonerDao(DbConnectionPool.getConnection());
+			dao.editPlacement(this.group1Key, 100, 'C', 55, "5* dupe Medusa");
+			Assert.assertTrue(false); // must have an exception thrown
+		} catch (SummonerNotFoundException e) {
+			// Good one in this case
+			System.err.println(e);
+		}
+
+		// Test summoner not found
+		try {
+			dao = new WarSummonerDao(DbConnectionPool.getConnection());
+			dao.editPlacement(this.group1Key, 2, 'Z', 55, "5* dupe Medusa");
+			Assert.assertTrue(false); // must have an exception thrown
+		} catch (GenericDaoException e) {
+			// Good one in this case
+			System.err.println(e);
+		}
+
 	}
 
 	@Test(expected = Exception.class)

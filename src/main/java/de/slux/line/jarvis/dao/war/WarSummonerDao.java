@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -19,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import de.slux.line.jarvis.dao.DbConnectionPool;
 import de.slux.line.jarvis.dao.exception.GenericDaoException;
+import de.slux.line.jarvis.dao.exception.SummonerNotFoundException;
 import de.slux.line.jarvis.dao.exception.SummonerNumberExceededException;
 import de.slux.line.jarvis.data.war.WarSummoner;
 import de.slux.line.jarvis.data.war.WarSummonerPlacement;
@@ -40,6 +40,7 @@ public class WarSummonerDao {
 		"WHERE WS.group_id = ? " +
 		"ORDER BY WS.id, WP.id";
 	private static final String ADD_PLACEMENTS = "INSERT INTO war_placement (summoner_id) VALUES (?), (?), (?), (?), (?)";
+	private static final String UPDATE_PLACEMENT = "UPDATE war_placement SET node = ?, champ = ? WHERE id = ?";
 	/* @formatter:on */
 
 	private Connection conn;
@@ -211,5 +212,64 @@ public class WarSummonerDao {
 		}
 
 		return summoners;
+	}
+
+	/**
+	 * edit a placement for a given summoner and group
+	 * 
+	 * @param groupId
+	 * @param summonerPos
+	 * @param placementPos
+	 * @param node
+	 * @param champ
+	 * @throws SQLException
+	 * @throws SummonerNotFoundException
+	 * @throws GenericDaoException
+	 */
+	public void editPlacement(Integer groupId, Integer summonerPos, Character placementPos, Integer node, String champ)
+	        throws SQLException, SummonerNotFoundException, GenericDaoException {
+		Map<Integer, WarSummoner> summoners = getAll(groupId);
+		WarSummoner summoner = summoners.get(summonerPos);
+		if (summoner == null) {
+			throw new SummonerNotFoundException("Sorry, cannot find the specified summoner at position " + summonerPos);
+		}
+
+		WarSummonerPlacement placement = summoner.getPlacements().get(placementPos);
+
+		if (placement == null) {
+			// If this happens, it's clearly a bug
+			throw new GenericDaoException("Cannot find position '" + placementPos + "' for summoner "
+			        + summoner.getName() + " (position=" + summonerPos + ")");
+		}
+
+		int placementDbKey = placement.getId();
+
+		// getAll() will close it
+		if (this.conn.isClosed()) {
+			this.conn = DbConnectionPool.getConnection();
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(UPDATE_PLACEMENT);
+			stmt.setInt(1, node);
+			stmt.setString(2, Base64.getEncoder().encodeToString(champ.getBytes()));
+			stmt.setInt(3, placementDbKey);
+			stmt.executeUpdate();
+
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
