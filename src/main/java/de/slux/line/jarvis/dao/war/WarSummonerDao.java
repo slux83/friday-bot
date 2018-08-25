@@ -12,6 +12,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +55,12 @@ public class WarSummonerDao {
 	 * @param summoners
 	 * @throws SummonerNumberExceededException
 	 *             if you add more then {@link WarSummonerDao#MAX_SUMMONERS}
-	 * @throws SQLException 
-	 * @throws GenericDaoException 
+	 * @throws SQLException
+	 * @throws GenericDaoException
 	 * @throws Exception
 	 */
-	public void storeData(int groupId, List<String> summoners) throws SummonerNumberExceededException, SQLException, GenericDaoException {
+	public void storeData(int groupId, List<String> summoners)
+	        throws SummonerNumberExceededException, SQLException, GenericDaoException {
 		PreparedStatement stmt = null;
 		try {
 			Map<Integer, WarSummoner> existingSummoners = getAll(groupId);
@@ -150,15 +152,25 @@ public class WarSummonerDao {
 	public Map<Integer, WarSummoner> getAll(int groupId) throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		Map<Integer, WarSummoner> summoners = new HashMap<>();
+		Map<Integer, WarSummoner> summoners = new TreeMap<>();
 		try {
 
 			stmt = conn.prepareStatement(GET_DATA);
 			stmt.setInt(1, groupId);
 			rs = stmt.executeQuery();
 
+			char placementPos = 'A';
+			int summonerPos = 0;
+			int lastSummonerId = -1;
 			while (rs.next()) {
 				int summonerId = rs.getInt("ws_id");
+
+				if (lastSummonerId != summonerId) {
+					lastSummonerId = summonerId;
+					summonerPos++;
+					placementPos = 'A';
+				}
+
 				String summonerName = rs.getString("ws_name");
 				summonerName = new String(Base64.getDecoder().decode(summonerName.getBytes()));
 				int placementId = rs.getInt("wp_id");
@@ -167,13 +179,14 @@ public class WarSummonerDao {
 				if (placementChamp != null)
 					placementChamp = new String(Base64.getDecoder().decode(placementChamp.getBytes()));
 
-				WarSummoner ws = summoners.get(summonerId);
+				WarSummoner ws = summoners.get(summonerPos);
 				if (ws == null) {
 					ws = new WarSummoner(summonerId, summonerName);
-					summoners.put(summonerId, ws);
+					summoners.put(summonerPos, ws);
 				}
 
-				ws.getPlacements().add(new WarSummonerPlacement(placementId, placementNode, placementChamp));
+				ws.getPlacements().put(Character.valueOf(placementPos++),
+				        new WarSummonerPlacement(placementId, placementNode, placementChamp));
 
 			}
 		} finally {

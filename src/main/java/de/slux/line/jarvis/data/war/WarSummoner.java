@@ -2,6 +2,8 @@ package de.slux.line.jarvis.data.war;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Summoner pojo
@@ -11,7 +13,7 @@ import java.util.List;
 public class WarSummoner {
 	private Integer id;
 	private String name;
-	private List<WarSummonerPlacement> placements;
+	private Map<Character, WarSummonerPlacement> placements;
 
 	/**
 	 * @param id
@@ -19,7 +21,7 @@ public class WarSummoner {
 	 */
 	public WarSummoner(Integer id, String name) {
 		super();
-		this.placements = new ArrayList<>();
+		this.placements = new TreeMap<>();
 		this.id = id;
 		this.name = name;
 	}
@@ -57,7 +59,7 @@ public class WarSummoner {
 	/**
 	 * @return the placements
 	 */
-	public List<WarSummonerPlacement> getPlacements() {
+	public Map<Character, WarSummonerPlacement> getPlacements() {
 		return placements;
 	}
 
