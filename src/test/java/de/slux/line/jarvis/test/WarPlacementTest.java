@@ -101,6 +101,24 @@ public class WarPlacementTest {
 			System.err.println(e);
 		}
 
+		// Rename a summoner
+		dao = new WarSummonerDao(DbConnectionPool.getConnection());
+		dao.renameSummoner(this.group1Key, 3, "Slux is Testing");
+
+		dao = new WarSummonerDao(DbConnectionPool.getConnection());
+		summoners = dao.getAll(this.group1Key);
+		assertNotNull(summoners.get(3));
+		assertEquals("Slux is Testing", summoners.get(3).getName());
+
+		// Test summoner not found
+		try {
+			dao = new WarSummonerDao(DbConnectionPool.getConnection());
+			dao.renameSummoner(this.group1Key, 13, "dummy");
+			Assert.assertTrue(false); // must have an exception thrown
+		} catch (SummonerNotFoundException e) {
+			// Good one in this case
+			System.err.println(e);
+		}
 	}
 
 	@Test(expected = Exception.class)

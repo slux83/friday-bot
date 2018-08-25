@@ -41,6 +41,7 @@ public class WarSummonerDao {
 		"ORDER BY WS.id, WP.id";
 	private static final String ADD_PLACEMENTS = "INSERT INTO war_placement (summoner_id) VALUES (?), (?), (?), (?), (?)";
 	private static final String UPDATE_PLACEMENT = "UPDATE war_placement SET node = ?, champ = ? WHERE id = ?";
+	private static final String RENAME_SUMMONER = "UPDATE war_summoner SET name = ? WHERE id = ?";
 	/* @formatter:on */
 
 	private Connection conn;
@@ -215,11 +216,61 @@ public class WarSummonerDao {
 	}
 
 	/**
+	 * Rename the name of a summoner in the current list
+	 * 
+	 * @param groupId
+	 * @param summonerPos
+	 *            [1-10]
+	 * @param name
+	 * @throws SQLException
+	 * @throws SummonerNotFoundException
+	 */
+	public void renameSummoner(Integer groupId, Integer summonerPos, String name)
+	        throws SQLException, SummonerNotFoundException {
+		Map<Integer, WarSummoner> summoners = getAll(groupId);
+		WarSummoner summoner = summoners.get(summonerPos);
+		if (summoner == null) {
+			throw new SummonerNotFoundException("Sorry, cannot find the specified summoner at position " + summonerPos);
+		}
+
+		int summonerDbKey = summoner.getId();
+
+		// getAll() will close it
+		if (this.conn.isClosed()) {
+			this.conn = DbConnectionPool.getConnection();
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(RENAME_SUMMONER);
+			stmt.setString(1, Base64.getEncoder().encodeToString(name.getBytes()));
+			stmt.setInt(2, summonerDbKey);
+			stmt.executeUpdate();
+
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * edit a placement for a given summoner and group
 	 * 
 	 * @param groupId
 	 * @param summonerPos
+	 *            [1-10]
 	 * @param placementPos
+	 *            [A-E]
 	 * @param node
 	 * @param champ
 	 * @throws SQLException
