@@ -53,6 +53,7 @@ import de.slux.line.jarvis.command.InfoCommand;
 import de.slux.line.jarvis.command.admin.AdminBroadcastCommand;
 import de.slux.line.jarvis.command.admin.AdminHelpCommand;
 import de.slux.line.jarvis.command.admin.AdminStatusCommand;
+import de.slux.line.jarvis.command.war.WarAddSummonersCommand;
 import de.slux.line.jarvis.command.war.WarDeleteCommand;
 import de.slux.line.jarvis.command.war.WarHistoryCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
@@ -129,6 +130,7 @@ public class JarvisBotApplication {
 		this.commands.add(new WarHistoryCommand(this.lineMessagingClient));
 		this.commands.add(new WarDeleteCommand(this.lineMessagingClient));
 		this.commands.add(new WarResetCommand(this.lineMessagingClient));
+		this.commands.add(new WarAddSummonersCommand(this.lineMessagingClient));
 
 		// Admin commands
 		this.commands.add(new AdminHelpCommand(this.lineMessagingClient));

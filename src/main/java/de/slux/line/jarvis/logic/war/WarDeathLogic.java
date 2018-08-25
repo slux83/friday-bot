@@ -118,9 +118,9 @@ public class WarDeathLogic {
 	 * @throws WarDaoUnregisteredException
 	 *             if the group is not registered
 	 */
-	private int checkGroupRegistration(String groupId) throws Exception {
+	public static int checkGroupRegistration(String groupId) throws Exception {
 		int key = -1;
-		if ((key = this.getKeyOfGroup(groupId)) == -1)
+		if ((key = getKeyOfGroup(groupId)) == -1)
 			throw new WarDaoUnregisteredException("Group not registered");
 
 		return key;
@@ -203,7 +203,7 @@ public class WarDeathLogic {
 	 * @return the key or -1 if none
 	 * @throws Exception
 	 */
-	public int getKeyOfGroup(String groupId) throws Exception {
+	public static int getKeyOfGroup(String groupId) throws Exception {
 		Connection conn = DbConnectionPool.getConnection();
 
 		LOG.debug("Connection to the DB valid");

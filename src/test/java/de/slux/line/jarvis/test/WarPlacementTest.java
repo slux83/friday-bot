@@ -49,9 +49,9 @@ public class WarPlacementTest {
 		this.warModel.resetFor(GROUP2_ID);
 		this.warModel.resetFor(GROUP3_ID);
 
-		this.group1Key = this.warModel.getKeyOfGroup(GROUP1_ID);
-		this.group2Key = this.warModel.getKeyOfGroup(GROUP2_ID);
-		this.group3Key = this.warModel.getKeyOfGroup(GROUP3_ID);
+		this.group1Key = WarDeathLogic.getKeyOfGroup(GROUP1_ID);
+		this.group2Key = WarDeathLogic.getKeyOfGroup(GROUP2_ID);
+		this.group3Key = WarDeathLogic.getKeyOfGroup(GROUP3_ID);
 		assertNotEquals(-1, this.group1Key);
 		assertNotEquals(-1, this.group2Key);
 		assertNotEquals(-1, this.group3Key);

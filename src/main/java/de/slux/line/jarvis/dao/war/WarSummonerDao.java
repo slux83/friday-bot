@@ -22,12 +22,12 @@ import de.slux.line.jarvis.dao.exception.SummonerNotFoundException;
 import de.slux.line.jarvis.dao.exception.SummonerNumberExceededException;
 import de.slux.line.jarvis.data.war.WarSummoner;
 import de.slux.line.jarvis.data.war.WarSummonerPlacement;
+import de.slux.line.jarvis.logic.war.WarPlacementLogic;
 
 /**
  * @author slux
  */
 public class WarSummonerDao {
-	private static final int MAX_SUMMONERS = 10;
 	private static Logger LOG = LoggerFactory.getLogger(WarSummonerDao.class);
 
 	/* @formatter:off */
@@ -66,9 +66,10 @@ public class WarSummonerDao {
 		PreparedStatement stmt = null;
 		try {
 			Map<Integer, WarSummoner> existingSummoners = getAll(groupId);
-			if (existingSummoners.size() + summoners.size() > MAX_SUMMONERS) {
-				throw new SummonerNumberExceededException("You can add a maximum of " + MAX_SUMMONERS
-				        + " summoners, and you have already added " + existingSummoners.size());
+			if (existingSummoners.size() + summoners.size() > WarPlacementLogic.MAX_SUMMONERS) {
+				throw new SummonerNumberExceededException("You can add a maximum of " + WarPlacementLogic.MAX_SUMMONERS
+				        + " summoners, and you are trying to add an extra " + summoners.size() + " on top of the "
+				        + existingSummoners.size() + " existing one(s)");
 			}
 
 			// getAll() will close it

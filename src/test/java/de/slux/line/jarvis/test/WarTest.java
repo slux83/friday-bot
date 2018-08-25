@@ -72,9 +72,9 @@ public class WarTest {
 		this.warModel.addNewGroup(GROUP1_ID, "ALLY-BG1");
 		this.warModel.addNewGroup(GROUP3_ID, "ALLY-BG3");
 
-		int group1Key = this.warModel.getKeyOfGroup(GROUP1_ID);
-		int group2Key = this.warModel.getKeyOfGroup(GROUP2_ID);
-		int group3Key = this.warModel.getKeyOfGroup(GROUP3_ID);
+		int group1Key = WarDeathLogic.getKeyOfGroup(GROUP1_ID);
+		int group2Key = WarDeathLogic.getKeyOfGroup(GROUP2_ID);
+		int group3Key = WarDeathLogic.getKeyOfGroup(GROUP3_ID);
 		assertNotEquals(-1, group1Key);
 		assertNotEquals(-1, group2Key);
 		assertNotEquals(-1, group3Key);

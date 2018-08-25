@@ -17,6 +17,8 @@ import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.jarvis.JarvisBotApplication;
 import de.slux.line.jarvis.command.InfoCommand;
 import de.slux.line.jarvis.command.admin.AdminStatusCommand;
+import de.slux.line.jarvis.command.war.WarAddSummonersCommand;
+import de.slux.line.jarvis.command.war.WarRegisterCommand;
 
 /**
  * @author slux
@@ -81,6 +83,60 @@ public class TestCommand {
 
 		TextMessage response = jarvis.handleTextMessageEvent(event);
 
+		System.out.println(response);
+	}
+
+	@Test
+	public void testAddSummonersCommand() throws Exception {
+		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		jarvis.postConstruct();
+
+		// Add summoners command
+		Source source = new GroupSource("group-id", "user-id");
+		Instant timestamp = Instant.now();
+		String summoners = " Summoner 1, Summoner 2, Summoner 3";
+		TextMessageContent message = new TextMessageContent("001", WarAddSummonersCommand.CMD_PREFIX + summoners);
+		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
+		        timestamp);
+
+		// Register command
+		Source sourceRegister = new GroupSource("group-id", "user-id");
+		TextMessageContent messageRegister = new TextMessageContent("001",
+		        WarRegisterCommand.CMD_PREFIX + " test-group");
+		MessageEvent<TextMessageContent> eventRegister = new MessageEvent<TextMessageContent>("reply-token",
+		        sourceRegister, messageRegister, timestamp);
+
+		TextMessage response = jarvis.handleTextMessageEvent(eventRegister);
+		System.out.println(response);
+
+		response = jarvis.handleTextMessageEvent(event);
+		System.out.println(response);
+	}
+	
+	@Test
+	public void testAddSummonersCommandTooMany() throws Exception {
+		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		jarvis.postConstruct();
+
+		// Add summoners command
+		Source source = new GroupSource("group-id1", "user-id");
+		Instant timestamp = Instant.now();
+		String summoners = " Summoner 1, Summoner 2, Summoner 3, Summoner 4, Summoner 5, Summoner 6, Summoner 7, Summoner 8, Summoner 9, Summoner 10, Summoner 11";
+		TextMessageContent message = new TextMessageContent("001", WarAddSummonersCommand.CMD_PREFIX + summoners);
+		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
+		        timestamp);
+
+		// Register command
+		Source sourceRegister = new GroupSource("group-id1", "user-id");
+		TextMessageContent messageRegister = new TextMessageContent("001",
+		        WarRegisterCommand.CMD_PREFIX + " test-group");
+		MessageEvent<TextMessageContent> eventRegister = new MessageEvent<TextMessageContent>("reply-token",
+		        sourceRegister, messageRegister, timestamp);
+
+		TextMessage response = jarvis.handleTextMessageEvent(eventRegister);
+		System.out.println(response);
+
+		response = jarvis.handleTextMessageEvent(event);
 		System.out.println(response);
 	}
 }
