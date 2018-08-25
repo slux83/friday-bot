@@ -13,8 +13,8 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
-import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTagException;
-import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
+import de.slux.line.jarvis.dao.exception.WarDaoDuplicatedAllianceTagException;
+import de.slux.line.jarvis.dao.exception.WarDaoUnregisteredException;
 import de.slux.line.jarvis.logic.war.WarReportModel;
 
 /**

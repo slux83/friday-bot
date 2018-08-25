@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import de.slux.line.jarvis.dao.DbConnectionPool;
-import de.slux.line.jarvis.dao.WarSummonerDao;
+import de.slux.line.jarvis.dao.war.WarSummonerDao;
 import de.slux.line.jarvis.data.war.WarSummoner;
 import de.slux.line.jarvis.logic.war.WarReportModel;
 

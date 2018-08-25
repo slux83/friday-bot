@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import de.slux.line.jarvis.JarvisBotApplication;
 import de.slux.line.jarvis.dao.DbConnectionPool;
-import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTagException;
-import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
-import de.slux.line.jarvis.dao.WarDeathDao;
-import de.slux.line.jarvis.dao.WarGroupDao;
-import de.slux.line.jarvis.dao.WarHistoryDao;
+import de.slux.line.jarvis.dao.exception.WarDaoDuplicatedAllianceTagException;
+import de.slux.line.jarvis.dao.exception.WarDaoUnregisteredException;
+import de.slux.line.jarvis.dao.war.WarDeathDao;
+import de.slux.line.jarvis.dao.war.WarGroupDao;
+import de.slux.line.jarvis.dao.war.WarHistoryDao;
 import de.slux.line.jarvis.data.war.WarGroup;
 
 /**

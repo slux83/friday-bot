@@ -20,7 +20,7 @@ import com.linecorp.bot.model.response.BotApiResponse;
 
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
-import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
+import de.slux.line.jarvis.dao.exception.WarDaoUnregisteredException;
 import de.slux.line.jarvis.data.war.WarGroup;
 import de.slux.line.jarvis.logic.war.WarReportModel;
 

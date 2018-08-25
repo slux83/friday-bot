@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.slux.line.jarvis.dao;
+package de.slux.line.jarvis.dao.war;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +16,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.slux.line.jarvis.dao.DbConnectionPool;
 import de.slux.line.jarvis.data.war.WarSummoner;
 import de.slux.line.jarvis.data.war.WarSummonerPlacement;
 

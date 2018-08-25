@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.slux.line.jarvis.dao;
+package de.slux.line.jarvis.dao.war;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

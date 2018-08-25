@@ -17,8 +17,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTagException;
-import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
+import de.slux.line.jarvis.dao.exception.WarDaoDuplicatedAllianceTagException;
+import de.slux.line.jarvis.dao.exception.WarDaoUnregisteredException;
 import de.slux.line.jarvis.data.war.WarGroup;
 import de.slux.line.jarvis.data.war.WarGroup.TotalDeathReport;
 import de.slux.line.jarvis.logic.war.WarReportModel;
