@@ -62,6 +62,7 @@ import de.slux.line.jarvis.command.war.WarResetCommand;
 import de.slux.line.jarvis.command.war.WarSaveCommand;
 import de.slux.line.jarvis.command.war.WarSummaryDeathCommand;
 import de.slux.line.jarvis.command.war.WarSummonerNodeCommand;
+import de.slux.line.jarvis.command.war.WarSummonerRenameCommand;
 import de.slux.line.jarvis.command.war.WarUndoDeathCommand;
 
 @SpringBootApplication
@@ -133,6 +134,7 @@ public class JarvisBotApplication {
 		this.commands.add(new WarResetCommand(this.lineMessagingClient));
 		this.commands.add(new WarAddSummonersCommand(this.lineMessagingClient));
 		this.commands.add(new WarSummonerNodeCommand(this.lineMessagingClient));
+		this.commands.add(new WarSummonerRenameCommand(this.lineMessagingClient));
 
 		// Admin commands
 		this.commands.add(new AdminHelpCommand(this.lineMessagingClient));

@@ -70,6 +70,26 @@ public class WarPlacementLogic {
 	}
 
 	/**
+	 * Rename summoner
+	 * 
+	 * @param groupId
+	 * @param summonerPos
+	 * @param name
+	 * @throws Exception
+	 */
+	public void renameSummoner(String groupId, Integer summonerPos, String name) throws Exception {
+		int groupKey = WarDeathLogic.checkGroupRegistration(groupId);
+
+		Connection conn = DbConnectionPool.getConnection();
+
+		LOG.debug("Connection to the DB valid");
+
+		WarSummonerDao dao = new WarSummonerDao(conn);
+
+		dao.renameSummoner(groupKey, summonerPos, name);
+	}
+
+	/**
 	 * Edit a placement
 	 * 
 	 * @param groupId

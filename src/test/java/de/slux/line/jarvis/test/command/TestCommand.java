@@ -20,6 +20,7 @@ import de.slux.line.jarvis.command.admin.AdminStatusCommand;
 import de.slux.line.jarvis.command.war.WarAddSummonersCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
 import de.slux.line.jarvis.command.war.WarSummonerNodeCommand;
+import de.slux.line.jarvis.command.war.WarSummonerRenameCommand;
 
 /**
  * @author slux
@@ -112,18 +113,28 @@ public class TestCommand {
 
 		response = jarvis.handleTextMessageEvent(event);
 		System.out.println(response);
-		
+
 		// Edit element
 		Source sourceEdit = new GroupSource("group-id", "user-id");
 		TextMessageContent messageEdit = new TextMessageContent("001",
-		        WarSummonerNodeCommand.CMD_PREFIX + " 2E 5z hello");
-		MessageEvent<TextMessageContent> eventEdit = new MessageEvent<TextMessageContent>("reply-token",
-		        sourceEdit, messageEdit, timestamp);
+		        WarSummonerNodeCommand.CMD_PREFIX + " 2E 5 5* dupe Medusa");
+		MessageEvent<TextMessageContent> eventEdit = new MessageEvent<TextMessageContent>("reply-token", sourceEdit,
+		        messageEdit, timestamp);
 
 		response = jarvis.handleTextMessageEvent(eventEdit);
 		System.out.println(response);
+
+		// Rename summoner
+		Source sourceRename = new GroupSource("group-id", "user-id");
+		TextMessageContent messageRename = new TextMessageContent("001",
+		        WarSummonerRenameCommand.CMD_PREFIX + " 1 slux 83");
+		MessageEvent<TextMessageContent> eventRename = new MessageEvent<TextMessageContent>("reply-token", sourceRename,
+		        messageRename, timestamp);
+
+		response = jarvis.handleTextMessageEvent(eventRename);
+		System.out.println(response);
 	}
-	
+
 	@Test
 	public void testAddSummonersCommandTooMany() throws Exception {
 		JarvisBotApplication jarvis = new JarvisBotApplication(null);
@@ -150,7 +161,7 @@ public class TestCommand {
 		response = jarvis.handleTextMessageEvent(event);
 		System.out.println(response);
 	}
-	
+
 	@Test
 	public void testAddSummonersJustPrint() throws Exception {
 		JarvisBotApplication jarvis = new JarvisBotApplication(null);
