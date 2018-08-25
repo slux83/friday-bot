@@ -12,7 +12,7 @@ import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.dao.exception.WarDaoUnregisteredException;
-import de.slux.line.jarvis.logic.war.WarReportModel;
+import de.slux.line.jarvis.logic.war.WarDeathLogic;
 
 /**
  * This command is triggered on the register command
@@ -53,7 +53,7 @@ public class WarResetCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		try {
-			new WarReportModel().resetFor(senderId);
+			new WarDeathLogic().resetFor(senderId);
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");

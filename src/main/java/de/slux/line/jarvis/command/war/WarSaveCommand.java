@@ -15,7 +15,7 @@ import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.dao.exception.WarDaoDuplicatedAllianceTagException;
 import de.slux.line.jarvis.dao.exception.WarDaoUnregisteredException;
-import de.slux.line.jarvis.logic.war.WarReportModel;
+import de.slux.line.jarvis.logic.war.WarDeathLogic;
 
 /**
  * This command is triggered on the register command
@@ -58,7 +58,7 @@ public class WarSaveCommand extends AbstractCommand {
 		String allyTag = "";
 		try {
 			// Get the summary of a specific day
-			WarReportModel warModel = new WarReportModel();
+			WarDeathLogic warModel = new WarDeathLogic();
 			List<String> argsAsList = super.extractArgs(message);
 
 			if (argsAsList.size() < 3)

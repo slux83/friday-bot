@@ -21,7 +21,7 @@ import de.slux.line.jarvis.dao.exception.WarDaoDuplicatedAllianceTagException;
 import de.slux.line.jarvis.dao.exception.WarDaoUnregisteredException;
 import de.slux.line.jarvis.data.war.WarGroup;
 import de.slux.line.jarvis.data.war.WarGroup.TotalDeathReport;
-import de.slux.line.jarvis.logic.war.WarReportModel;
+import de.slux.line.jarvis.logic.war.WarDeathLogic;
 
 /**
  * Testing the war stuff
@@ -34,11 +34,11 @@ public class WarTest {
 	private static final String GROUP2_ID = "test_group2";
 	private static final String GROUP3_ID = "test_group3";
 
-	private WarReportModel warModel;
+	private WarDeathLogic warModel;
 
 	@Before
 	public void tierUp() throws Exception {
-		this.warModel = new WarReportModel();
+		this.warModel = new WarDeathLogic();
 		this.warModel.register(GROUP1_ID, "test_group_1");
 		this.warModel.register(GROUP2_ID, "test_group_2");
 		this.warModel.register(GROUP3_ID, "test_group_3");
@@ -49,7 +49,7 @@ public class WarTest {
 
 	@AfterClass
 	public static void tierDown() throws Exception {
-		WarReportModel model = new WarReportModel();
+		WarDeathLogic model = new WarDeathLogic();
 		model.resetFor(GROUP1_ID);
 		model.resetFor(GROUP2_ID);
 		model.resetFor(GROUP3_ID);

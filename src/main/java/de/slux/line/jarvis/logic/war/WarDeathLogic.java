@@ -24,8 +24,8 @@ import de.slux.line.jarvis.data.war.WarGroup;
 /**
  * @author slux
  */
-public class WarReportModel {
-	private static Logger LOG = LoggerFactory.getLogger(WarReportModel.class);
+public class WarDeathLogic {
+	private static Logger LOG = LoggerFactory.getLogger(WarDeathLogic.class);
 
 	public static final int WAR_POINTS_LOST_PER_DEATH = 80;
 	public static final int WAR_POINTS_LOST_CAP = WAR_POINTS_LOST_PER_DEATH * 3;
@@ -34,7 +34,7 @@ public class WarReportModel {
 	/**
 	 * Ctor
 	 */
-	public WarReportModel() {
+	public WarDeathLogic() {
 	}
 
 	/**

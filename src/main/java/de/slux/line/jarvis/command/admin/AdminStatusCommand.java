@@ -14,7 +14,7 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.JarvisBotApplication;
 import de.slux.line.jarvis.command.AbstractCommand;
-import de.slux.line.jarvis.logic.war.WarReportModel;
+import de.slux.line.jarvis.logic.war.WarDeathLogic;
 
 /**
  * This command is triggered for information
@@ -95,7 +95,7 @@ public class AdminStatusCommand extends AbstractCommand {
 		sb.append("\n");
 
 		sb.append("Total groups: ");
-		WarReportModel model = new WarReportModel();
+		WarDeathLogic model = new WarDeathLogic();
 		int groupCounter = -1;
 		try {
 			groupCounter = model.getAllGroups().size();

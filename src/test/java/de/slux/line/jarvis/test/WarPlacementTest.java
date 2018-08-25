@@ -21,7 +21,7 @@ import de.slux.line.jarvis.dao.exception.SummonerNotFoundException;
 import de.slux.line.jarvis.dao.war.WarSummonerDao;
 import de.slux.line.jarvis.data.war.WarSummoner;
 import de.slux.line.jarvis.data.war.WarSummonerPlacement;
-import de.slux.line.jarvis.logic.war.WarReportModel;
+import de.slux.line.jarvis.logic.war.WarDeathLogic;
 
 /**
  * Testing the war stuff
@@ -34,14 +34,14 @@ public class WarPlacementTest {
 	private static final String GROUP2_ID = "test_group2";
 	private static final String GROUP3_ID = "test_group3";
 
-	private WarReportModel warModel;
+	private WarDeathLogic warModel;
 	private int group1Key;
 	private int group2Key;
 	private int group3Key;
 
 	@Before
 	public void tierUp() throws Exception {
-		this.warModel = new WarReportModel();
+		this.warModel = new WarDeathLogic();
 		this.warModel.register(GROUP1_ID, "test_group_1");
 		this.warModel.register(GROUP2_ID, "test_group_2");
 		this.warModel.register(GROUP3_ID, "test_group_3");
