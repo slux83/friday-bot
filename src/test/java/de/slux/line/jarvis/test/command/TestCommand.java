@@ -94,7 +94,7 @@ public class TestCommand {
 		// Add summoners command
 		Source source = new GroupSource("group-id", "user-id");
 		Instant timestamp = Instant.now();
-		String summoners = " Summoner 1, Summoner 2, Summoner 3";
+		String summoners = " Summoner 1   , Summoner2, Summoner 3";
 		TextMessageContent message = new TextMessageContent("001", WarAddSummonersCommand.CMD_PREFIX + summoners);
 		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
 		        timestamp);
