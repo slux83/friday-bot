@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.slux.line.jarvis.dao.DbConnectionPool;
+import de.slux.line.jarvis.dao.exception.GenericDaoException;
+import de.slux.line.jarvis.dao.exception.SummonerNumberExceededException;
 import de.slux.line.jarvis.data.war.WarSummoner;
 import de.slux.line.jarvis.data.war.WarSummonerPlacement;
 
@@ -50,14 +52,18 @@ public class WarSummonerDao {
 	 * 
 	 * @param groupId
 	 * @param summoners
+	 * @throws SummonerNumberExceededException
+	 *             if you add more then {@link WarSummonerDao#MAX_SUMMONERS}
+	 * @throws SQLException 
+	 * @throws GenericDaoException 
 	 * @throws Exception
 	 */
-	public void storeData(int groupId, List<String> summoners) throws Exception {
+	public void storeData(int groupId, List<String> summoners) throws SummonerNumberExceededException, SQLException, GenericDaoException {
 		PreparedStatement stmt = null;
 		try {
 			Map<Integer, WarSummoner> existingSummoners = getAll(groupId);
 			if (existingSummoners.size() + summoners.size() > MAX_SUMMONERS) {
-				throw new Exception("You can add a maximum of " + MAX_SUMMONERS
+				throw new SummonerNumberExceededException("You can add a maximum of " + MAX_SUMMONERS
 				        + " summoners, and you have already added " + existingSummoners.size());
 			}
 
@@ -79,7 +85,7 @@ public class WarSummonerDao {
 				if (rs.next()) {
 					insertedKey = rs.getInt(1);
 				} else {
-					throw new Exception("Something wrong with the insertion of the summoners: " + summoners
+					throw new GenericDaoException("Something wrong with the insertion of the summoners: " + summoners
 					        + ". Cannot retrieve the inserted key");
 				}
 
