@@ -139,4 +139,30 @@ public class TestCommand {
 		response = jarvis.handleTextMessageEvent(event);
 		System.out.println(response);
 	}
+	
+	@Test
+	public void testAddSummonersJustPrint() throws Exception {
+		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		jarvis.postConstruct();
+
+		// Add summoners command
+		Source source = new GroupSource("group-id", "user-id");
+		Instant timestamp = Instant.now();
+		TextMessageContent message = new TextMessageContent("001", WarAddSummonersCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
+		        timestamp);
+
+		// Register command
+		Source sourceRegister = new GroupSource("group-id", "user-id");
+		TextMessageContent messageRegister = new TextMessageContent("001",
+		        WarRegisterCommand.CMD_PREFIX + " test-group");
+		MessageEvent<TextMessageContent> eventRegister = new MessageEvent<TextMessageContent>("reply-token",
+		        sourceRegister, messageRegister, timestamp);
+
+		TextMessage response = jarvis.handleTextMessageEvent(eventRegister);
+		System.out.println(response);
+
+		response = jarvis.handleTextMessageEvent(event);
+		System.out.println(response);
+	}
 }

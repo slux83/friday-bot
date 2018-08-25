@@ -46,7 +46,7 @@ public class WarAddSummonersCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX + " ");
+		return message.toLowerCase().startsWith(CMD_PREFIX + " ") || message.equalsIgnoreCase(CMD_PREFIX);
 	}
 
 	/*
@@ -59,24 +59,27 @@ public class WarAddSummonersCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		try {
-			List<String> args = extractArgs(message);
-			// clear up prefix
-			args.remove(0);
-			args.remove(0);
-
-			if (args.size() == 0) {
-				return new TextMessage("Please specify a list of summoner names");
-			}
-			String summoners = String.join(" ", args);
-			String[] summonerNamesSplit = summoners.split(",");
-			List<String> summonerNames = new ArrayList<>();
-			for (String s : summonerNamesSplit) {
-				summonerNames.add(s.trim());
-			}
-
-			// Add names
+			// we can use this command only to print the last version
 			WarPlacementLogic logic = new WarPlacementLogic();
-			logic.addSummoners(senderId, summonerNames);
+			if (!message.equalsIgnoreCase(CMD_PREFIX)) {
+				List<String> args = extractArgs(message);
+				// clear up prefix
+				args.remove(0);
+				args.remove(0);
+
+				if (args.size() == 0) {
+					return new TextMessage("Please specify a list of summoner names");
+				}
+				String summoners = String.join(" ", args);
+				String[] summonerNamesSplit = summoners.split(",");
+				List<String> summonerNames = new ArrayList<>();
+				for (String s : summonerNamesSplit) {
+					summonerNames.add(s.trim());
+				}
+
+				// Add names
+				logic.addSummoners(senderId, summonerNames);
+			}
 
 			// Return the new placement
 			Map<Integer, WarSummoner> updatedSummoners = logic.getSummoners(senderId);
@@ -110,8 +113,10 @@ public class WarAddSummonersCommand extends AbstractCommand {
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <name1, name2, ...]\n");
-		sb.append("Add summoner names (max " + WarPlacementLogic.MAX_SUMMONERS + ") to the list for the current war. ");
+		sb.append("[" + CMD_PREFIX + " <name1, name2, ...?>\n");
+		sb.append(
+		        "Add summoner names (max " + WarPlacementLogic.MAX_SUMMONERS + ") to the list for the current war.\n");
+		sb.append("Use " + CMD_PREFIX + " only to just print the list of summoners.\n");
 		sb.append("Example " + CMD_PREFIX + " John Doe, FooBar, slux83");
 
 		return sb.toString();
