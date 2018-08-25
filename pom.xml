@@ -4,7 +4,7 @@
 
 	<groupId>de.slux</groupId>
 	<artifactId>jarvis-bot</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1-beta2</version>
 	<packaging>jar</packaging>
 
 	<name>jarvis-bot</name>

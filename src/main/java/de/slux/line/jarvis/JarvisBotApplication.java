@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.event.Event;
@@ -63,7 +65,7 @@ import de.slux.line.jarvis.command.war.WarUndoDeathCommand;
 @SpringBootApplication
 @LineMessageHandler
 public class JarvisBotApplication {
-	public static String JARVIS_VERSION = "0.0.1-beta1";
+	public static String JARVIS_VERSION = "0.0.1-beta2";
 	public static final int MAX_LINE_MESSAGE_SIZE = 1500;
 
 	private static Logger LOG = LoggerFactory.getLogger(JarvisBotApplication.class);
@@ -91,7 +93,12 @@ public class JarvisBotApplication {
 
 	@Autowired
 	public JarvisBotApplication(ApplicationArguments args) {
-		LOG.info("Jarvis BOT - APP Initialization completed");
+		LOG.info("Jarvis BOT - APP starting up...");
+	}
+
+	@EventListener(ApplicationReadyEvent.class)
+	public void startupCompleted() {
+		LOG.info("*** JARVIS v" + JARVIS_VERSION + " startup completed ***");
 	}
 
 	@PostConstruct
@@ -129,6 +136,7 @@ public class JarvisBotApplication {
 		this.commands.add(new AdminStatusCommand(this.lineMessagingClient));
 
 		LOG.info("Commands initialized. Total command(s): " + this.commands.size());
+
 	}
 
 	@EventMapping
