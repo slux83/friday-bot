@@ -19,6 +19,7 @@ import de.slux.line.jarvis.command.InfoCommand;
 import de.slux.line.jarvis.command.admin.AdminStatusCommand;
 import de.slux.line.jarvis.command.war.WarAddSummonersCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
+import de.slux.line.jarvis.command.war.WarSummonerNodeCommand;
 
 /**
  * @author slux
@@ -110,6 +111,16 @@ public class TestCommand {
 		System.out.println(response);
 
 		response = jarvis.handleTextMessageEvent(event);
+		System.out.println(response);
+		
+		// Edit element
+		Source sourceEdit = new GroupSource("group-id", "user-id");
+		TextMessageContent messageEdit = new TextMessageContent("001",
+		        WarSummonerNodeCommand.CMD_PREFIX + " 2E 5z hello");
+		MessageEvent<TextMessageContent> eventEdit = new MessageEvent<TextMessageContent>("reply-token",
+		        sourceEdit, messageEdit, timestamp);
+
+		response = jarvis.handleTextMessageEvent(eventEdit);
 		System.out.println(response);
 	}
 	

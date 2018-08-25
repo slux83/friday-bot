@@ -70,6 +70,29 @@ public class WarPlacementLogic {
 	}
 
 	/**
+	 * Edit a placement
+	 * 
+	 * @param groupId
+	 * @param summonerPos
+	 * @param placementPos
+	 * @param node
+	 * @param champ
+	 * @throws Exception
+	 */
+	public void editPlacement(String groupId, Integer summonerPos, Character placementPos, Integer node, String champ)
+	        throws Exception {
+		int groupKey = WarDeathLogic.checkGroupRegistration(groupId);
+
+		Connection conn = DbConnectionPool.getConnection();
+
+		LOG.debug("Connection to the DB valid");
+
+		WarSummonerDao dao = new WarSummonerDao(conn);
+
+		dao.editPlacement(groupKey, summonerPos, placementPos, node, champ);
+	}
+
+	/**
 	 * Stringify the map of summoners for printing/posting
 	 * 
 	 * @param summoners
@@ -96,7 +119,7 @@ public class WarPlacementLogic {
 					sb.append("\n");
 				}
 			}
-			
+
 			sb.append("\n");
 		}
 		return sb.toString();
