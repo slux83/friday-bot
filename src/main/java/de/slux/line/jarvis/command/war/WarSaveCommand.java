@@ -13,9 +13,9 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
-import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTag;
+import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTagException;
 import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
-import de.slux.line.jarvis.logic.war.WarBusinessLogic;
+import de.slux.line.jarvis.logic.war.WarReportModel;
 
 /**
  * This command is triggered on the register command
@@ -58,7 +58,7 @@ public class WarSaveCommand extends AbstractCommand {
 		String allyTag = "";
 		try {
 			// Get the summary of a specific day
-			WarBusinessLogic warModel = new WarBusinessLogic();
+			WarReportModel warModel = new WarReportModel();
 			List<String> argsAsList = super.extractArgs(message);
 
 			if (argsAsList.size() < 3)
@@ -76,7 +76,7 @@ public class WarSaveCommand extends AbstractCommand {
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");
-		} catch (WarDaoDuplicatedAllianceTag e) {
+		} catch (WarDaoDuplicatedAllianceTagException e) {
 			return new TextMessage(
 			        "Error: the alliance '" + allyTag + "' has been already registered today. Use the command '"
 			                + WarDeleteCommand.CMD_PREFIX + "' to delete the previeus one");

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import de.slux.line.jarvis.JarvisBotApplication;
 import de.slux.line.jarvis.dao.DbConnectionPool;
-import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTag;
+import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTagException;
 import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
 import de.slux.line.jarvis.dao.WarDeathDao;
 import de.slux.line.jarvis.dao.WarGroupDao;
@@ -24,8 +24,8 @@ import de.slux.line.jarvis.data.war.WarGroup;
 /**
  * @author slux
  */
-public class WarBusinessLogic {
-	private static Logger LOG = LoggerFactory.getLogger(WarBusinessLogic.class);
+public class WarReportModel {
+	private static Logger LOG = LoggerFactory.getLogger(WarReportModel.class);
 
 	public static final int WAR_POINTS_LOST_PER_DEATH = 80;
 	public static final int WAR_POINTS_LOST_CAP = WAR_POINTS_LOST_PER_DEATH * 3;
@@ -34,7 +34,7 @@ public class WarBusinessLogic {
 	/**
 	 * Ctor
 	 */
-	public WarBusinessLogic() {
+	public WarReportModel() {
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class WarBusinessLogic {
 	 * 
 	 * @param groupId
 	 * @param allianceTag
-	 * @throws WarDaoDuplicatedAllianceTag
+	 * @throws WarDaoDuplicatedAllianceTagException
 	 *             and WarDaoUnregisteredException
 	 */
 	public void saveWar(String groupId, String allianceTag) throws Exception {
@@ -252,7 +252,7 @@ public class WarBusinessLogic {
 		Map<String, WarGroup> history = getHistorySummary(groupId, c.getTime());
 
 		if (history.containsKey(allianceTag))
-			throw new WarDaoDuplicatedAllianceTag("The alliance " + allianceTag + " has been already saved today");
+			throw new WarDaoDuplicatedAllianceTagException("The alliance " + allianceTag + " has been already saved today");
 
 		Connection conn = DbConnectionPool.getConnection();
 

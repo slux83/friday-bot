@@ -17,11 +17,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTag;
+import de.slux.line.jarvis.dao.WarDaoDuplicatedAllianceTagException;
 import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
 import de.slux.line.jarvis.data.war.WarGroup;
 import de.slux.line.jarvis.data.war.WarGroup.TotalDeathReport;
-import de.slux.line.jarvis.logic.war.WarBusinessLogic;
+import de.slux.line.jarvis.logic.war.WarReportModel;
 
 /**
  * Testing the war stuff
@@ -34,11 +34,11 @@ public class WarTest {
 	private static final String GROUP2_ID = "test_group2";
 	private static final String GROUP3_ID = "test_group3";
 
-	private WarBusinessLogic warModel;
+	private WarReportModel warModel;
 
 	@Before
 	public void tierUp() throws Exception {
-		this.warModel = new WarBusinessLogic();
+		this.warModel = new WarReportModel();
 		this.warModel.register(GROUP1_ID, "test_group_1");
 		this.warModel.register(GROUP2_ID, "test_group_2");
 		this.warModel.register(GROUP3_ID, "test_group_3");
@@ -49,7 +49,7 @@ public class WarTest {
 
 	@AfterClass
 	public static void tierDown() throws Exception {
-		WarBusinessLogic model = new WarBusinessLogic();
+		WarReportModel model = new WarReportModel();
 		model.resetFor(GROUP1_ID);
 		model.resetFor(GROUP2_ID);
 		model.resetFor(GROUP3_ID);
@@ -154,7 +154,7 @@ public class WarTest {
 		try {
 			this.warModel.saveWar(GROUP2_ID, "DH");
 			assertFalse("expected exception here", true);
-		} catch (WarDaoDuplicatedAllianceTag e) {
+		} catch (WarDaoDuplicatedAllianceTagException e) {
 			System.err.println(e);
 		}
 		System.out.println(this.warModel.getHistoryText(GROUP1_ID));

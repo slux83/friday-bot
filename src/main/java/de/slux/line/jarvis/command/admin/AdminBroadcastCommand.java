@@ -18,7 +18,7 @@ import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.response.BotApiResponse;
 
 import de.slux.line.jarvis.command.AbstractCommand;
-import de.slux.line.jarvis.logic.war.WarBusinessLogic;
+import de.slux.line.jarvis.logic.war.WarReportModel;
 
 /**
  * This command is triggered for information
@@ -72,7 +72,7 @@ public class AdminBroadcastCommand extends AbstractCommand {
 		// Get all groups
 		Map<String, String> groups = Collections.emptyMap();
 		try {
-			groups = new WarBusinessLogic().getAllGroups();
+			groups = new WarReportModel().getAllGroups();
 			if (LOG.isDebugEnabled())
 				LOG.debug(groups.toString());
 

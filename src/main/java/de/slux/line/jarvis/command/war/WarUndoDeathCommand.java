@@ -12,7 +12,7 @@ import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
-import de.slux.line.jarvis.logic.war.WarBusinessLogic;
+import de.slux.line.jarvis.logic.war.WarReportModel;
 
 /**
  * This command is triggered on the register command
@@ -53,7 +53,7 @@ public class WarUndoDeathCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		try {
-			WarBusinessLogic warModel = new WarBusinessLogic();
+			WarReportModel warModel = new WarReportModel();
 			warModel.undoLast(senderId);
 			return new TextMessage(warModel.getReport(senderId));
 		} catch (WarDaoUnregisteredException e) {

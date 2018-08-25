@@ -7,7 +7,7 @@ package de.slux.line.jarvis.dao;
  * @author slux
  *
  */
-public class WarDaoDuplicatedAllianceTag extends Exception {
+public class WarDaoDuplicatedAllianceTagException extends Exception {
 
 	/**
 	 * 
@@ -17,20 +17,20 @@ public class WarDaoDuplicatedAllianceTag extends Exception {
 	/**
 	 * 
 	 */
-	public WarDaoDuplicatedAllianceTag() {
+	public WarDaoDuplicatedAllianceTagException() {
 	}
 
 	/**
 	 * @param message
 	 */
-	public WarDaoDuplicatedAllianceTag(String message) {
+	public WarDaoDuplicatedAllianceTagException(String message) {
 		super(message);
 	}
 
 	/**
 	 * @param cause
 	 */
-	public WarDaoDuplicatedAllianceTag(Throwable cause) {
+	public WarDaoDuplicatedAllianceTagException(Throwable cause) {
 		super(cause);
 	}
 
@@ -38,7 +38,7 @@ public class WarDaoDuplicatedAllianceTag extends Exception {
 	 * @param message
 	 * @param cause
 	 */
-	public WarDaoDuplicatedAllianceTag(String message, Throwable cause) {
+	public WarDaoDuplicatedAllianceTagException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -48,7 +48,7 @@ public class WarDaoDuplicatedAllianceTag extends Exception {
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public WarDaoDuplicatedAllianceTag(String message, Throwable cause, boolean enableSuppression,
+	public WarDaoDuplicatedAllianceTagException(String message, Throwable cause, boolean enableSuppression,
 	        boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}

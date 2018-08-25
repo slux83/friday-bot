@@ -12,7 +12,7 @@ import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.command.AbstractCommand;
-import de.slux.line.jarvis.logic.war.WarBusinessLogic;
+import de.slux.line.jarvis.logic.war.WarReportModel;
 
 /**
  * This command is triggered on the register command
@@ -64,7 +64,7 @@ public class WarRegisterCommand extends AbstractCommand {
 		String arg = String.join(" ", args);
 
 		try {
-			WarBusinessLogic warModel = new WarBusinessLogic();
+			WarReportModel warModel = new WarReportModel();
 			warModel.register(senderId, arg.trim());
 		} catch (Exception e) {
 			LOG.error("Failed executing command " + this.getClass().getSimpleName(), e);
