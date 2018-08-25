@@ -53,6 +53,12 @@ public class WarTest {
 		model.resetFor(GROUP1_ID);
 		model.resetFor(GROUP2_ID);
 		model.resetFor(GROUP3_ID);
+		
+		model.deleteHistoryEntries(GROUP1_ID, "ISO8A", new Date());
+		model.deleteHistoryEntries(GROUP2_ID, "DH", new Date());
+		model.deleteHistoryEntries(GROUP2_ID, "DH-DM", new Date());
+		model.deleteHistoryEntries(GROUP3_ID, "BRAE", new Date());
+
 	}
 
 	@Test(expected = WarDaoUnregisteredException.class)
