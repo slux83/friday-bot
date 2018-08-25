@@ -1,4 +1,4 @@
-package de.slux.line.jarvis.war;
+package de.slux.line.jarvis.data.war;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.logic.war.WarBusinessLogic;
 
 /**
  * The status of the war of a specific group
@@ -87,9 +88,9 @@ public class WarGroup {
 
 		for (Integer deaths : totalDeathsPerNode.values()) {
 
-			int nodeLostPoints = deaths * WarReportModel.WAR_POINTS_LOST_PER_DEATH;
-			if (nodeLostPoints > WarReportModel.WAR_POINTS_LOST_CAP)
-				nodeLostPoints = WarReportModel.WAR_POINTS_LOST_CAP;
+			int nodeLostPoints = deaths * WarBusinessLogic.WAR_POINTS_LOST_PER_DEATH;
+			if (nodeLostPoints > WarBusinessLogic.WAR_POINTS_LOST_CAP)
+				nodeLostPoints = WarBusinessLogic.WAR_POINTS_LOST_CAP;
 
 			totalLostPoints += nodeLostPoints;
 			totalDeaths += deaths;

@@ -16,8 +16,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.slux.line.jarvis.war.WarSummoner;
-import de.slux.line.jarvis.war.WarSummonerPlacement;
+import de.slux.line.jarvis.data.war.WarSummoner;
+import de.slux.line.jarvis.data.war.WarSummonerPlacement;
 
 /**
  * @author slux

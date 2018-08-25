@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.slux.line.jarvis.war;
+package de.slux.line.jarvis.data.war;
 
 /**
  * Summoner placement pojo

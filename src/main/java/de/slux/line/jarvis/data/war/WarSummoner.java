@@ -1,4 +1,4 @@
-package de.slux.line.jarvis.war;
+package de.slux.line.jarvis.data.war;
 
 import java.util.ArrayList;
 import java.util.List;

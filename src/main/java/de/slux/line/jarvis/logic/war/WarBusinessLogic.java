@@ -1,4 +1,4 @@
-package de.slux.line.jarvis.war;
+package de.slux.line.jarvis.logic.war;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
@@ -19,12 +19,13 @@ import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
 import de.slux.line.jarvis.dao.WarDeathDao;
 import de.slux.line.jarvis.dao.WarGroupDao;
 import de.slux.line.jarvis.dao.WarHistoryDao;
+import de.slux.line.jarvis.data.war.WarGroup;
 
 /**
  * @author slux
  */
-public class WarReportModel {
-	private static Logger LOG = LoggerFactory.getLogger(WarReportModel.class);
+public class WarBusinessLogic {
+	private static Logger LOG = LoggerFactory.getLogger(WarBusinessLogic.class);
 
 	public static final int WAR_POINTS_LOST_PER_DEATH = 80;
 	public static final int WAR_POINTS_LOST_CAP = WAR_POINTS_LOST_PER_DEATH * 3;
@@ -33,7 +34,7 @@ public class WarReportModel {
 	/**
 	 * Ctor
 	 */
-	public WarReportModel() {
+	public WarBusinessLogic() {
 	}
 
 	/**

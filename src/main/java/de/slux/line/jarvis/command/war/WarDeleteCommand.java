@@ -16,7 +16,7 @@ import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
-import de.slux.line.jarvis.war.WarReportModel;
+import de.slux.line.jarvis.logic.war.WarBusinessLogic;
 
 /**
  * This command is triggered on the register command
@@ -56,7 +56,7 @@ public class WarDeleteCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
-		WarReportModel warModel = new WarReportModel();
+		WarBusinessLogic warModel = new WarBusinessLogic();
 		// Get the summary of a specific day
 		List<String> argsAsList = super.extractArgs(message);
 
@@ -66,7 +66,7 @@ public class WarDeleteCommand extends AbstractCommand {
 		String allyTag = "";
 		String day = argsAsList.get(3).trim();
 		try {
-			Date warDate = WarReportModel.SDF.parse(day);
+			Date warDate = WarBusinessLogic.SDF.parse(day);
 
 			// In case the ally tag has blanks
 			StringBuilder allyTagBuilder = new StringBuilder();
@@ -87,7 +87,7 @@ public class WarDeleteCommand extends AbstractCommand {
 			}
 		} catch (ParseException e) {
 			return new TextMessage(
-			        "Incorrect date syntax.\nPlease use the following pattern: " + WarReportModel.SDF.toPattern());
+			        "Incorrect date syntax.\nPlease use the following pattern: " + WarBusinessLogic.SDF.toPattern());
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");

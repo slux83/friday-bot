@@ -15,7 +15,7 @@ import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.dao.WarDaoUnregisteredException;
-import de.slux.line.jarvis.war.WarReportModel;
+import de.slux.line.jarvis.logic.war.WarBusinessLogic;
 
 /**
  * This command is triggered on the register command
@@ -97,7 +97,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 		String userName = super.getUserName(senderId, userId);
 
 		try {
-			WarReportModel warModel = new WarReportModel();
+			WarBusinessLogic warModel = new WarBusinessLogic();
 			warModel.addDeath(senderId, deaths, node, champName.trim(), userName);
 			return new TextMessage(warModel.getReport(senderId));
 		} catch (WarDaoUnregisteredException e) {
