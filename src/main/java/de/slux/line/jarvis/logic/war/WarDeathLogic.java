@@ -20,6 +20,7 @@ import de.slux.line.jarvis.dao.war.WarDeathDao;
 import de.slux.line.jarvis.dao.war.WarGroupDao;
 import de.slux.line.jarvis.dao.war.WarHistoryDao;
 import de.slux.line.jarvis.data.war.WarGroup;
+import de.slux.line.jarvis.data.war.WarSummoner;
 
 /**
  * @author slux
@@ -249,10 +250,11 @@ public class WarDeathLogic {
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);
-		Map<String, WarGroup> history = getHistorySummary(groupId, c.getTime());
+		Map<String, WarGroup> history = getHistorySummaryForDeaths(groupId, c.getTime());
 
 		if (history.containsKey(allianceTag))
-			throw new WarDaoDuplicatedAllianceTagException("The alliance " + allianceTag + " has been already saved today");
+			throw new WarDaoDuplicatedAllianceTagException(
+			        "The alliance " + allianceTag + " has been already saved today");
 
 		Connection conn = DbConnectionPool.getConnection();
 
@@ -312,14 +314,14 @@ public class WarDeathLogic {
 	}
 
 	/**
-	 * Retrieve the summaries of a given day
+	 * Retrieve the summaries of deaths of a given day
 	 * 
 	 * @param groupId
 	 * @param day
 	 * @return the war groups for the day (key is the alliance tag)
 	 * @throws Exception
 	 */
-	public Map<String, WarGroup> getHistorySummary(String groupId, Date day) throws Exception {
+	public Map<String, WarGroup> getHistorySummaryForDeaths(String groupId, Date day) throws Exception {
 
 		int groupKey = checkGroupRegistration(groupId);
 
@@ -336,7 +338,36 @@ public class WarDeathLogic {
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);
 
-		return dao.getAllData(groupKey, new Timestamp(c.getTimeInMillis()));
+		return dao.getAllDataForDeaths(groupKey, new Timestamp(c.getTimeInMillis()));
+	}
+
+	/**
+	 * Retrieve the table of reports of a given day
+	 * 
+	 * @param groupId
+	 * @param day
+	 * @return the war groups for the day (key is the alliance tag)
+	 * @throws Exception
+	 */
+	public Map<String, Map<Integer, WarSummoner>> getHistorySummaryForReports(String groupId, Date day)
+	        throws Exception {
+
+		int groupKey = checkGroupRegistration(groupId);
+
+		Connection conn = DbConnectionPool.getConnection();
+
+		LOG.debug("Connection to the DB valid");
+
+		WarHistoryDao dao = new WarHistoryDao(conn);
+
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(day.getTime());
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+
+		return dao.getAllDataForReports(groupKey, new Timestamp(c.getTimeInMillis()));
 	}
 
 	/**

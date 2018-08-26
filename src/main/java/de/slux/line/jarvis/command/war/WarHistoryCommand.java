@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +15,14 @@ import org.slf4j.LoggerFactory;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.message.TextMessage;
-import com.linecorp.bot.model.response.BotApiResponse;
 
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.command.HelpCommand;
 import de.slux.line.jarvis.dao.exception.WarDaoUnregisteredException;
 import de.slux.line.jarvis.data.war.WarGroup;
+import de.slux.line.jarvis.data.war.WarSummoner;
 import de.slux.line.jarvis.logic.war.WarDeathLogic;
+import de.slux.line.jarvis.logic.war.WarPlacementLogic;
 
 /**
  * This command is triggered on the register command
@@ -67,10 +67,7 @@ public class WarHistoryCommand extends AbstractCommand {
 			// Get all history
 			try {
 				List<String> history = warModel.getHistoryText(senderId);
-				for (String h : history) {
-					PushMessage pushMessage = new PushMessage(senderId, new TextMessage(h));
-					super.messagingClient.pushMessage(pushMessage).get();
-				}
+				super.pushMultipleMessages(senderId, "", history);
 			} catch (WarDaoUnregisteredException e) {
 				return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 				        + "' for info on how to register your chat room");
@@ -86,23 +83,27 @@ public class WarHistoryCommand extends AbstractCommand {
 			try {
 				Date warDate = WarDeathLogic.SDF.parse(day.trim());
 
-				Map<String, WarGroup> history = warModel.getHistorySummary(senderId, warDate);
+				Map<String, WarGroup> historyDeaths = warModel.getHistorySummaryForDeaths(senderId, warDate);
+				Map<String, Map<Integer, WarSummoner>> historyPlacement = warModel.getHistorySummaryForReports(senderId,
+				        warDate);
 
-				if (history.isEmpty())
-					return new TextMessage("Nothing found for " + day);
+				if (historyDeaths.isEmpty()) {
+					PushMessage pushMessage = new PushMessage(senderId,
+					        new TextMessage("No death reports found for " + day));
+					super.messagingClient.pushMessage(pushMessage).get();
+				}
 
-				for (Entry<String, WarGroup> historyEntry : history.entrySet()) {
+				for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
 					List<String> summaryText = historyEntry.getValue().getSummaryText();
-					// We gotta push multiple messages
-					PushMessage pushMessage = new PushMessage(senderId, new TextMessage(
-					        "*** " + day.trim() + " - " + historyEntry.getKey() + " ***\n\n" + summaryText.get(0)));
-					CompletableFuture<BotApiResponse> outcome = super.messagingClient.pushMessage(pushMessage);
-					outcome.get();
+					super.pushMultipleMessages(senderId,
+					        "*** " + day.trim() + " - " + historyEntry.getKey() + " ***\n\n", summaryText);
+				}
 
-					for (int i = 1; i < summaryText.size(); i++) {
-						pushMessage = new PushMessage(senderId, new TextMessage(summaryText.get(i)));
-						super.messagingClient.pushMessage(pushMessage).get();
-					}
+				for (Entry<String, Map<Integer, WarSummoner>> placements : historyPlacement.entrySet()) {
+					String allyTag = placements.getKey();
+					Map<Integer, WarSummoner> placementTable = placements.getValue();
+					List<String> text = WarPlacementLogic.getSummonersText(placementTable, false);
+					super.pushMultipleMessages(senderId, "*** " + day.trim() + " - " + allyTag + " ***\n\n", text);
 				}
 
 			} catch (ParseException e) {

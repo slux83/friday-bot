@@ -3,8 +3,11 @@
  */
 package de.slux.line.jarvis.test.command;
 
+import static org.junit.Assert.assertTrue;
+
 import java.time.Instant;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.linecorp.bot.model.event.MessageEvent;
@@ -21,6 +24,8 @@ import de.slux.line.jarvis.command.war.WarAddSummonersCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
 import de.slux.line.jarvis.command.war.WarSummonerNodeCommand;
 import de.slux.line.jarvis.command.war.WarSummonerRenameCommand;
+import de.slux.line.jarvis.test.util.LineMessagingClientMock;
+import de.slux.line.jarvis.test.util.MessagingClientCallbackImpl;
 
 /**
  * @author slux
@@ -29,7 +34,10 @@ public class TestCommand {
 
 	@Test
 	public void testAdminStatusCommand() throws Exception {
+
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 
 		Source source = new UserSource(JarvisBotApplication.SLUX_ID);
@@ -48,7 +56,7 @@ public class TestCommand {
 		event = new MessageEvent<TextMessageContent>("reply-token", source, message, timestamp);
 		response = jarvis.handleTextMessageEvent(event);
 
-		System.out.println(response);
+		Assert.assertTrue(response.getText().contains("status fake"));
 
 		// 16 secs day
 		System.out.println(AdminStatusCommand.calculateUptime(1000 * 16));
@@ -74,7 +82,9 @@ public class TestCommand {
 
 	@Test
 	public void testInfoCommand() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 
 		Source source = new GroupSource("group-id", "user-id");
@@ -85,12 +95,14 @@ public class TestCommand {
 
 		TextMessage response = jarvis.handleTextMessageEvent(event);
 
-		System.out.println(response);
+		assertTrue(response.getText().contains("J.A.R.V.I.S. MCOC Line Bot"));
 	}
 
 	@Test
 	public void testAddSummonersCommand() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 
 		// Add summoners command
@@ -109,10 +121,10 @@ public class TestCommand {
 		        sourceRegister, messageRegister, timestamp);
 
 		TextMessage response = jarvis.handleTextMessageEvent(eventRegister);
-		System.out.println(response);
+		Assert.assertTrue(response.getText().contains("registered using the name test-group"));
 
 		response = jarvis.handleTextMessageEvent(event);
-		System.out.println(response);
+		Assert.assertTrue(callback.takeAllMessages().contains("Summoner2"));
 
 		// Edit element
 		Source sourceEdit = new GroupSource("group-id", "user-id");
@@ -122,7 +134,9 @@ public class TestCommand {
 		        messageEdit, timestamp);
 
 		response = jarvis.handleTextMessageEvent(eventEdit);
-		System.out.println(response);
+		String pushedText = callback.takeAllMessages();
+		Assert.assertTrue(pushedText.contains("Summoner2"));
+		Assert.assertTrue(pushedText.contains("5* dupe Medusa"));
 
 		// Rename summoner
 		Source sourceRename = new GroupSource("group-id", "user-id");
@@ -132,12 +146,16 @@ public class TestCommand {
 		        messageRename, timestamp);
 
 		response = jarvis.handleTextMessageEvent(eventRename);
-		System.out.println(response);
+		pushedText = callback.takeAllMessages();
+		Assert.assertFalse(pushedText.contains("Summoner 1"));
+		Assert.assertTrue(pushedText.contains("slux 83"));
 	}
 
 	@Test
 	public void testAddSummonersCommandTooMany() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 
 		// Add summoners command
@@ -156,15 +174,17 @@ public class TestCommand {
 		        sourceRegister, messageRegister, timestamp);
 
 		TextMessage response = jarvis.handleTextMessageEvent(eventRegister);
-		System.out.println(response);
+		Assert.assertTrue(response.getText().contains("registered using the name test-group"));
 
 		response = jarvis.handleTextMessageEvent(event);
-		System.out.println(response);
+		Assert.assertTrue(response.getText().contains("You can add a maximum of"));
 	}
 
 	@Test
 	public void testAddSummonersJustPrint() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 
 		// Add summoners command
@@ -181,10 +201,11 @@ public class TestCommand {
 		MessageEvent<TextMessageContent> eventRegister = new MessageEvent<TextMessageContent>("reply-token",
 		        sourceRegister, messageRegister, timestamp);
 
-		TextMessage response = jarvis.handleTextMessageEvent(eventRegister);
-		System.out.println(response);
+		TextMessage resp = jarvis.handleTextMessageEvent(eventRegister);
+		Assert.assertTrue(resp.getText().contains("registered using the name test-group"));
 
-		response = jarvis.handleTextMessageEvent(event);
-		System.out.println(response);
+		jarvis.handleTextMessageEvent(event);
+		String response = callback.takeAllMessages();
+		Assert.assertTrue(response.contains("CURRENT WAR PLACEMENT"));
 	}
 }

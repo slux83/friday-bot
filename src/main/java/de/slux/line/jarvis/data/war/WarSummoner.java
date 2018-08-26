@@ -23,6 +23,13 @@ public class WarSummoner {
 		this.id = id;
 		this.name = name;
 	}
+	
+	/**
+	 * @param name
+	 */
+	public WarSummoner(String name) {
+		this(-1, name);
+	}
 
 	/**
 	 * @return the id

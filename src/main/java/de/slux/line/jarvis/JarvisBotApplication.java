@@ -261,6 +261,13 @@ public class JarvisBotApplication {
 	}
 
 	/**
+	 * @param client
+	 */
+	public void setLineMessagingClient(LineMessagingClient client) {
+		this.lineMessagingClient = client;
+	}
+
+	/**
 	 * Get the commands
 	 * 
 	 * @return the commands

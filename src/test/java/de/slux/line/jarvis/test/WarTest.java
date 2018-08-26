@@ -164,7 +164,7 @@ public class WarTest {
 		System.out.println("HUGE HISTORY:\n" + bg3History);
 		Assert.assertTrue(bg3History.size() > 0);
 
-		Map<String, WarGroup> historyToday = this.warModel.getHistorySummary(GROUP1_ID, new Date());
+		Map<String, WarGroup> historyToday = this.warModel.getHistorySummaryForDeaths(GROUP1_ID, new Date());
 		for (Entry<String, WarGroup> entry : historyToday.entrySet()) {
 			System.out.println("ALLY " + entry.getKey());
 			System.out.println(entry.getValue().getSummaryText());
@@ -176,7 +176,7 @@ public class WarTest {
 		assertTrue(this.warModel.deleteHistoryEntries(GROUP2_ID, "DH-DM", new Date()));
 		assertFalse(this.warModel.deleteHistoryEntries(GROUP2_ID, "FAKE", new Date()));
 
-		historyToday = this.warModel.getHistorySummary(GROUP1_ID, new Date());
+		historyToday = this.warModel.getHistorySummaryForDeaths(GROUP1_ID, new Date());
 		for (Entry<String, WarGroup> entry : historyToday.entrySet()) {
 			System.out.println("ALLY " + entry.getKey());
 			System.out.println(entry.getValue().getSummaryText());

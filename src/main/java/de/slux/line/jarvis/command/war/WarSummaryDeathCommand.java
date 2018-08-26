@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.linecorp.bot.client.LineMessagingClient;
-import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.command.AbstractCommand;
@@ -58,10 +57,7 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 		try {
 			WarDeathLogic warModel = new WarDeathLogic();
 			List<String> summary = warModel.getSummary(senderId);
-			for (String s : summary) {
-				PushMessage pushMessage = new PushMessage(senderId, new TextMessage(s));
-				super.messagingClient.pushMessage(pushMessage).get();
-			}
+			super.pushMultipleMessages(senderId, "", summary);
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");

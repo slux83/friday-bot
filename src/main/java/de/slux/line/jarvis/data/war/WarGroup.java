@@ -16,6 +16,20 @@ import de.slux.line.jarvis.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarGroup {
+	public enum HistoryType {
+		HistoryTypeDeathReport(0), HistoryTypePlacementReport(1);
+		
+		private final int value;
+
+		private HistoryType(int value) {
+	        this.value = value;
+	    }
+
+		public int getValue() {
+			return value;
+		}
+	}
+
 	private List<WarDeath> deathReports;
 
 	/**

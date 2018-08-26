@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.linecorp.bot.client.LineMessagingClient;
+import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.profile.UserProfileResponse;
 
@@ -119,5 +120,23 @@ public abstract class AbstractCommand {
 		LOG.debug("Got username " + userName + " for userId=" + userId);
 
 		return userName;
+	}
+
+	/**
+	 * Pushes the messages with a header to the senderId
+	 * 
+	 * @param senderId
+	 * @param header
+	 * @param messages
+	 * @throws Exception
+	 */
+	protected void pushMultipleMessages(String senderId, String header, List<String> messages) throws Exception {
+		PushMessage pushMessage = new PushMessage(senderId, new TextMessage(header + messages.get(0)));
+		this.messagingClient.pushMessage(pushMessage).get();
+
+		for (int i = 1; i < messages.size(); i++) {
+			pushMessage = new PushMessage(senderId, new TextMessage(messages.get(i)));
+			this.messagingClient.pushMessage(pushMessage).get();
+		}
 	}
 }

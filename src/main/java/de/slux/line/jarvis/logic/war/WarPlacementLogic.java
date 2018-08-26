@@ -4,6 +4,7 @@
 package de.slux.line.jarvis.logic.war;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +12,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.slux.line.jarvis.JarvisBotApplication;
 import de.slux.line.jarvis.dao.DbConnectionPool;
 import de.slux.line.jarvis.dao.war.WarSummonerDao;
 import de.slux.line.jarvis.data.war.WarSummoner;
@@ -113,14 +115,25 @@ public class WarPlacementLogic {
 	}
 
 	/**
-	 * Stringify the map of summoners for printing/posting
+	 * Stringify the map of summoners for printing/posting.
+	 * <p>
+	 * Split the message in multiple ones if bigger than
+	 * {@link JarvisBotApplication#MAX_LINE_MESSAGE_SIZE}
+	 * </p>
 	 * 
 	 * @param summoners
-	 * @return the string for the map
+	 * @param isCurrent
+	 * @return the string(s) for the map
 	 */
-	public String getSummonersText(Map<Integer, WarSummoner> summoners) {
-		StringBuilder sb = new StringBuilder("*** CURRENT WAR PLACEMENTS ***\n\n");
+	public static List<String> getSummonersText(Map<Integer, WarSummoner> summoners, boolean isCurrent) {
+		List<String> outcome = new ArrayList<>();
+		StringBuilder sb = new StringBuilder(isCurrent ? "*** CURRENT WAR PLACEMENTS ***\n\n" : "");
 		for (Entry<Integer, WarSummoner> entry : summoners.entrySet()) {
+			if (sb.length() > JarvisBotApplication.MAX_LINE_MESSAGE_SIZE) {
+				outcome.add(sb.toString());
+				sb.setLength(0);
+			}
+			
 			sb.append(entry.getKey().toString());
 			sb.append(". ");
 			sb.append(entry.getValue().getName());
@@ -142,6 +155,13 @@ public class WarPlacementLogic {
 
 			sb.append("\n");
 		}
-		return sb.toString();
+		
+		if (summoners.isEmpty()) {
+			sb.append("Nothing reported");
+		}
+		
+		outcome.add(sb.toString());
+		
+		return outcome;
 	}
 }

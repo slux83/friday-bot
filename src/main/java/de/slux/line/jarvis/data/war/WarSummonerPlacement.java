@@ -26,6 +26,14 @@ public class WarSummonerPlacement {
 	}
 
 	/**
+	 * @param node
+	 * @param champion
+	 */
+	public WarSummonerPlacement(Integer node, String champion) {
+		this(-1, node, champion);
+	}
+
+	/**
 	 * @return the id
 	 */
 	public Integer getId() {

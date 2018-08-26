@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS `war_history` (
   `num_deaths` tinyint(4) NOT NULL DEFAULT 0,
   `champion` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   `player` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `history_type` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `FK_war_history_war_group` (`group_id`),
   CONSTRAINT `FK_war_history_war_group` FOREIGN KEY (`group_id`) REFERENCES `war_group` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION

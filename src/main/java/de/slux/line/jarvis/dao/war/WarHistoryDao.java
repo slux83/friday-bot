@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -17,16 +18,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.slux.line.jarvis.data.war.WarGroup;
+import de.slux.line.jarvis.data.war.WarGroup.HistoryType;
+import de.slux.line.jarvis.data.war.WarSummoner;
+import de.slux.line.jarvis.data.war.WarSummonerPlacement;
 
 /**
- * @author adfazio
+ * @author slux
  */
 public class WarHistoryDao {
 	private static Logger LOG = LoggerFactory.getLogger(WarHistoryDao.class);
 
 	private Connection conn;
 
-	private static final String ADD_DATA_STATEMENT = "INSERT INTO war_history (group_id, node, num_deaths, champion, player, opponent_tag, war_date) "
+	private static final String ADD_DATA_DEATHS_STATEMENT = "INSERT INTO war_history (group_id, node, num_deaths, champion, player, opponent_tag, war_date) "
 	        + "(SELECT group_id, node, num_deaths, champion, player, TO_BASE64(?), ? FROM war_death where group_id = ?)";
 
 	private static final String GET_ALL_DATA = "SELECT war_date, FROM_BASE64(opponent_tag) AS ally_tag FROM war_history "
@@ -34,9 +38,20 @@ public class WarHistoryDao {
 
 	private static final String GET_DAILY_DATA = "SELECT FROM_BASE64(opponent_tag) AS ally_tag, node, num_deaths, "
 	        + "FROM_BASE64(champion) AS champ, FROM_BASE64(player) AS player_name "
-	        + "FROM war_history WHERE group_id = ? AND war_date = ?";
+	        + "FROM war_history WHERE group_id = ? AND war_date = ? AND history_type = ? ORDER BY id";
 
 	private static final String DELETE_DATA = "DELETE FROM war_history WHERE group_id = ? AND war_date = ? AND opponent_tag = TO_BASE64(?)";
+
+	/* @formatter:off */
+	private static final String ADD_DATA_PLACEMENT_STATEMENT = 
+			"INSERT INTO war_history (group_id, node, num_deaths, champion, player, opponent_tag, war_date, history_type) " + 
+			"(SELECT WS.group_id, WP.node, -1, IFNULL(WP.champ, ''), " + 
+			"		WS.name, TO_BASE64(?), ?, ? " + 
+			"FROM war_summoner AS WS " + 
+			"	JOIN war_placement AS WP ON (WS.id = WP.summoner_id) " + 
+			"WHERE WS.group_id = ? " + 
+			"ORDER BY WS.id, WP.id)";
+	/* @formatter:on */
 
 	public WarHistoryDao(Connection conn) {
 		this.conn = conn;
@@ -89,14 +104,14 @@ public class WarHistoryDao {
 	}
 
 	/**
-	 * get all the history for a particular day
+	 * get all the history for a particular day (death reports)
 	 * 
 	 * @param groupKey
 	 * @param warDate
 	 * @return map where key=ally_tag
 	 * @throws SQLException
 	 */
-	public Map<String, WarGroup> getAllData(int groupKey, Timestamp warDate) throws SQLException {
+	public Map<String, WarGroup> getAllDataForDeaths(int groupKey, Timestamp warDate) throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		Map<String, WarGroup> outcome = new TreeMap<>();
@@ -105,6 +120,7 @@ public class WarHistoryDao {
 			stmt = conn.prepareStatement(GET_DAILY_DATA);
 			stmt.setInt(1, groupKey);
 			stmt.setTimestamp(2, warDate);
+			stmt.setInt(3, HistoryType.HistoryTypeDeathReport.getValue());
 			rs = stmt.executeQuery();
 
 			while (rs.next()) {
@@ -120,6 +136,85 @@ public class WarHistoryDao {
 				}
 
 				outcome.get(allianceName).addDeath(numDeaths, node, champ, player);
+			}
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return outcome;
+	}
+
+	/**
+	 * get all the history for a particular day (death reports)
+	 * 
+	 * @param groupKey
+	 * @param warDate
+	 * @return map where key=ally_tag
+	 * @throws SQLException
+	 */
+	public Map<String, Map<Integer, WarSummoner>> getAllDataForReports(int groupKey, Timestamp warDate)
+	        throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Map<String, Map<Integer, WarSummoner>> outcome = new HashMap<>();
+
+		try {
+
+			stmt = conn.prepareStatement(GET_DAILY_DATA);
+			stmt.setInt(1, groupKey);
+			stmt.setTimestamp(2, warDate);
+			stmt.setInt(3, HistoryType.HistoryTypePlacementReport.getValue());
+			rs = stmt.executeQuery();
+
+			char placementPos = 'A';
+			int summonerPos = 0;
+			String lastSummonerName = null;
+			while (rs.next()) {
+				String summonerName = rs.getString("player_name");
+				String allianceName = rs.getString("ally_tag");
+				int placementNode = rs.getInt("node");
+				String placementChamp = rs.getString("champ");
+				if (placementChamp.isEmpty())
+					placementChamp = null;
+
+				if (!lastSummonerName.equals(summonerName)) {
+					lastSummonerName = summonerName;
+					summonerPos++;
+					placementPos = 'A';
+				}
+
+				if (!outcome.containsKey(allianceName)) {
+					Map<Integer, WarSummoner> summoners = new TreeMap<>();
+					outcome.put(allianceName, summoners);
+				}
+
+				Map<Integer, WarSummoner> summoners = outcome.get(allianceName);
+
+				WarSummoner ws = summoners.get(summonerPos);
+				if (ws == null) {
+					ws = new WarSummoner(summonerName);
+					summoners.put(summonerPos, ws);
+				}
+
+				ws.getPlacements().put(Character.valueOf(placementPos++),
+				        new WarSummonerPlacement(placementNode, placementChamp));
 			}
 		} finally {
 			try {
@@ -217,10 +312,20 @@ public class WarHistoryDao {
 		Timestamp timestamp = new Timestamp(c.getTimeInMillis());
 
 		try {
-			stmt = conn.prepareStatement(ADD_DATA_STATEMENT);
+			// Store the deaths if any
+			stmt = conn.prepareStatement(ADD_DATA_DEATHS_STATEMENT);
 			stmt.setString(1, allianceTag);
 			stmt.setTimestamp(2, timestamp);
 			stmt.setInt(3, groupKey);
+			stmt.execute();
+			stmt.close();
+
+			// Store the placements if any
+			stmt = conn.prepareStatement(ADD_DATA_PLACEMENT_STATEMENT);
+			stmt.setString(1, allianceTag);
+			stmt.setTimestamp(2, timestamp);
+			stmt.setInt(3, HistoryType.HistoryTypePlacementReport.getValue());
+			stmt.setInt(4, groupKey);
 			stmt.execute();
 
 		} finally {
