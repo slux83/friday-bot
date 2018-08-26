@@ -45,7 +45,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX);
+		return message.toLowerCase().startsWith(CMD_PREFIX + " ");
 	}
 
 	/*
