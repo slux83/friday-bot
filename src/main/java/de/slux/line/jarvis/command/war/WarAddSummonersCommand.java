@@ -114,9 +114,9 @@ public class WarAddSummonersCommand extends AbstractCommand {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[" + CMD_PREFIX + " <name1, name2, ...?>\n");
-		sb.append(
-		        "Add summoner names (max " + WarPlacementLogic.MAX_SUMMONERS + ") to the list for the current war.\n");
-		sb.append("Use " + CMD_PREFIX + " only to just print the list of summoners.\n");
+		sb.append("Add summoner names (max " + WarPlacementLogic.MAX_SUMMONERS
+		        + ") to the placement table for the current war.\n");
+		sb.append("Use '" + CMD_PREFIX + "' only to simply print the placement table.\n");
 		sb.append("Example " + CMD_PREFIX + " John Doe, FooBar, slux83");
 
 		return sb.toString();
