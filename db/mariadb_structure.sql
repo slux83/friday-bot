@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `war_death` (
   PRIMARY KEY (`id`),
   KEY `FK_war_death_war_group` (`group_id`),
   CONSTRAINT `FK_war_death_war_group` FOREIGN KEY (`group_id`) REFERENCES `war_group` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=553 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for table friday.war_group
@@ -35,9 +35,11 @@ CREATE TABLE IF NOT EXISTS `war_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   `group_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `group_status` tinyint(4) NOT NULL DEFAULT 1,
+  `group_features` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   UNIQUE KEY `group_id` (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=161 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for table friday.war_history
@@ -54,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `war_history` (
   PRIMARY KEY (`id`),
   KEY `FK_war_history_war_group` (`group_id`),
   CONSTRAINT `FK_war_history_war_group` FOREIGN KEY (`group_id`) REFERENCES `war_group` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=964 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
 -- Dumping structure for table friday.war_placement
@@ -66,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `war_placement` (
   PRIMARY KEY (`id`),
   KEY `FK_war_placement_war_summoner` (`summoner_id`),
   CONSTRAINT `FK_war_placement_war_summoner` FOREIGN KEY (`summoner_id`) REFERENCES `war_summoner` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=320 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 -- Dumping structure for table friday.war_summoner
@@ -77,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `war_summoner` (
   PRIMARY KEY (`id`),
   KEY `FK_war_summoner_war_group` (`group_id`),
   CONSTRAINT `FK_war_summoner_war_group` FOREIGN KEY (`group_id`) REFERENCES `war_group` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
