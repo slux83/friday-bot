@@ -50,6 +50,16 @@ public class InfoCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		StringBuilder sb = new StringBuilder("*** F.R.I.D.A.Y. MCOC Line Bot ***\n\n");
+		sb.append(getInfo(senderId));
+		return new TextMessage(sb.toString());
+	}
+	
+	/**
+	 * Get the info
+	 * @return
+	 */
+	public static String getInfo(String senderId) {
+		StringBuilder sb = new StringBuilder();
 		sb.append("FRIDAY Bot Line users group: ");
 		sb.append(FRIDAY_USERS_LINE_GROUP_LINK);
 		sb.append("\n");
@@ -64,8 +74,8 @@ public class InfoCommand extends AbstractCommand {
 		sb.append("PAYPAL: ");
 		sb.append(PAYPAL_LINK.replace("$GUID", senderId));
 		sb.append("\n");
-
-		return new TextMessage(sb.toString());
+		
+		return sb.toString();
 	}
 
 	/*

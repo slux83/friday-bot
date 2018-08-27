@@ -86,7 +86,8 @@ public class FridayBotApplication {
 	@Autowired
 	private LineMessagingClient lineMessagingClient;
 	private Date startup;
-	private AtomicLong incomingMsgCounter;
+	private AtomicLong commandIncomingMsgCounter;
+	private AtomicLong totalIncomingMsgCounter;
 	private AtomicBoolean isOperational;
 	private List<AbstractCommand> commands;
 
@@ -109,7 +110,8 @@ public class FridayBotApplication {
 		// Save the instance
 		setInstance(this);
 		this.startup = new Date();
-		this.incomingMsgCounter = new AtomicLong();
+		this.commandIncomingMsgCounter = new AtomicLong();
+		this.totalIncomingMsgCounter = new AtomicLong();
 		this.isOperational = new AtomicBoolean(true);
 
 		// Initialise all commands (the order is important for the help)
@@ -151,6 +153,7 @@ public class FridayBotApplication {
 		LOG.info("event source USER-ID: " + event.getSource().getUserId());
 		LOG.info("event source SENDER_ID: " + event.getSource().getSenderId());
 		LOG.info("event message text: " + event.getMessage().getText());
+		this.totalIncomingMsgCounter.incrementAndGet();
 
 		String message = event.getMessage().getText().trim();
 		String userId = event.getSource().getUserId();
@@ -183,7 +186,7 @@ public class FridayBotApplication {
 			AbstractCommand command = getAdminCommand(message);
 
 			if (!(command instanceof DefaultCommand))
-				this.incomingMsgCounter.incrementAndGet();
+				this.commandIncomingMsgCounter.incrementAndGet();
 
 			return command.execute(userId, null, message);
 		}
@@ -210,7 +213,7 @@ public class FridayBotApplication {
 		}
 
 		if (!(command instanceof DefaultCommand))
-			this.incomingMsgCounter.incrementAndGet();
+			this.commandIncomingMsgCounter.incrementAndGet();
 
 		return command.execute(userId, groupId, message);
 	}
@@ -289,10 +292,17 @@ public class FridayBotApplication {
 	}
 
 	/**
-	 * @return the incomingMsgCounter as long
+	 * @return the commandIncomingMsgCounter
 	 */
-	public AtomicLong getIncomingMsgCounter() {
-		return incomingMsgCounter;
+	public AtomicLong getCommandIncomingMsgCounter() {
+		return commandIncomingMsgCounter;
+	}
+	
+	/**
+	 * @return the totalIncomingMsgCounter
+	 */
+	public AtomicLong getTotalIncomingMsgCounter() {
+		return totalIncomingMsgCounter;
 	}
 
 	/**

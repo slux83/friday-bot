@@ -54,9 +54,8 @@ public class HelloGroupCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		// Push back the message to the user
-		// FIXME: add a proper message here
 		CompletableFuture<BotApiResponse> response = super.messagingClient
-		        .pushMessage(new PushMessage(senderId, new TextMessage("Hello group of friend!")));
+		        .pushMessage(new PushMessage(senderId, new TextMessage(getGroupWelcomeMessage(senderId))));
 
 		try {
 			response.get(AbstractCommand.RESPONSE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
@@ -68,6 +67,23 @@ public class HelloGroupCommand extends AbstractCommand {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get the welcome message when the bot joins a group
+	 * 
+	 * @param senderId
+	 * @return the welcome message
+	 */
+	private String getGroupWelcomeMessage(String senderId) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Hello summoners!\n\n");
+		sb.append("I'm F.R.I.D.A.Y. the BOT and I'm here to assist you during the MCOC wars!\n");
+		sb.append("I can also do many other things, just type '" + HelpCommand.CMD_PREFIX
+		        + "' for the list of commands!\n\n");
+		sb.append("Here you can find some info and useful things about me:\n");
+		sb.append(InfoCommand.getInfo(senderId));
+		return sb.toString();
 	}
 
 	/*

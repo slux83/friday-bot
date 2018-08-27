@@ -20,7 +20,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarRegisterCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday register";
+	public static final String CMD_PREFIX = "friday register war";
 	private static Logger LOG = LoggerFactory.getLogger(WarRegisterCommand.class);
 
 	/**
@@ -54,11 +54,12 @@ public class WarRegisterCommand extends AbstractCommand {
 	public TextMessage execute(String userId, String senderId, String message) {
 		List<String> args = super.extractArgs(message);
 
-		if (args.size() < 3) {
+		if (args.size() < 4) {
 			return new TextMessage("Please specify your group name. E.g. DM-BG3");
 		}
 
 		// Remove prefix
+		args.remove(0);
 		args.remove(0);
 		args.remove(0);
 		String arg = String.join(" ", args);

@@ -21,6 +21,7 @@ import org.junit.Test;
 import de.slux.line.friday.dao.exception.WarDaoDuplicatedAllianceTagException;
 import de.slux.line.friday.dao.exception.WarDaoUnregisteredException;
 import de.slux.line.friday.data.war.WarGroup;
+import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.data.war.WarGroup.TotalDeathReport;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 
@@ -73,9 +74,9 @@ public class WarTest {
 		this.warModel.addNewGroup(GROUP1_ID, "ALLY-BG1");
 		this.warModel.addNewGroup(GROUP3_ID, "ALLY-BG3");
 
-		int group1Key = WarDeathLogic.getKeyOfGroup(GROUP1_ID);
-		int group2Key = WarDeathLogic.getKeyOfGroup(GROUP2_ID);
-		int group3Key = WarDeathLogic.getKeyOfGroup(GROUP3_ID);
+		int group1Key = WarDeathLogic.getKeyOfGroup(GROUP1_ID, GroupStatus.GroupStatusActive);
+		int group2Key = WarDeathLogic.getKeyOfGroup(GROUP2_ID, GroupStatus.GroupStatusActive);
+		int group3Key = WarDeathLogic.getKeyOfGroup(GROUP3_ID, GroupStatus.GroupStatusActive);
 		assertNotEquals(-1, group1Key);
 		assertNotEquals(-1, group2Key);
 		assertNotEquals(-1, group3Key);

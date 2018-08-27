@@ -21,6 +21,7 @@ import de.slux.line.friday.dao.war.WarGroupDao;
 import de.slux.line.friday.dao.war.WarHistoryDao;
 import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarSummoner;
+import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 
 /**
  * @author slux
@@ -121,7 +122,7 @@ public class WarDeathLogic {
 	 */
 	public static int checkGroupRegistration(String groupId) throws Exception {
 		int key = -1;
-		if ((key = getKeyOfGroup(groupId)) == -1)
+		if ((key = getKeyOfGroup(groupId, GroupStatus.GroupStatusActive)) == -1)
 			throw new WarDaoUnregisteredException("Group not registered");
 
 		return key;
@@ -162,6 +163,22 @@ public class WarDeathLogic {
 		return reportModel;
 
 	}
+	
+	/**
+	 * Update the group status
+	 * @param groupId
+	 * @param newStatus
+	 * @throws Exception
+	 */
+	public void updateGroupStatus(String groupId, GroupStatus newStatus) throws Exception {
+		Connection conn = DbConnectionPool.getConnection();
+
+		LOG.debug("Connection to the DB valid");
+
+		WarGroupDao dao = new WarGroupDao(conn);
+
+		dao.updateGroupStatus(groupId, newStatus);
+	}
 
 	/**
 	 * Undo the last insert for groupId
@@ -201,17 +218,18 @@ public class WarDeathLogic {
 	 * Retrieve the group DB key
 	 * 
 	 * @param groupId
+	 * @param groupStatus
 	 * @return the key or -1 if none
 	 * @throws Exception
 	 */
-	public static int getKeyOfGroup(String groupId) throws Exception {
+	public static int getKeyOfGroup(String groupId, GroupStatus groupStatus) throws Exception {
 		Connection conn = DbConnectionPool.getConnection();
 
 		LOG.debug("Connection to the DB valid");
 
 		WarGroupDao dao = new WarGroupDao(conn);
 
-		return dao.getKeyById(groupId);
+		return dao.getKeyById(groupId, groupStatus);
 	}
 
 	/**

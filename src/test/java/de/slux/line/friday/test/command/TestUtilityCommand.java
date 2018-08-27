@@ -10,11 +10,13 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.linecorp.bot.model.event.JoinEvent;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
+import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
@@ -37,7 +39,8 @@ public class TestUtilityCommand {
 		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(null, FridayBotApplication.SLUX_ID,
 		        AdminStatusCommand.CMD_PREFIX);
 
-		friday.getIncomingMsgCounter().set(10);
+		friday.getCommandIncomingMsgCounter().set(10);
+		friday.getTotalIncomingMsgCounter().set(100);
 		Thread.sleep(1000);
 		TextMessage response = friday.handleTextMessageEvent(event);
 
@@ -84,6 +87,24 @@ public class TestUtilityCommand {
 		TextMessage response = friday.handleTextMessageEvent(event);
 
 		assertTrue(response.getText().contains("F.R.I.D.A.Y. MCOC Line Bot"));
+	}
+	
+	@Test
+	public void testJoinCommand() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
+
+		JoinEvent event = MessageEventUtil.createJoinEvent(UUID.randomUUID().toString(),
+		        UUID.randomUUID().toString());
+
+		friday.handleDefaultMessageEvent(event);
+
+		String answer = callback.takeAllMessages();
+		assertTrue(answer.contains("Hello summoners!"));
+		assertTrue(answer.contains("PAYPAL"));
+		assertTrue(answer.contains(HelpCommand.CMD_PREFIX));
 	}
 
 }

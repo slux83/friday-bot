@@ -18,12 +18,41 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
 public class WarGroup {
 	public enum HistoryType {
 		HistoryTypeDeathReport(0), HistoryTypePlacementReport(1);
-		
+
 		private final int value;
 
 		private HistoryType(int value) {
-	        this.value = value;
-	    }
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+	}
+
+	public enum GroupStatus {
+		GroupStatusInactive(0), GroupStatusActive(1);
+
+		private final int value;
+
+		private GroupStatus(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+	}
+
+	public enum GroupFeature {
+	    // Use bits (1, 2, 4, 8, 16, 32 and 64)
+		GroupFeatureWar(1);
+
+		private final int value;
+
+		private GroupFeature(int value) {
+			this.value = value;
+		}
 
 		public int getValue() {
 			return value;

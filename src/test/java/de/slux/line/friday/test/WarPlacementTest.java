@@ -22,6 +22,7 @@ import de.slux.line.friday.dao.exception.SummonerNotFoundException;
 import de.slux.line.friday.dao.war.WarSummonerDao;
 import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.data.war.WarSummonerPlacement;
+import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 
 /**
@@ -50,9 +51,9 @@ public class WarPlacementTest {
 		this.warModel.resetFor(GROUP2_ID);
 		this.warModel.resetFor(GROUP3_ID);
 
-		this.group1Key = WarDeathLogic.getKeyOfGroup(GROUP1_ID);
-		this.group2Key = WarDeathLogic.getKeyOfGroup(GROUP2_ID);
-		this.group3Key = WarDeathLogic.getKeyOfGroup(GROUP3_ID);
+		this.group1Key = WarDeathLogic.getKeyOfGroup(GROUP1_ID, GroupStatus.GroupStatusActive);
+		this.group2Key = WarDeathLogic.getKeyOfGroup(GROUP2_ID, GroupStatus.GroupStatusActive);
+		this.group3Key = WarDeathLogic.getKeyOfGroup(GROUP3_ID, GroupStatus.GroupStatusActive);
 		assertNotEquals(-1, this.group1Key);
 		assertNotEquals(-1, this.group2Key);
 		assertNotEquals(-1, this.group3Key);

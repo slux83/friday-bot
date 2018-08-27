@@ -79,19 +79,26 @@ public class AdminStatusCommand extends AbstractCommand {
 		sb.append("Status: ");
 		sb.append(FridayBotApplication.getInstance().getIsOperational().get() ? "OPERATIONAL" : "MAINTENANCE");
 		sb.append("\n");
-		long msgCounter = FridayBotApplication.getInstance().getIncomingMsgCounter().get();
+		long msgCmdCounter = FridayBotApplication.getInstance().getCommandIncomingMsgCounter().get();
+		long msgTotalCounter = FridayBotApplication.getInstance().getTotalIncomingMsgCounter().get();
 		long startupMs = FridayBotApplication.getInstance().getStartup().getTime();
 		long nowMs = System.currentTimeMillis();
 		long msDiff = Math.abs(nowMs - startupMs);
-		double msgSec = (msgCounter / (msDiff / 1000.0));
-		sb.append("Total messages: ");
-		sb.append(Long.toString(msgCounter));
+		double msgCmdSec = (msgCmdCounter / (msDiff / 1000.0));
+		double msgTotalSec = (msgTotalCounter / (msDiff / 1000.0));
+		sb.append("Cmd/Tot messages: ");
+		sb.append(Long.toString(msgCmdCounter));
+		sb.append("/");
+		sb.append(Long.toString(msgTotalCounter));
 		sb.append("\n");
 		sb.append("Uptime: ");
 		sb.append(calculateUptime(msDiff));
 		sb.append("\n");
-		sb.append("Messages/sec: ");
-		sb.append(DECIMAL_FORMAT.format(msgSec));
+		sb.append("Commands Messages/sec: ");
+		sb.append(DECIMAL_FORMAT.format(msgCmdSec));
+		sb.append("\n");
+		sb.append("Total Messages/sec: ");
+		sb.append(DECIMAL_FORMAT.format(msgTotalSec));
 		sb.append("\n");
 
 		sb.append("Total groups: ");
@@ -105,7 +112,7 @@ public class AdminStatusCommand extends AbstractCommand {
 		sb.append(groupCounter != -1 ? Integer.toString(groupCounter) : "unknown");
 		sb.append("\n");
 
-		LOG.info("Messages/sec: " + DECIMAL_FORMAT.format(msgSec));
+		LOG.info("Messages/sec: " + DECIMAL_FORMAT.format(msgCmdSec));
 		LOG.info("Total groups: " + groupCounter);
 		LOG.info("Status: "
 		        + (FridayBotApplication.getInstance().getIsOperational().get() ? "OPERATIONAL" : "MAINTENANCE"));

@@ -15,8 +15,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.slux.line.friday.data.war.WarGroup.GroupStatus;
+
 /**
- * @author adfazio
+ * @author slux
  */
 public class WarGroupDao {
 	private static Logger LOG = LoggerFactory.getLogger(WarGroupDao.class);
@@ -25,12 +27,14 @@ public class WarGroupDao {
 
 	private static final String ADD_DATA_STATEMENT = "INSERT INTO war_group (group_id, group_name) VALUES(?, ?)";
 
-	private static final String RETRIEVE_DATA_STATEMENT = "SELECT id, group_name FROM war_group WHERE group_id = ?";
+	private static final String RETRIEVE_DATA_STATEMENT = "SELECT id, group_name FROM war_group WHERE group_id = ? AND group_status = ?";
 
-	private static final String UPDATE_DATA_STATEMENT = "UPDATE war_group SET group_name = ? WHERE group_id = ?";
+	private static final String UPDATE_NAME_DATA_STATEMENT = "UPDATE war_group SET group_name = ? WHERE group_id = ?";
+	
+	private static final String UPDATE_STATUS_DATA_STATEMENT = "UPDATE war_group SET group_status = ? WHERE group_id = ?";
 
 	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name FROM war_group";
-
+	
 	public WarGroupDao(Connection conn) {
 		this.conn = conn;
 	}
@@ -54,7 +58,7 @@ public class WarGroupDao {
 		} catch (SQLIntegrityConstraintViolationException ex) {
 			// The group already exists
 			LOG.info("WarGroupDao.storeData() name needs to be updated: " + ex);
-			updateGroup(groupId, groupName);
+			updateGroupName(groupId, groupName);
 		} finally {
 			try {
 				if (stmt != null)
@@ -80,10 +84,10 @@ public class WarGroupDao {
 	 * @param groupName
 	 * @throws SQLException
 	 */
-	private void updateGroup(String groupId, String groupName) throws SQLException {
+	private void updateGroupName(String groupId, String groupName) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			stmt = conn.prepareStatement(UPDATE_DATA_STATEMENT);
+			stmt = conn.prepareStatement(UPDATE_NAME_DATA_STATEMENT);
 			stmt.setString(1, Base64.getEncoder().encodeToString(groupName.getBytes()));
 			stmt.setString(2, groupId);
 			stmt.executeUpdate();
@@ -105,6 +109,39 @@ public class WarGroupDao {
 
 		LOG.info("Data updated successfully: " + groupId + " (" + groupName + ")");
 	}
+	
+	/**
+	 * Update the name of the group
+	 * 
+	 * @param groupId
+	 * @param groupName
+	 * @throws SQLException
+	 */
+	public void updateGroupStatus(String groupId, GroupStatus groupStatus) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(UPDATE_STATUS_DATA_STATEMENT);
+			stmt.setInt(1, groupStatus.getValue());
+			stmt.setString(2, groupId);
+			stmt.executeUpdate();
+
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+		}
+
+		LOG.info("Data updated successfully: " + groupId + " (newStatus=" + groupStatus + ")");
+	}
 
 	/**
 	 * get the key of the table by groupId
@@ -113,7 +150,7 @@ public class WarGroupDao {
 	 * @return the key or -1 if none
 	 * @throws SQLException
 	 */
-	public int getKeyById(String groupId) throws SQLException {
+	public int getKeyById(String groupId, GroupStatus groupStatus) throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		int key = -1;
@@ -121,6 +158,7 @@ public class WarGroupDao {
 
 			stmt = conn.prepareStatement(RETRIEVE_DATA_STATEMENT);
 			stmt.setString(1, groupId);
+			stmt.setInt(2, groupStatus.getValue());
 			rs = stmt.executeQuery();
 
 			while (rs.next()) {

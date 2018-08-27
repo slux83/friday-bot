@@ -136,7 +136,6 @@ public class WarDeathDao {
 	 */
 	public void clearData(int groupKey) throws SQLException {
 		PreparedStatement stmt = null;
-		// TODO: reset the summoners too
 		
 		try {
 			stmt = conn.prepareStatement(DELETE_DATA_DEATH_BY_GROUP_STATEMENT);
