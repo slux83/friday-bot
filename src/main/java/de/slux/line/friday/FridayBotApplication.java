@@ -151,7 +151,6 @@ public class FridayBotApplication {
 		LOG.info("event source USER-ID: " + event.getSource().getUserId());
 		LOG.info("event source SENDER_ID: " + event.getSource().getSenderId());
 		LOG.info("event message text: " + event.getMessage().getText());
-		this.incomingMsgCounter.incrementAndGet();
 
 		String message = event.getMessage().getText().trim();
 		String userId = event.getSource().getUserId();
@@ -183,6 +182,9 @@ public class FridayBotApplication {
 		if (SLUX_ID.equals(userId)) {
 			AbstractCommand command = getAdminCommand(message);
 
+			if (!(command instanceof DefaultCommand))
+				this.incomingMsgCounter.incrementAndGet();
+
 			return command.execute(userId, null, message);
 		}
 
@@ -206,6 +208,9 @@ public class FridayBotApplication {
 		if (!this.isOperational.get() && !(command instanceof DefaultCommand)) {
 			return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
 		}
+
+		if (!(command instanceof DefaultCommand))
+			this.incomingMsgCounter.incrementAndGet();
 
 		return command.execute(userId, groupId, message);
 	}
