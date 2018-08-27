@@ -26,7 +26,8 @@ public class WarDeathDao {
 
 	private static final String RETRIEVE_DATA_STATEMENT = "SELECT node, num_deaths, FROM_BASE64(champion) AS champion, FROM_BASE64(player) AS player FROM war_death WHERE group_id = ?";
 
-	private static final String DELETE_DATA_BY_GROUP_STATEMENT = "DELETE FROM war_death WHERE group_id = ?";
+	private static final String DELETE_DATA_DEATH_BY_GROUP_STATEMENT = "DELETE FROM war_death WHERE group_id = ?";
+	private static final String DELETE_DATA_SUMMONER_BY_GROUP_STATEMENT = "DELETE FROM war_summoner WHERE group_id = ?";
 
 	private static final String GET_LAST_INSERT_STATEMENT = "SELECT MAX(id) AS latest FROM war_death WHERE group_id = ?";
 
@@ -138,10 +139,16 @@ public class WarDeathDao {
 		// TODO: reset the summoners too
 		
 		try {
-			stmt = conn.prepareStatement(DELETE_DATA_BY_GROUP_STATEMENT);
+			stmt = conn.prepareStatement(DELETE_DATA_DEATH_BY_GROUP_STATEMENT);
 			stmt.setInt(1, groupKey);
 			int deletedRows = stmt.executeUpdate();
-			LOG.info("Deleted " + deletedRows + " report(s) for groupkey=" + groupKey);
+			LOG.info("Deleted " + deletedRows + " death report(s) for groupkey=" + groupKey);
+			stmt.close();
+			
+			stmt = conn.prepareStatement(DELETE_DATA_SUMMONER_BY_GROUP_STATEMENT);
+			stmt.setInt(1, groupKey);
+			deletedRows = stmt.executeUpdate();
+			LOG.info("Deleted " + deletedRows + " summoner report(s) for groupkey=" + groupKey);
 		} finally {
 			try {
 				if (stmt != null)
