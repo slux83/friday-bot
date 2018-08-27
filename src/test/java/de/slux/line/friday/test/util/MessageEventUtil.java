@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import com.linecorp.bot.model.event.JoinEvent;
+import com.linecorp.bot.model.event.LeaveEvent;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.GroupSource;
@@ -51,6 +52,19 @@ public class MessageEventUtil {
 		Instant timestamp = Instant.now();
 		Source source = new GroupSource(groupId, userId);
 		return new JoinEvent(UUID.randomUUID().toString(), source, timestamp);
+	}
+	
+	/**
+	 * Create a leave event
+	 * 
+	 * @param groupId
+	 * @param userId
+	 * @return the event of type {@link LeaveEvent}
+	 */
+	public static LeaveEvent createLeaveEvent(String groupId, String userId) {
+		Instant timestamp = Instant.now();
+		Source source = new GroupSource(groupId, userId);
+		return new LeaveEvent(source, timestamp);
 	}
 
 }
