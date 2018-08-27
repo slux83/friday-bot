@@ -22,7 +22,7 @@ import de.slux.line.jarvis.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarSummaryDeathCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis summary death";
+	public static final String CMD_PREFIX = "friday summary death";
 	private static Logger LOG = LoggerFactory.getLogger(WarSummaryDeathCommand.class);
 
 	/**

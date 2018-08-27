@@ -16,7 +16,7 @@ import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
-import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.FridayBotApplication;
 import de.slux.line.jarvis.command.war.WarDeleteCommand;
 import de.slux.line.jarvis.command.war.WarHistoryCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
@@ -38,7 +38,7 @@ public class TestWarCommand {
 	@Test
 	public void testNominalWarDeathReportingWorkflowCommands() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
-		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		FridayBotApplication jarvis = new FridayBotApplication(null);
 		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 

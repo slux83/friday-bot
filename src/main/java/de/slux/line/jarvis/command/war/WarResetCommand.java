@@ -20,7 +20,7 @@ import de.slux.line.jarvis.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarResetCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis reset";
+	public static final String CMD_PREFIX = "friday reset";
 	private static Logger LOG = LoggerFactory.getLogger(WarResetCommand.class);
 
 	/**

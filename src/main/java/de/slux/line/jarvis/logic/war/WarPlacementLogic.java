@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.FridayBotApplication;
 import de.slux.line.jarvis.dao.DbConnectionPool;
 import de.slux.line.jarvis.dao.war.WarSummonerDao;
 import de.slux.line.jarvis.data.war.WarSummoner;
@@ -118,7 +118,7 @@ public class WarPlacementLogic {
 	 * Stringify the map of summoners for printing/posting.
 	 * <p>
 	 * Split the message in multiple ones if bigger than
-	 * {@link JarvisBotApplication#MAX_LINE_MESSAGE_SIZE}
+	 * {@link FridayBotApplication#MAX_LINE_MESSAGE_SIZE}
 	 * </p>
 	 * 
 	 * @param summoners
@@ -129,7 +129,7 @@ public class WarPlacementLogic {
 		List<String> outcome = new ArrayList<>();
 		StringBuilder sb = new StringBuilder(isCurrent ? "*** CURRENT WAR PLACEMENTS ***\n\n" : "");
 		for (Entry<Integer, WarSummoner> entry : summoners.entrySet()) {
-			if (sb.length() > JarvisBotApplication.MAX_LINE_MESSAGE_SIZE) {
+			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
 				outcome.add(sb.toString());
 				sb.setLength(0);
 			}

@@ -16,11 +16,11 @@ import org.apache.commons.dbcp2.BasicDataSource;
 public class DbConnectionPool {
 	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 	private static final String DB_URL = "jdbc:mysql://";
-	private static final String DB_USER = System.getProperty("jarvis.db.user");
-	private static final String DB_PASSWORD = System.getProperty("jarvis.db.password");
-	private static final String DB_HOST = System.getProperty("jarvis.db.host");
-	private static final String DB_PORT = System.getProperty("jarvis.db.port");
-	private static final String DB_NAME = System.getProperty("jarvis.db.name");
+	private static final String DB_USER = System.getProperty("friday.db.user");
+	private static final String DB_PASSWORD = System.getProperty("friday.db.password");
+	private static final String DB_HOST = System.getProperty("friday.db.host");
+	private static final String DB_PORT = System.getProperty("friday.db.port");
+	private static final String DB_NAME = System.getProperty("friday.db.name");
 	private static final int CONN_POOL_SIZE = 10;
 	private static DbConnectionPool INSTANCE = null;
 

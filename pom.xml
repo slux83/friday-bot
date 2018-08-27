@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.slux</groupId>
-	<artifactId>jarvis-bot</artifactId>
+	<artifactId>friday-bot</artifactId>
 	<version>0.0.1-beta2</version>
 	<packaging>jar</packaging>
 
-	<name>jarvis-bot</name>
+	<name>friday-bot</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -85,7 +85,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>de.slux.line.jarvis.DhBotApplication</mainClass>
+							<mainClass>de.slux.line.friday.FridayBotApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

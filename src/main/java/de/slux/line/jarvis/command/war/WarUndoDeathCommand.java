@@ -20,7 +20,7 @@ import de.slux.line.jarvis.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarUndoDeathCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis undo death";
+	public static final String CMD_PREFIX = "friday undo death";
 	private static Logger LOG = LoggerFactory.getLogger(WarUndoDeathCommand.class);
 
 	/**

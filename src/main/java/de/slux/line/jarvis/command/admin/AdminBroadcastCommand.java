@@ -26,7 +26,7 @@ import de.slux.line.jarvis.logic.war.WarDeathLogic;
  * @author slux
  */
 public class AdminBroadcastCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis broadcast";
+	public static final String CMD_PREFIX = "friday broadcast";
 	private static Logger LOG = LoggerFactory.getLogger(AdminBroadcastCommand.class);
 
 	/**

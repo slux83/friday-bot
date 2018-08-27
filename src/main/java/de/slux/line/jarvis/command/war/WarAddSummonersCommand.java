@@ -26,7 +26,7 @@ import de.slux.line.jarvis.logic.war.WarPlacementLogic;
  * @author slux
  */
 public class WarAddSummonersCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis summoners";
+	public static final String CMD_PREFIX = "friday summoners";
 	private static Logger LOG = LoggerFactory.getLogger(WarAddSummonersCommand.class);
 
 	/**

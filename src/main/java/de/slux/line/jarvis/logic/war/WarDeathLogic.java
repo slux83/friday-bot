@@ -12,7 +12,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.FridayBotApplication;
 import de.slux.line.jarvis.dao.DbConnectionPool;
 import de.slux.line.jarvis.dao.exception.WarDaoDuplicatedAllianceTagException;
 import de.slux.line.jarvis.dao.exception.WarDaoUnregisteredException;
@@ -293,7 +293,7 @@ public class WarDeathLogic {
 		StringBuilder sb = new StringBuilder("*** WAR HISTORY ***\n");
 
 		for (Map.Entry<Timestamp, String> entry : history.entrySet()) {
-			if (sb.length() > JarvisBotApplication.MAX_LINE_MESSAGE_SIZE) {
+			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
 				outcome.add(sb.toString());
 				sb.setLength(0);
 			}

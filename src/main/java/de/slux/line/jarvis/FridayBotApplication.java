@@ -67,19 +67,19 @@ import de.slux.line.jarvis.command.war.WarUndoDeathCommand;
 
 @SpringBootApplication
 @LineMessageHandler
-public class JarvisBotApplication {
-	public static String JARVIS_VERSION = "0.0.1-beta2";
+public class FridayBotApplication {
+	public static String FRIDAY_VERSION = "0.0.1-beta2";
 	public static final int MAX_LINE_MESSAGE_SIZE = 1500;
 
-	private static Logger LOG = LoggerFactory.getLogger(JarvisBotApplication.class);
-	private static JarvisBotApplication INSTANCE = null;
+	private static Logger LOG = LoggerFactory.getLogger(FridayBotApplication.class);
+	private static FridayBotApplication INSTANCE = null;
 	public static final String SLUX_ID = "Ufea80d366e42a0e4b7e3d228ed133e89";
 
-	public static synchronized JarvisBotApplication getInstance() {
+	public static synchronized FridayBotApplication getInstance() {
 		return INSTANCE;
 	}
 
-	public static synchronized void setInstance(JarvisBotApplication app) {
+	public static synchronized void setInstance(FridayBotApplication app) {
 		INSTANCE = app;
 	}
 
@@ -91,17 +91,17 @@ public class JarvisBotApplication {
 	private List<AbstractCommand> commands;
 
 	public static void main(String[] args) {
-		SpringApplication.run(JarvisBotApplication.class, args);
+		SpringApplication.run(FridayBotApplication.class, args);
 	}
 
 	@Autowired
-	public JarvisBotApplication(ApplicationArguments args) {
-		LOG.info("Jarvis BOT - APP starting up...");
+	public FridayBotApplication(ApplicationArguments args) {
+		LOG.info("FRIDAY BOT - APP starting up...");
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void startupCompleted() {
-		LOG.info("*** JARVIS v" + JARVIS_VERSION + " startup completed ***");
+		LOG.info("*** FRIDAY v" + FRIDAY_VERSION + " startup completed ***");
 	}
 
 	@PostConstruct
@@ -204,7 +204,7 @@ public class JarvisBotApplication {
 		AbstractCommand command = getCommand(message);
 
 		if (!this.isOperational.get() && !(command instanceof DefaultCommand)) {
-			return new TextMessage("Sorry, JARVIS is currently in standby for scheduled maintenance.");
+			return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
 		}
 
 		return command.execute(userId, groupId, message);

@@ -6,7 +6,7 @@ package de.slux.line.jarvis.command;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
 
-import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.FridayBotApplication;
 
 /**
  * This command is triggered for information
@@ -14,11 +14,11 @@ import de.slux.line.jarvis.JarvisBotApplication;
  * @author slux
  */
 public class InfoCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis info";
+	public static final String CMD_PREFIX = "friday info";
 
 	// Replace $GUID with the groupID
-	private static final String PAYPAL_LINK = "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=slux83@gmail.com&lc=US&item_name=jarvis%3A$GUID&no_note=0&cn=&currency_code=USD&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted";
-	private static final String JARVIS_USERS_LINE_GROUP_LINK = "https://line.me/R/ti/g/oNF5Riui79";
+	private static final String PAYPAL_LINK = "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=slux83@gmail.com&lc=US&item_name=friday%3A$GUID&no_note=0&cn=&currency_code=USD&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted";
+	private static final String FRIDAY_USERS_LINE_GROUP_LINK = "https://line.me/R/ti/g/oNF5Riui79";
 
 	/**
 	 * Ctor
@@ -49,18 +49,18 @@ public class InfoCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
-		StringBuilder sb = new StringBuilder("*** J.A.R.V.I.S. MCOC Line Bot ***\n\n");
-		sb.append("JARVIS Bot Line users group: ");
-		sb.append(JARVIS_USERS_LINE_GROUP_LINK);
+		StringBuilder sb = new StringBuilder("*** F.R.I.D.A.Y. MCOC Line Bot ***\n\n");
+		sb.append("FRIDAY Bot Line users group: ");
+		sb.append(FRIDAY_USERS_LINE_GROUP_LINK);
 		sb.append("\n");
-		sb.append("You can join the LINE group of JARVIS users to ask for help and play with the Bot.\n\n");
+		sb.append("You can join the LINE group of FRIDAY users to ask for help and play with the Bot.\n\n");
 		sb.append("Version: ");
-		sb.append(JarvisBotApplication.JARVIS_VERSION);
+		sb.append(FridayBotApplication.FRIDAY_VERSION);
 		sb.append("\n");
 		sb.append("Author: slux83\n");
-		sb.append("Issues tracker: https://github.com/slux83/jarvis-bot/issues\n\n");
-		sb.append("Please cosider a small donation if you want to support the JARVIS Bot development!\n");
-		sb.append("JARVIS Bot is hosted on a dedicated server and it has some running costs.\n\n");
+		sb.append("Issues tracker: https://github.com/slux83/friday-bot/issues\n\n");
+		sb.append("Please cosider a small donation if you want to support the FRIDAY Bot development!\n");
+		sb.append("FRIDAY Bot is hosted on a dedicated server and it has some running costs.\n\n");
 		sb.append("PAYPAL: ");
 		sb.append(PAYPAL_LINK.replace("$GUID", senderId));
 		sb.append("\n");

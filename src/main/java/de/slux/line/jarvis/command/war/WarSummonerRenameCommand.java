@@ -26,7 +26,7 @@ import de.slux.line.jarvis.logic.war.WarPlacementLogic;
  * @author slux
  */
 public class WarSummonerRenameCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis rename summoner";
+	public static final String CMD_PREFIX = "friday rename summoner";
 	private static Logger LOG = LoggerFactory.getLogger(WarSummonerRenameCommand.class);
 
 	/**

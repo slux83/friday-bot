@@ -12,11 +12,11 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 
--- Dumping database structure for jarvis
-CREATE DATABASE IF NOT EXISTS `jarvis` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `jarvis`;
+-- Dumping database structure for friday
+CREATE DATABASE IF NOT EXISTS `friday` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `friday`;
 
--- Dumping structure for table jarvis.war_death
+-- Dumping structure for table friday.war_death
 CREATE TABLE IF NOT EXISTS `war_death` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL DEFAULT 0,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `war_death` (
 ) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
--- Dumping structure for table jarvis.war_group
+-- Dumping structure for table friday.war_group
 CREATE TABLE IF NOT EXISTS `war_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `war_group` (
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
--- Dumping structure for table jarvis.war_history
+-- Dumping structure for table friday.war_history
 CREATE TABLE IF NOT EXISTS `war_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `war_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `war_history` (
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Data exporting was unselected.
--- Dumping structure for table jarvis.war_placement
+-- Dumping structure for table friday.war_placement
 CREATE TABLE IF NOT EXISTS `war_placement` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `summoner_id` int(11) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `war_placement` (
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
--- Dumping structure for table jarvis.war_summoner
+-- Dumping structure for table friday.war_summoner
 CREATE TABLE IF NOT EXISTS `war_summoner` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL,

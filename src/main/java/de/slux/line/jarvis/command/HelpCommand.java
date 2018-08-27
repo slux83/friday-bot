@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
 
-import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.FridayBotApplication;
 
 /**
  * This command is triggered on the register command
@@ -19,7 +19,7 @@ import de.slux.line.jarvis.JarvisBotApplication;
  * @author slux
  */
 public class HelpCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis help";
+	public static final String CMD_PREFIX = "friday help";
 	private static Logger LOG = LoggerFactory.getLogger(HelpCommand.class);
 
 	/**
@@ -53,7 +53,7 @@ public class HelpCommand extends AbstractCommand {
 	public TextMessage execute(String userId, String senderId, String message) {
 		StringBuilder sb = new StringBuilder("*** J.A.R.V.I.S. HELP ***");
 
-		List<AbstractCommand> commands = JarvisBotApplication.getInstance().getCommands();
+		List<AbstractCommand> commands = FridayBotApplication.getInstance().getCommands();
 
 		LOG.info("Constructing help using " + commands.size() + " command(s)");
 		for (AbstractCommand c : commands) {

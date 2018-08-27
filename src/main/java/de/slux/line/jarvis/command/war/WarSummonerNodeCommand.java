@@ -26,7 +26,7 @@ import de.slux.line.jarvis.logic.war.WarPlacementLogic;
  * @author slux
  */
 public class WarSummonerNodeCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis node";
+	public static final String CMD_PREFIX = "friday node";
 	private static Logger LOG = LoggerFactory.getLogger(WarSummonerNodeCommand.class);
 	private static final String POSITION_REGEX = "^(10?|[1-9])[A-E]";
 

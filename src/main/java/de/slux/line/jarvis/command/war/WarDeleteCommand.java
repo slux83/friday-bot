@@ -24,7 +24,7 @@ import de.slux.line.jarvis.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarDeleteCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis delete war";
+	public static final String CMD_PREFIX = "friady delete war";
 	private static Logger LOG = LoggerFactory.getLogger(WarDeleteCommand.class);
 
 	/**

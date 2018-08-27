@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.FridayBotApplication;
 import de.slux.line.jarvis.logic.war.WarDeathLogic;
 
 /**
@@ -134,7 +134,7 @@ public class WarGroup {
 
 		for (WarDeath wd : reports) {
 
-			if (sb.length() > JarvisBotApplication.MAX_LINE_MESSAGE_SIZE) {
+			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
 				// We need to split it and clear
 				outcome.add(sb.toString());
 				sb.setLength(0);

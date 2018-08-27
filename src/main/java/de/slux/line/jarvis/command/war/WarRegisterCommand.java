@@ -20,7 +20,7 @@ import de.slux.line.jarvis.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarRegisterCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis register";
+	public static final String CMD_PREFIX = "friday register";
 	private static Logger LOG = LoggerFactory.getLogger(WarRegisterCommand.class);
 
 	/**
@@ -94,7 +94,7 @@ public class WarRegisterCommand extends AbstractCommand {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[" + CMD_PREFIX + " <ALLYTAG-BG>]\n");
-		sb.append("Register this chat group for Jarvis war tools. ");
+		sb.append("Register this chat group for FRIDAY war tools. ");
 		sb.append("Use this command later on to modify the name if needed\n");
 		sb.append("Example " + CMD_PREFIX + " 4Loki-BG1");
 

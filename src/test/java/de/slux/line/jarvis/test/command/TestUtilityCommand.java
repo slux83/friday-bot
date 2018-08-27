@@ -14,7 +14,7 @@ import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
-import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.FridayBotApplication;
 import de.slux.line.jarvis.command.InfoCommand;
 import de.slux.line.jarvis.command.admin.AdminStatusCommand;
 import de.slux.line.jarvis.test.util.LineMessagingClientMock;
@@ -30,11 +30,11 @@ public class TestUtilityCommand {
 	public void testAdminStatusCommand() throws Exception {
 
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
-		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		FridayBotApplication jarvis = new FridayBotApplication(null);
 		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 
-		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(null, JarvisBotApplication.SLUX_ID,
+		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(null, FridayBotApplication.SLUX_ID,
 		        AdminStatusCommand.CMD_PREFIX);
 
 		jarvis.getIncomingMsgCounter().set(10);
@@ -43,7 +43,7 @@ public class TestUtilityCommand {
 
 		System.out.println(response);
 
-		event = MessageEventUtil.createMessageEvent(null, JarvisBotApplication.SLUX_ID,
+		event = MessageEventUtil.createMessageEvent(null, FridayBotApplication.SLUX_ID,
 		        AdminStatusCommand.CMD_PREFIX + " fake foo bar");
 		response = jarvis.handleTextMessageEvent(event);
 
@@ -74,7 +74,7 @@ public class TestUtilityCommand {
 	@Test
 	public void testInfoCommand() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
-		JarvisBotApplication jarvis = new JarvisBotApplication(null);
+		FridayBotApplication jarvis = new FridayBotApplication(null);
 		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
 
-import de.slux.line.jarvis.JarvisBotApplication;
+import de.slux.line.jarvis.FridayBotApplication;
 import de.slux.line.jarvis.command.AbstractCommand;
 import de.slux.line.jarvis.logic.war.WarDeathLogic;
 
@@ -22,7 +22,7 @@ import de.slux.line.jarvis.logic.war.WarDeathLogic;
  * @author slux
  */
 public class AdminStatusCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "jarvis status";
+	public static final String CMD_PREFIX = "friday status";
 	private static Logger LOG = LoggerFactory.getLogger(AdminStatusCommand.class);
 	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
@@ -63,9 +63,9 @@ public class AdminStatusCommand extends AbstractCommand {
 			String newStatus = args.get(2).trim();
 
 			if (newStatus.equalsIgnoreCase("operational")) {
-				JarvisBotApplication.getInstance().getIsOperational().set(true);
+				FridayBotApplication.getInstance().getIsOperational().set(true);
 			} else if (newStatus.equalsIgnoreCase("maintenance")) {
-				JarvisBotApplication.getInstance().getIsOperational().set(false);
+				FridayBotApplication.getInstance().getIsOperational().set(false);
 			} else {
 				sb.append("WARNING: submitted unknown status ");
 				sb.append(newStatus);
@@ -74,13 +74,13 @@ public class AdminStatusCommand extends AbstractCommand {
 		}
 
 		sb.append("Version: ");
-		sb.append(JarvisBotApplication.JARVIS_VERSION);
+		sb.append(FridayBotApplication.FRIDAY_VERSION);
 		sb.append("\n");
 		sb.append("Status: ");
-		sb.append(JarvisBotApplication.getInstance().getIsOperational().get() ? "OPERATIONAL" : "MAINTENANCE");
+		sb.append(FridayBotApplication.getInstance().getIsOperational().get() ? "OPERATIONAL" : "MAINTENANCE");
 		sb.append("\n");
-		long msgCounter = JarvisBotApplication.getInstance().getIncomingMsgCounter().get();
-		long startupMs = JarvisBotApplication.getInstance().getStartup().getTime();
+		long msgCounter = FridayBotApplication.getInstance().getIncomingMsgCounter().get();
+		long startupMs = FridayBotApplication.getInstance().getStartup().getTime();
 		long nowMs = System.currentTimeMillis();
 		long msDiff = Math.abs(nowMs - startupMs);
 		double msgSec = (msgCounter / (msDiff / 1000.0));
@@ -108,7 +108,7 @@ public class AdminStatusCommand extends AbstractCommand {
 		LOG.info("Messages/sec: " + DECIMAL_FORMAT.format(msgSec));
 		LOG.info("Total groups: " + groupCounter);
 		LOG.info("Status: "
-		        + (JarvisBotApplication.getInstance().getIsOperational().get() ? "OPERATIONAL" : "MAINTENANCE"));
+		        + (FridayBotApplication.getInstance().getIsOperational().get() ? "OPERATIONAL" : "MAINTENANCE"));
 
 		return new TextMessage(sb.toString());
 	}
@@ -160,7 +160,7 @@ public class AdminStatusCommand extends AbstractCommand {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[" + CMD_PREFIX + " <(maintenance|operational)?>]\n");
-		sb.append("Prints the current status of JARVIS. Set JARVIS new status (maintenance|operational)");
+		sb.append("Prints the current status of FRIDAY. Set FRIDAY new status (maintenance|operational)");
 
 		return sb.toString();
 	}
