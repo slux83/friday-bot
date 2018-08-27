@@ -168,6 +168,14 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("War reports cleared"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 		
+		response = friday.handleTextMessageEvent(summonersPrintCmd);
+		assertTrue(response.getText().contains("Nothing to report"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(deathSummaryCmd);
+		assertTrue(response.getText().contains("Nothing to report"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
 		response = friday.handleTextMessageEvent(historyWarCmd);
 		assertTrue(response.getText().contains("DH DM"));
 		assertTrue(response.getText().contains(WarDeathLogic.SDF.format(new Date())));
@@ -179,7 +187,6 @@ public class TestWarCommand {
 		assertTrue(history.contains("6* NC"));
 		assertTrue(history.contains("4. Tony 88"));
 		assertTrue(history.contains("A. 5* dupe IMIW (55)"));
-		System.err.println(history);
 
 		response = friday.handleTextMessageEvent(deleteHistoryWarCmd);
 		assertTrue(response.getText().contains("DH DM"));

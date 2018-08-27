@@ -152,7 +152,7 @@ public class WarGroup {
 		}
 
 		if (reports.isEmpty())
-			sb.append("Nothing to summarize\n\n");
+			sb.append("Nothing to report\n\n");
 
 		sb.append("\n");
 		sb.append(getReport());
