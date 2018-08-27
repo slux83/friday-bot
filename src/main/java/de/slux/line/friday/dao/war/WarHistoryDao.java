@@ -19,9 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.slux.line.friday.data.war.WarGroup;
+import de.slux.line.friday.data.war.WarGroup.HistoryType;
 import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.data.war.WarSummonerPlacement;
-import de.slux.line.friday.data.war.WarGroup.HistoryType;
 
 /**
  * @author slux

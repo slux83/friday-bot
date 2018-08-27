@@ -20,9 +20,9 @@ import de.slux.line.friday.dao.DbConnectionPool;
 import de.slux.line.friday.dao.exception.GenericDaoException;
 import de.slux.line.friday.dao.exception.SummonerNotFoundException;
 import de.slux.line.friday.dao.war.WarSummonerDao;
+import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.data.war.WarSummonerPlacement;
-import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 
 /**

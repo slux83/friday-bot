@@ -93,6 +93,12 @@ public class WarHistoryCommand extends AbstractCommand {
 					super.messagingClient.pushMessage(pushMessage).get();
 				}
 
+				if (historyPlacement.isEmpty()) {
+					PushMessage pushMessage = new PushMessage(senderId,
+					        new TextMessage("No placement reports found for " + day));
+					super.messagingClient.pushMessage(pushMessage).get();
+				}
+
 				for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
 					List<String> summaryText = historyEntry.getValue().getSummaryText();
 					super.pushMultipleMessages(senderId,

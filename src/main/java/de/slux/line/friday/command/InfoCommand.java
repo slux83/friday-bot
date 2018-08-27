@@ -53,9 +53,10 @@ public class InfoCommand extends AbstractCommand {
 		sb.append(getInfo(senderId));
 		return new TextMessage(sb.toString());
 	}
-	
+
 	/**
 	 * Get the info
+	 * 
 	 * @return
 	 */
 	public static String getInfo(String senderId) {
@@ -74,7 +75,7 @@ public class InfoCommand extends AbstractCommand {
 		sb.append("PAYPAL: ");
 		sb.append(PAYPAL_LINK.replace("$GUID", senderId));
 		sb.append("\n");
-		
+
 		return sb.toString();
 	}
 

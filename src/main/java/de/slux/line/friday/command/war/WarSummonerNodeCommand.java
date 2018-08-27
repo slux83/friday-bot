@@ -15,7 +15,6 @@ import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.dao.exception.SummonerNotFoundException;
-import de.slux.line.friday.dao.exception.SummonerNumberExceededException;
 import de.slux.line.friday.dao.exception.WarDaoUnregisteredException;
 import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.logic.war.WarPlacementLogic;
@@ -88,11 +87,8 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 
 			int summoner = -1;
 
-			try {
-				summoner = Integer.parseInt(summonerNum);
-			} catch (NumberFormatException e) {
-				return new TextMessage("Invalid summoner position. Expected 1-10 values, got " + summonerNum);
-			}
+			// Already validated by the regex
+			summoner = Integer.parseInt(summonerNum);
 
 			int node = -1;
 
@@ -112,8 +108,6 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");
 		} catch (SummonerNotFoundException e) {
-			return new TextMessage(e.getMessage());
-		} catch (SummonerNumberExceededException e) {
 			return new TextMessage(e.getMessage());
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);

@@ -68,6 +68,7 @@ public class WarAddSummonersCommand extends AbstractCommand {
 				args.remove(0);
 
 				if (args.size() == 0) {
+					// Can't really happen
 					return new TextMessage("Please specify a list of summoner names");
 				}
 				String summoners = String.join(" ", args);

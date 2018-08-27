@@ -133,7 +133,7 @@ public class WarPlacementLogic {
 				outcome.add(sb.toString());
 				sb.setLength(0);
 			}
-			
+
 			sb.append(entry.getKey().toString());
 			sb.append(". ");
 			sb.append(entry.getValue().getName());
@@ -155,13 +155,13 @@ public class WarPlacementLogic {
 
 			sb.append("\n");
 		}
-		
+
 		if (summoners.isEmpty()) {
 			sb.append("Nothing to report");
 		}
-		
+
 		outcome.add(sb.toString());
-		
+
 		return outcome;
 	}
 }

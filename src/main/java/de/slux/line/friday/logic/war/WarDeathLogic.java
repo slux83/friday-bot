@@ -20,8 +20,8 @@ import de.slux.line.friday.dao.war.WarDeathDao;
 import de.slux.line.friday.dao.war.WarGroupDao;
 import de.slux.line.friday.dao.war.WarHistoryDao;
 import de.slux.line.friday.data.war.WarGroup;
-import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
+import de.slux.line.friday.data.war.WarSummoner;
 
 /**
  * @author slux
@@ -163,9 +163,10 @@ public class WarDeathLogic {
 		return reportModel;
 
 	}
-	
+
 	/**
 	 * Update the group status
+	 * 
 	 * @param groupId
 	 * @param newStatus
 	 * @throws Exception

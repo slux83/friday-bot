@@ -23,7 +23,7 @@ public class WarSummoner {
 		this.id = id;
 		this.name = name;
 	}
-	
+
 	/**
 	 * @param name
 	 */

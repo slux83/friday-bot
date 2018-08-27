@@ -44,13 +44,13 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 import de.slux.line.friday.command.AbstractCommand;
+import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.DefaultCommand;
 import de.slux.line.friday.command.GoodbyeGroupCommand;
 import de.slux.line.friday.command.HelloGroupCommand;
 import de.slux.line.friday.command.HelloUserCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
-import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
 import de.slux.line.friday.command.admin.AdminHelpCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
@@ -299,7 +299,7 @@ public class FridayBotApplication {
 	public AtomicLong getCommandIncomingMsgCounter() {
 		return commandIncomingMsgCounter;
 	}
-	
+
 	/**
 	 * @return the totalIncomingMsgCounter
 	 */

@@ -124,7 +124,7 @@ public abstract class AbstractCommand {
 
 	protected TextMessage pushMultipleMessages(String senderId, String header, List<String> messages, boolean forcePush)
 	        throws Exception {
-		
+
 		if (messages.isEmpty())
 			return null;
 

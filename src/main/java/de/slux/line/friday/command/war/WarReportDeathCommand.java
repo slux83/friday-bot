@@ -3,7 +3,6 @@
  */
 package de.slux.line.friday.command.war;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -24,8 +23,6 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  */
 public class WarReportDeathCommand extends AbstractCommand {
 	public static final String CMD_PREFIX = "friday death";
-	public static final String CMD_PREFIX_1 = CMD_PREFIX.split(" ")[0];
-	public static final String CMD_PREFIX_2 = CMD_PREFIX.split(" ")[1];
 	private static Logger LOG = LoggerFactory.getLogger(WarReportDeathCommand.class);
 
 	/**
@@ -57,27 +54,20 @@ public class WarReportDeathCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
-		List<String> argsAsList = super.extractArgs(message.replace(CMD_PREFIX, ""));
+		List<String> args = super.extractArgs(message);
 
-		// Clean up the empty ones and command
-		for (Iterator<String> iterator = argsAsList.iterator(); iterator.hasNext();) {
-			String string = iterator.next();
-			if (string.trim().isEmpty() || string.trim().equalsIgnoreCase(CMD_PREFIX_1)
-			        || string.trim().equalsIgnoreCase(CMD_PREFIX_2)) {
-				// Remove the current element from the iterator and the
-				// list.
-				iterator.remove();
-			}
-		}
-		LOG.debug("war args after clean up: " + argsAsList);
-		if (argsAsList.size() < 3) {
+		// Clean up prefix
+		args.remove(0);
+		args.remove(0);
+
+		if (args.size() < 3) {
 			return new TextMessage(
 			        "Incorrect syntax. Please use the following:\n" + CMD_PREFIX + " <deaths> <node> <champ>");
 		}
 
 		int deaths = -1;
 		try {
-			deaths = Integer.parseInt(argsAsList.get(0).trim());
+			deaths = Integer.parseInt(args.get(0).trim());
 		} catch (NumberFormatException e) {
 			return new TextMessage("Number expected for <deaths>. Please use the following:\n" + CMD_PREFIX
 			        + " <deaths> <node> <champ>");
@@ -85,15 +75,15 @@ public class WarReportDeathCommand extends AbstractCommand {
 
 		int node = -1;
 		try {
-			node = Integer.parseInt(argsAsList.get(1).trim());
+			node = Integer.parseInt(args.get(1).trim());
 		} catch (NumberFormatException e) {
 			return new TextMessage("Number expected for <node>. Please use the following:\n" + CMD_PREFIX
 			        + " <deaths> <node> <champ>");
 		}
 
-		argsAsList.remove(0);
-		argsAsList.remove(0);
-		String champName = String.join(" ", argsAsList.toArray(new String[] {}));
+		args.remove(0);
+		args.remove(0);
+		String champName = String.join(" ", args.toArray(new String[] {}));
 		String userName = super.getUserName(senderId, userId);
 
 		try {

@@ -59,18 +59,15 @@ public class WarSaveCommand extends AbstractCommand {
 		try {
 			// Get the summary of a specific day
 			WarDeathLogic warModel = new WarDeathLogic();
-			List<String> argsAsList = super.extractArgs(message);
+			List<String> args = super.extractArgs(message);
 
-			if (argsAsList.size() < 3)
-				return new TextMessage("Please specify the opponent alliance tag");
+			if (args.size() < 3)
+				return new TextMessage("Missing argument. Please specify the opponent alliance tag");
 
-			StringBuilder allyTagBuilder = new StringBuilder();
-			for (int i = 2; i < argsAsList.size(); ++i) {
-				allyTagBuilder.append(argsAsList.get(i));
-				allyTagBuilder.append(" ");
-			}
+			args.remove(0);
+			args.remove(0);
+			allyTag = String.join(" ", args);
 
-			allyTag = allyTagBuilder.toString().trim();
 			warModel.saveWar(senderId, allyTag);
 			return new TextMessage("War reports against '" + allyTag + "' saved successfully");
 		} catch (WarDaoUnregisteredException e) {

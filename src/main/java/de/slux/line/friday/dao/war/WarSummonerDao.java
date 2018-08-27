@@ -246,7 +246,6 @@ public class WarSummonerDao {
 			stmt.setString(1, Base64.getEncoder().encodeToString(name.getBytes()));
 			stmt.setInt(2, summonerDbKey);
 			stmt.executeUpdate();
-
 		} finally {
 			try {
 				if (stmt != null)

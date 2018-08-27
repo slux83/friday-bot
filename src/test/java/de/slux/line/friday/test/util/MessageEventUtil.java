@@ -53,7 +53,7 @@ public class MessageEventUtil {
 		Source source = new GroupSource(groupId, userId);
 		return new JoinEvent(UUID.randomUUID().toString(), source, timestamp);
 	}
-	
+
 	/**
 	 * Create a leave event
 	 * 

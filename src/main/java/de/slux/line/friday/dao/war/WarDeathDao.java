@@ -136,14 +136,14 @@ public class WarDeathDao {
 	 */
 	public void clearData(int groupKey) throws SQLException {
 		PreparedStatement stmt = null;
-		
+
 		try {
 			stmt = conn.prepareStatement(DELETE_DATA_DEATH_BY_GROUP_STATEMENT);
 			stmt.setInt(1, groupKey);
 			int deletedRows = stmt.executeUpdate();
 			LOG.info("Deleted " + deletedRows + " death report(s) for groupkey=" + groupKey);
 			stmt.close();
-			
+
 			stmt = conn.prepareStatement(DELETE_DATA_SUMMONER_BY_GROUP_STATEMENT);
 			stmt.setInt(1, groupKey);
 			deletedRows = stmt.executeUpdate();

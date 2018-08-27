@@ -3,6 +3,7 @@
  */
 package de.slux.line.friday.test.command;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
@@ -19,6 +20,7 @@ import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
+import de.slux.line.friday.command.admin.AdminBroadcastCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarHistoryCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
@@ -74,6 +76,24 @@ public class TestUtilityCommand {
 		// 10 day and 1h and 12 min and 40 secs
 		System.out.println(AdminStatusCommand
 		        .calculateUptime((((1000 * 60 * 60 * 24 * 10) + 1000 * 60 * 60) + 1000 * 60 * 12) + 1000 * 40));
+
+	}
+
+	@Test
+	public void testAdminBroadcastCommand() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
+
+		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(null, FridayBotApplication.SLUX_ID,
+		        AdminBroadcastCommand.CMD_PREFIX + " hello everyone!");
+
+		TextMessage response = friday.handleTextMessageEvent(event);
+
+		assertNotNull(response);
+		assertTrue(response.getText().contains("Message broadcasted"));
+		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
 
 	}
 
@@ -135,12 +155,10 @@ public class TestUtilityCommand {
 
 		friday.handleDefaultMessageEvent(event);
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		response = friday.handleTextMessageEvent(historyWarCmd);
 		assertTrue(response.getText().contains("This group is unregistered"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
-
 	}
-
 }

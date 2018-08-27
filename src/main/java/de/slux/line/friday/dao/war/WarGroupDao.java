@@ -30,11 +30,11 @@ public class WarGroupDao {
 	private static final String RETRIEVE_DATA_STATEMENT = "SELECT id, group_name FROM war_group WHERE group_id = ? AND group_status = ?";
 
 	private static final String UPDATE_NAME_DATA_STATEMENT = "UPDATE war_group SET group_name = ? WHERE group_id = ?";
-	
+
 	private static final String UPDATE_STATUS_DATA_STATEMENT = "UPDATE war_group SET group_status = ? WHERE group_id = ?";
 
 	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name FROM war_group";
-	
+
 	public WarGroupDao(Connection conn) {
 		this.conn = conn;
 	}
@@ -109,7 +109,7 @@ public class WarGroupDao {
 
 		LOG.info("Data updated successfully: " + groupId + " (" + groupName + ")");
 	}
-	
+
 	/**
 	 * Update the name of the group
 	 * 

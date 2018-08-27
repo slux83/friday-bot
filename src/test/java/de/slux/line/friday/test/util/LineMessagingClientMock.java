@@ -53,7 +53,7 @@ public class LineMessagingClientMock implements LineMessagingClient {
 	@Override
 	public CompletableFuture<BotApiResponse> pushMessage(PushMessage pushMessage) {
 		this.callback.pushMessageGenerated(pushMessage.toString());
-		
+
 		CompletableFuture<BotApiResponse> response = new CompletableFuture<>();
 		response.complete(new BotApiResponse("", Collections.emptyList()));
 		return response;

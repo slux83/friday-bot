@@ -10,8 +10,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -55,7 +55,7 @@ public class WarTest {
 		model.resetFor(GROUP1_ID);
 		model.resetFor(GROUP2_ID);
 		model.resetFor(GROUP3_ID);
-		
+
 		model.deleteHistoryEntries(GROUP1_ID, "ISO8A", new Date());
 		model.deleteHistoryEntries(GROUP2_ID, "DH", new Date());
 		model.deleteHistoryEntries(GROUP2_ID, "DH-DM", new Date());
