@@ -14,15 +14,15 @@ DB_NAME="friday"
 
 echo "*** Starting FRIDAY BOT ${FRIDAY_VERSION} ***"
 
-java    -Dline.bot.channelSecret="$LINE_CHANNEL_SECRET" \
-	-Dline.bot.channelToken="$LINE_CHANNEL_TOKEN" \
-	-Dfriday.db.user="$DB_USER" \
-	-Dfriday.db.password="$DB_PASSWORD" \
-	-Dfriday.db.host="$DB_HOST" \
-	-Dfriday.db.port="$DB_PORT" \
-	-Dfriday.db.name="$DB_NAME" \
-	$JAVA_OPTS \
-	-cp "target/friday-bot-${FRIDAY_VERSION}.jar:target/libs/*" ${MAIN} 
+java -Dline.bot.channelSecret="$LINE_CHANNEL_SECRET" \
+     -Dline.bot.channelToken="$LINE_CHANNEL_TOKEN" \
+     -Dfriday.db.user="$DB_USER" \
+     -Dfriday.db.password="$DB_PASSWORD" \
+     -Dfriday.db.host="$DB_HOST" \
+     -Dfriday.db.port="$DB_PORT" \
+     -Dfriday.db.name="$DB_NAME" \
+     $JAVA_OPTS \
+     -cp "target/friday-bot-${FRIDAY_VERSION}.jar:target/libs/*" ${MAIN} 
 
 
 

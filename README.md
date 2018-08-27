@@ -1,3 +1,3 @@
-# jarvis-bot
+# friday-bot
 
-MCOC Jarvis Bot
+MCOC F.R.I.D.A.Y. Bot
