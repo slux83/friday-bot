@@ -3,9 +3,12 @@
  */
 package de.slux.line.jarvis.test.command;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -19,12 +22,17 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.JarvisBotApplication;
 import de.slux.line.jarvis.command.war.WarAddSummonersCommand;
+import de.slux.line.jarvis.command.war.WarDeleteCommand;
+import de.slux.line.jarvis.command.war.WarHistoryCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
 import de.slux.line.jarvis.command.war.WarReportDeathCommand;
+import de.slux.line.jarvis.command.war.WarResetCommand;
+import de.slux.line.jarvis.command.war.WarSaveCommand;
 import de.slux.line.jarvis.command.war.WarSummaryDeathCommand;
 import de.slux.line.jarvis.command.war.WarSummonerNodeCommand;
 import de.slux.line.jarvis.command.war.WarSummonerRenameCommand;
 import de.slux.line.jarvis.command.war.WarUndoDeathCommand;
+import de.slux.line.jarvis.logic.war.WarDeathLogic;
 import de.slux.line.jarvis.test.util.LineMessagingClientMock;
 import de.slux.line.jarvis.test.util.MessageEventUtil;
 import de.slux.line.jarvis.test.util.MessagingClientCallbackImpl;
@@ -64,6 +72,26 @@ public class TestWarCommand {
 		MessageEvent<TextMessageContent> undoDeathCmd = MessageEventUtil.createMessageEvent(groupId, userId,
 		        WarUndoDeathCommand.CMD_PREFIX);
 
+		// Save war command
+		MessageEvent<TextMessageContent> saveWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		        WarSaveCommand.CMD_PREFIX + " DH DM");
+
+		// Reset war command
+		MessageEvent<TextMessageContent> resetWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		        WarResetCommand.CMD_PREFIX);
+
+		// All history command
+		MessageEvent<TextMessageContent> historyWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		        WarHistoryCommand.CMD_PREFIX);
+
+		// Specific history command
+		MessageEvent<TextMessageContent> specificHistoryWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		        WarHistoryCommand.CMD_PREFIX + " " + WarDeathLogic.SDF.format(new Date()));
+
+		// Delete history command
+		MessageEvent<TextMessageContent> deleteHistoryWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		        WarDeleteCommand.CMD_PREFIX + " " + WarDeathLogic.SDF.format(new Date()) + " DH DM");
+
 		/* Start the workflow */
 		TextMessage response = jarvis.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("successfully registered using the name group1"));
@@ -74,117 +102,38 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("480"));
 		assertTrue(response.getText().contains("7"));
 
-		// TODO: complete me
-	}
+		response = jarvis.handleTextMessageEvent(deathSummaryCmd);
+		assertNull(response);
+		assertTrue(callback.takeAllMessages().contains("5* dupe KP"));
 
-	@Test
-	public void testAddSummonersCommand() throws Exception {
-		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
-		JarvisBotApplication jarvis = new JarvisBotApplication(null);
-		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
-		jarvis.postConstruct();
+		response = jarvis.handleTextMessageEvent(undoDeathCmd);
+		assertTrue(response.getText().contains("WAR DEATH REPORT"));
 
-		// Add summoners command
-		Source source = new GroupSource("group-id", UUID.randomUUID().toString());
-		Instant timestamp = Instant.now();
-		String summoners = " Summoner 1   , Summoner2, Summoner 3";
-		TextMessageContent message = new TextMessageContent("001", WarAddSummonersCommand.CMD_PREFIX + summoners);
-		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
-		        timestamp);
+		response = jarvis.handleTextMessageEvent(deathSummaryCmd);
+		assertNull(response);
+		assertFalse(callback.takeAllMessages().contains("5* dupe KP"));
 
-		// Register command
-		Source sourceRegister = new GroupSource("group-id", UUID.randomUUID().toString());
-		TextMessageContent messageRegister = new TextMessageContent("001",
-		        WarRegisterCommand.CMD_PREFIX + " test-group");
-		MessageEvent<TextMessageContent> eventRegister = new MessageEvent<TextMessageContent>("reply-token",
-		        sourceRegister, messageRegister, timestamp);
+		response = jarvis.handleTextMessageEvent(saveWarCmd);
+		assertTrue(response.getText().contains("DH DM"));
+		assertTrue(callback.takeAllMessages().isEmpty());
 
-		TextMessage response = jarvis.handleTextMessageEvent(eventRegister);
-		Assert.assertTrue(response.getText().contains("registered using the name test-group"));
+		response = jarvis.handleTextMessageEvent(resetWarCmd);
+		assertTrue(response.getText().contains("War reports cleared"));
+		assertTrue(callback.takeAllMessages().isEmpty());
 
-		response = jarvis.handleTextMessageEvent(event);
-		Assert.assertTrue(callback.takeAllMessages().contains("Summoner2"));
+		response = jarvis.handleTextMessageEvent(historyWarCmd);
+		assertNull(response);
+		String allMessages = callback.takeAllMessages();
+		assertTrue(allMessages.contains("DH DM"));
+		assertTrue(allMessages.contains(WarDeathLogic.SDF.format(new Date())));
 
-		// Edit element
-		Source sourceEdit = new GroupSource("group-id", UUID.randomUUID().toString());
-		TextMessageContent messageEdit = new TextMessageContent("001",
-		        WarSummonerNodeCommand.CMD_PREFIX + " 2E 5 5* dupe Medusa");
-		MessageEvent<TextMessageContent> eventEdit = new MessageEvent<TextMessageContent>("reply-token", sourceEdit,
-		        messageEdit, timestamp);
+		response = jarvis.handleTextMessageEvent(specificHistoryWarCmd);
+		assertNull(response);
+		assertTrue(callback.takeAllMessages().contains("6* NC"));
 
-		response = jarvis.handleTextMessageEvent(eventEdit);
-		String pushedText = callback.takeAllMessages();
-		Assert.assertTrue(pushedText.contains("Summoner2"));
-		Assert.assertTrue(pushedText.contains("5* dupe Medusa"));
-
-		// Rename summoner
-		Source sourceRename = new GroupSource("group-id", UUID.randomUUID().toString());
-		TextMessageContent messageRename = new TextMessageContent("001",
-		        WarSummonerRenameCommand.CMD_PREFIX + " 1 slux 83");
-		MessageEvent<TextMessageContent> eventRename = new MessageEvent<TextMessageContent>("reply-token", sourceRename,
-		        messageRename, timestamp);
-
-		response = jarvis.handleTextMessageEvent(eventRename);
-		pushedText = callback.takeAllMessages();
-		Assert.assertFalse(pushedText.contains("Summoner 1"));
-		Assert.assertTrue(pushedText.contains("slux 83"));
-	}
-
-	@Test
-	public void testAddSummonersCommandTooMany() throws Exception {
-		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
-		JarvisBotApplication jarvis = new JarvisBotApplication(null);
-		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
-		jarvis.postConstruct();
-
-		// Add summoners command
-		Source source = new GroupSource("group-id1", UUID.randomUUID().toString());
-		Instant timestamp = Instant.now();
-		String summoners = " Summoner 1, Summoner 2, Summoner 3, Summoner 4, Summoner 5, Summoner 6, Summoner 7, Summoner 8, Summoner 9, Summoner 10, Summoner 11";
-		TextMessageContent message = new TextMessageContent("001", WarAddSummonersCommand.CMD_PREFIX + summoners);
-		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
-		        timestamp);
-
-		// Register command
-		Source sourceRegister = new GroupSource("group-id1", UUID.randomUUID().toString());
-		TextMessageContent messageRegister = new TextMessageContent("001",
-		        WarRegisterCommand.CMD_PREFIX + " test-group");
-		MessageEvent<TextMessageContent> eventRegister = new MessageEvent<TextMessageContent>("reply-token",
-		        sourceRegister, messageRegister, timestamp);
-
-		TextMessage response = jarvis.handleTextMessageEvent(eventRegister);
-		Assert.assertTrue(response.getText().contains("registered using the name test-group"));
-
-		response = jarvis.handleTextMessageEvent(event);
-		Assert.assertTrue(response.getText().contains("You can add a maximum of"));
-	}
-
-	@Test
-	public void testAddSummonersJustPrint() throws Exception {
-		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
-		JarvisBotApplication jarvis = new JarvisBotApplication(null);
-		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
-		jarvis.postConstruct();
-
-		// Add summoners command
-		Source source = new GroupSource("group-id", UUID.randomUUID().toString());
-		Instant timestamp = Instant.now();
-		TextMessageContent message = new TextMessageContent("001", WarAddSummonersCommand.CMD_PREFIX);
-		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
-		        timestamp);
-
-		// Register command
-		Source sourceRegister = new GroupSource("group-id", UUID.randomUUID().toString());
-		TextMessageContent messageRegister = new TextMessageContent("001",
-		        WarRegisterCommand.CMD_PREFIX + " test-group");
-		MessageEvent<TextMessageContent> eventRegister = new MessageEvent<TextMessageContent>("reply-token",
-		        sourceRegister, messageRegister, timestamp);
-
-		TextMessage resp = jarvis.handleTextMessageEvent(eventRegister);
-		Assert.assertTrue(resp.getText().contains("registered using the name test-group"));
-
-		jarvis.handleTextMessageEvent(event);
-		String response = callback.takeAllMessages();
-		Assert.assertTrue(response.contains("CURRENT WAR PLACEMENT"));
+		response = jarvis.handleTextMessageEvent(deleteHistoryWarCmd);
+		assertTrue(response.getText().contains("DH DM"));
+		assertTrue(response.getText().contains(WarDeathLogic.SDF.format(new Date())));
+		assertTrue(callback.takeAllMessages().isEmpty());
 	}
 }
