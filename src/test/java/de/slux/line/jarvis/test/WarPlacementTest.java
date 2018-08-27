@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,9 +31,9 @@ import de.slux.line.jarvis.logic.war.WarDeathLogic;
  */
 public class WarPlacementTest {
 
-	private static final String GROUP1_ID = "test_group1";
-	private static final String GROUP2_ID = "test_group2";
-	private static final String GROUP3_ID = "test_group3";
+	private static final String GROUP1_ID = UUID.randomUUID().toString();
+	private static final String GROUP2_ID = UUID.randomUUID().toString();
+	private static final String GROUP3_ID = UUID.randomUUID().toString();
 
 	private WarDeathLogic warModel;
 	private int group1Key;

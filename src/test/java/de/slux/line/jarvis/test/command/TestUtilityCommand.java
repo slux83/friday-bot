@@ -5,22 +5,20 @@ package de.slux.line.jarvis.test.command;
 
 import static org.junit.Assert.assertTrue;
 
-import java.time.Instant;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
-import com.linecorp.bot.model.event.source.GroupSource;
-import com.linecorp.bot.model.event.source.Source;
-import com.linecorp.bot.model.event.source.UserSource;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.JarvisBotApplication;
 import de.slux.line.jarvis.command.InfoCommand;
 import de.slux.line.jarvis.command.admin.AdminStatusCommand;
 import de.slux.line.jarvis.test.util.LineMessagingClientMock;
+import de.slux.line.jarvis.test.util.MessageEventUtil;
 import de.slux.line.jarvis.test.util.MessagingClientCallbackImpl;
 
 /**
@@ -36,11 +34,8 @@ public class TestUtilityCommand {
 		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 
-		Source source = new UserSource(JarvisBotApplication.SLUX_ID);
-		Instant timestamp = Instant.now();
-		TextMessageContent message = new TextMessageContent("001", AdminStatusCommand.CMD_PREFIX);
-		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
-		        timestamp);
+		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(null, JarvisBotApplication.SLUX_ID,
+		        AdminStatusCommand.CMD_PREFIX);
 
 		jarvis.getIncomingMsgCounter().set(10);
 		Thread.sleep(1000);
@@ -48,8 +43,8 @@ public class TestUtilityCommand {
 
 		System.out.println(response);
 
-		message = new TextMessageContent("001", AdminStatusCommand.CMD_PREFIX + " fake foo bar");
-		event = new MessageEvent<TextMessageContent>("reply-token", source, message, timestamp);
+		event = MessageEventUtil.createMessageEvent(null, JarvisBotApplication.SLUX_ID,
+		        AdminStatusCommand.CMD_PREFIX + " fake foo bar");
 		response = jarvis.handleTextMessageEvent(event);
 
 		Assert.assertTrue(response.getText().contains("status fake"));
@@ -83,11 +78,8 @@ public class TestUtilityCommand {
 		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
 		jarvis.postConstruct();
 
-		Source source = new GroupSource("group-id", "user-id");
-		Instant timestamp = Instant.now();
-		TextMessageContent message = new TextMessageContent("001", InfoCommand.CMD_PREFIX);
-		MessageEvent<TextMessageContent> event = new MessageEvent<TextMessageContent>("reply-token", source, message,
-		        timestamp);
+		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(UUID.randomUUID().toString(),
+		        UUID.randomUUID().toString(), InfoCommand.CMD_PREFIX);
 
 		TextMessage response = jarvis.handleTextMessageEvent(event);
 
