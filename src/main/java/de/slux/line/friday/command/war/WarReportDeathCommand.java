@@ -104,7 +104,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Unexpected error " + e, e);
 			return new TextMessage("Unexpected error: " + e);
 		}
 

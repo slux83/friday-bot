@@ -90,13 +90,13 @@ public class WarHistoryDao {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 
@@ -142,19 +142,19 @@ public class WarHistoryDao {
 				if (rs != null)
 					rs.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 
@@ -221,19 +221,19 @@ public class WarHistoryDao {
 				if (rs != null)
 					rs.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 
@@ -274,19 +274,19 @@ public class WarHistoryDao {
 				if (rs != null)
 					rs.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 
@@ -333,13 +333,13 @@ public class WarHistoryDao {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 

@@ -103,13 +103,13 @@ public class WarSummonerDao {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 
@@ -141,8 +141,7 @@ public class WarSummonerDao {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				// FIXME: replace all the e.printStackTrace()
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 	}
@@ -197,19 +196,19 @@ public class WarSummonerDao {
 				if (rs != null)
 					rs.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 
@@ -253,13 +252,13 @@ public class WarSummonerDao {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 	}
@@ -314,13 +313,13 @@ public class WarSummonerDao {
 				if (stmt != null)
 					stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 			try {
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOG.error("Unexpected error " + e, e);
 			}
 		}
 	}
