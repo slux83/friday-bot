@@ -30,22 +30,22 @@ public class TestUtilityCommand {
 	public void testAdminStatusCommand() throws Exception {
 
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
-		FridayBotApplication jarvis = new FridayBotApplication(null);
-		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
-		jarvis.postConstruct();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
 
 		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(null, FridayBotApplication.SLUX_ID,
 		        AdminStatusCommand.CMD_PREFIX);
 
-		jarvis.getIncomingMsgCounter().set(10);
+		friday.getIncomingMsgCounter().set(10);
 		Thread.sleep(1000);
-		TextMessage response = jarvis.handleTextMessageEvent(event);
+		TextMessage response = friday.handleTextMessageEvent(event);
 
 		System.out.println(response);
 
 		event = MessageEventUtil.createMessageEvent(null, FridayBotApplication.SLUX_ID,
 		        AdminStatusCommand.CMD_PREFIX + " fake foo bar");
-		response = jarvis.handleTextMessageEvent(event);
+		response = friday.handleTextMessageEvent(event);
 
 		Assert.assertTrue(response.getText().contains("status fake"));
 
@@ -74,16 +74,16 @@ public class TestUtilityCommand {
 	@Test
 	public void testInfoCommand() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
-		FridayBotApplication jarvis = new FridayBotApplication(null);
-		jarvis.setLineMessagingClient(new LineMessagingClientMock(callback));
-		jarvis.postConstruct();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
 
 		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(UUID.randomUUID().toString(),
 		        UUID.randomUUID().toString(), InfoCommand.CMD_PREFIX);
 
-		TextMessage response = jarvis.handleTextMessageEvent(event);
+		TextMessage response = friday.handleTextMessageEvent(event);
 
-		assertTrue(response.getText().contains("J.A.R.V.I.S. MCOC Line Bot"));
+		assertTrue(response.getText().contains("F.R.I.D.A.Y. MCOC Line Bot"));
 	}
 
 }

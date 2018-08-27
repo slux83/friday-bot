@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.junit.AfterClass;
@@ -30,9 +31,9 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  */
 public class WarTest {
 
-	private static final String GROUP1_ID = "test_group1";
-	private static final String GROUP2_ID = "test_group2";
-	private static final String GROUP3_ID = "test_group3";
+	private static final String GROUP1_ID = UUID.randomUUID().toString();
+	private static final String GROUP2_ID = UUID.randomUUID().toString();
+	private static final String GROUP3_ID = UUID.randomUUID().toString();
 
 	private WarDeathLogic warModel;
 
