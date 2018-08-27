@@ -50,11 +50,11 @@ public class TestWarCommand {
 		String userId = UUID.randomUUID().toString();
 
 		// Register command
-		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarRegisterCommand.CMD_PREFIX + " group1");
 
 		// Register command
-		MessageEvent<TextMessageContent> helpCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> helpCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        HelpCommand.CMD_PREFIX);
 
 		TextMessage response = friday.handleTextMessageEvent(helpCmd);
@@ -80,63 +80,63 @@ public class TestWarCommand {
 		String userId = UUID.randomUUID().toString();
 
 		// Register command
-		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarRegisterCommand.CMD_PREFIX + " group1");
-		MessageEvent<TextMessageContent> registerMissingArgCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> registerMissingArgCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarRegisterCommand.CMD_PREFIX);
 
 		// Report death command
-		MessageEvent<TextMessageContent> death1Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> death1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarReportDeathCommand.CMD_PREFIX + " err 55 5* dupe Dormammu");
-		MessageEvent<TextMessageContent> death2Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> death2Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarReportDeathCommand.CMD_PREFIX + " 2 err 5* dupe Dormammu");
-		MessageEvent<TextMessageContent> death3Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> death3Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarReportDeathCommand.CMD_PREFIX + " 2 44");
-		MessageEvent<TextMessageContent> death4Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> death4Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarReportDeathCommand.CMD_PREFIX + " 2 44 Medusa");
 
 		// Summoner placement command
-		MessageEvent<TextMessageContent> summonersTooLongAddCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summonersTooLongAddCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarAddSummonersCommand.CMD_PREFIX + " 1,2,3,4,5,6,7,8,9,10,11");
 
 		// Summoner node
-		MessageEvent<TextMessageContent> summoner1NodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner1NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX + " 30A 55 5* dupe IMIW");
-		MessageEvent<TextMessageContent> summoner2NodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner2NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX + " 10A 22 4* dupe Mephisto");
-		MessageEvent<TextMessageContent> summoner3NodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner3NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX + " XX 12 5* undupe Sentinel");
-		MessageEvent<TextMessageContent> summoner4NodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner4NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX + " 3B err 5* duped Ronan");
-		MessageEvent<TextMessageContent> summoner5NodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner5NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX + " 3B 55");
-		MessageEvent<TextMessageContent> summoner6NodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner6NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX);
 
 		// Summoner rename
-		MessageEvent<TextMessageContent> summonerRename1Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summonerRename1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerRenameCommand.CMD_PREFIX + " 20 Foo Bar 1");
-		MessageEvent<TextMessageContent> summonerRename2Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summonerRename2Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerRenameCommand.CMD_PREFIX + " err Foo Bar 1");
-		MessageEvent<TextMessageContent> summonerRename3Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summonerRename3Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerRenameCommand.CMD_PREFIX);
 
 		// Save war command
-		MessageEvent<TextMessageContent> saveWarNoArgCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> saveWarNoArgCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSaveCommand.CMD_PREFIX);
-		MessageEvent<TextMessageContent> saveWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> saveWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSaveCommand.CMD_PREFIX + " DH DM");
 
 		// Specific history command
-		MessageEvent<TextMessageContent> specificHistoryWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> specificHistoryWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarHistoryCommand.CMD_PREFIX + " wrong_date");
 
 		// Delete history command
-		MessageEvent<TextMessageContent> deleteHistory1WarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> deleteHistory1WarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarDeleteCommand.CMD_PREFIX + " wrong_date DH DM");
-		MessageEvent<TextMessageContent> deleteHistor2WarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> deleteHistor2WarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarDeleteCommand.CMD_PREFIX + " " + WarDeathLogic.SDF.format(new Date()));
-		MessageEvent<TextMessageContent> deleteHistor3WarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> deleteHistor3WarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarDeleteCommand.CMD_PREFIX + " " + WarDeathLogic.SDF.format(new Date()) + " 4Loki");
 
 		/* Begin */
@@ -252,63 +252,63 @@ public class TestWarCommand {
 		String userId = UUID.randomUUID().toString();
 
 		// Register command
-		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarRegisterCommand.CMD_PREFIX + " group1");
 
 		// Report death command
-		MessageEvent<TextMessageContent> death1Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> death1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarReportDeathCommand.CMD_PREFIX + " 2 55 5* dupe Dormammu");
-		MessageEvent<TextMessageContent> death2Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> death2Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarReportDeathCommand.CMD_PREFIX + " 1 24 6* NC");
-		MessageEvent<TextMessageContent> death3Cmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> death3Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarReportDeathCommand.CMD_PREFIX + " 4 28 5* dupe KP");
 
 		// Summoner placement command
-		MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarAddSummonersCommand.CMD_PREFIX + " slux83, John Doe, Nemesis The Best, Tony 88");
-		MessageEvent<TextMessageContent> summonersPrintCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summonersPrintCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarAddSummonersCommand.CMD_PREFIX);
 
 		// Summoner node
-		MessageEvent<TextMessageContent> summoner1NodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner1NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX + " 3A 55 5* dupe IMIW");
-		MessageEvent<TextMessageContent> summoner2NodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner2NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX + " 1E 22 4* dupe Mephisto");
-		MessageEvent<TextMessageContent> summoner3NodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner3NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX + " 3B 12 5* undupe Sentinel");
-		MessageEvent<TextMessageContent> summoner3BisNodeCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summoner3BisNodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerNodeCommand.CMD_PREFIX + " 3B 12 5* duped Ronan"); // replace
 
 		// Summoner rename
-		MessageEvent<TextMessageContent> summonerRenameCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> summonerRenameCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummonerRenameCommand.CMD_PREFIX + " 3 Foo Bar 1");
 
 		// Death summary command
-		MessageEvent<TextMessageContent> deathSummaryCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> deathSummaryCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSummaryDeathCommand.CMD_PREFIX);
 
 		// Undo death command
-		MessageEvent<TextMessageContent> undoDeathCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> undoDeathCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarUndoDeathCommand.CMD_PREFIX);
 
 		// Save war command
-		MessageEvent<TextMessageContent> saveWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> saveWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarSaveCommand.CMD_PREFIX + " DH DM");
 
 		// Reset war command
-		MessageEvent<TextMessageContent> resetWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> resetWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarResetCommand.CMD_PREFIX);
 
 		// All history command
-		MessageEvent<TextMessageContent> historyWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> historyWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarHistoryCommand.CMD_PREFIX);
 
 		// Specific history command
-		MessageEvent<TextMessageContent> specificHistoryWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> specificHistoryWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarHistoryCommand.CMD_PREFIX + " " + WarDeathLogic.SDF.format(new Date()));
 
 		// Delete history command
-		MessageEvent<TextMessageContent> deleteHistoryWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> deleteHistoryWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarDeleteCommand.CMD_PREFIX + " " + WarDeathLogic.SDF.format(new Date()) + " DH DM");
 
 		/* Start the workflow */

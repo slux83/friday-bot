@@ -240,10 +240,10 @@ public class FridayBotApplication {
 	private AbstractCommand getCommand(String text) {
 
 		for (AbstractCommand command : this.commands) {
-			if (command.canTrigger(text.trim()))
+			if (!command.getType().equals(CommandType.CommandTypeAdmin) && command.canTrigger(text.trim()))
 				return command;
 		}
-
+ 
 		return new DefaultCommand(this.lineMessagingClient);
 	}
 

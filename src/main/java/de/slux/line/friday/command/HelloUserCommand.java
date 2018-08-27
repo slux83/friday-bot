@@ -14,6 +14,7 @@ import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.event.FollowEvent;
 import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.model.profile.UserProfileResponse;
 import com.linecorp.bot.model.response.BotApiResponse;
 
 /**
@@ -56,7 +57,7 @@ public class HelloUserCommand extends AbstractCommand {
 		// Push back the message to the user
 		// FIXME add a proper message here
 		CompletableFuture<BotApiResponse> response = super.messagingClient
-		        .pushMessage(new PushMessage(senderId, new TextMessage("Hello new friend!")));
+		        .pushMessage(new PushMessage(senderId, new TextMessage(getGroupWelcomeMessage(userId))));
 
 		try {
 			response.get(AbstractCommand.RESPONSE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
@@ -68,6 +69,32 @@ public class HelloUserCommand extends AbstractCommand {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get the welcome message when the bot is followed by an user
+	 * 
+	 * @param userId
+	 * @return the welcome message
+	 */
+	private String getGroupWelcomeMessage(String userId) {
+		CompletableFuture<UserProfileResponse> userProfileFuture = super.messagingClient.getProfile(userId);
+
+		String userName = "Summoner";
+		try {
+			UserProfileResponse userProfile = userProfileFuture.get();
+			userName = userProfile.getDisplayName();
+		} catch (Exception e) {
+			LOG.warn("Cannot retrieve user profile for " + userId + ". Reason " + e);
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("Hello " + userName + "!\n\n");
+		sb.append("Thanks for the add! I'm F.R.I.D.A.Y. the BOT and I'm here to assist you during the MCOC wars!\n");
+		sb.append(
+		        "I'm a bot that works inside a Line chat group, so don't waste more time and invite me in your battle group chat!\n");
+
+		return sb.toString();
 	}
 
 	/*

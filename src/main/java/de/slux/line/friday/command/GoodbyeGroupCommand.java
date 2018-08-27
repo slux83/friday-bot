@@ -51,7 +51,6 @@ public class GoodbyeGroupCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
-		// TODO: test this command
 		try {
 			LOG.info("FRIDAY is leaving the group: " + senderId);
 

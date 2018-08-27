@@ -3,12 +3,10 @@
  */
 package de.slux.line.friday.test.command;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.linecorp.bot.model.event.JoinEvent;
@@ -21,6 +19,7 @@ import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
+import de.slux.line.friday.command.admin.AdminHelpCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarHistoryCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
@@ -34,28 +33,16 @@ import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
 public class TestUtilityCommand {
 
 	@Test
-	public void testAdminStatusCommand() throws Exception {
+	public void testAdminStatusConstruction() throws Exception {
 
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(null, FridayBotApplication.SLUX_ID,
-		        AdminStatusCommand.CMD_PREFIX);
-
 		friday.getCommandIncomingMsgCounter().set(10);
 		friday.getTotalIncomingMsgCounter().set(100);
 		Thread.sleep(1000);
-		TextMessage response = friday.handleTextMessageEvent(event);
-
-		System.out.println(response);
-
-		event = MessageEventUtil.createMessageEvent(null, FridayBotApplication.SLUX_ID,
-		        AdminStatusCommand.CMD_PREFIX + " fake foo bar");
-		response = friday.handleTextMessageEvent(event);
-
-		Assert.assertTrue(response.getText().contains("status fake"));
 
 		// 16 secs day
 		System.out.println(AdminStatusCommand.calculateUptime(1000 * 16));
@@ -80,32 +67,14 @@ public class TestUtilityCommand {
 	}
 
 	@Test
-	public void testAdminBroadcastCommand() throws Exception {
-		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
-		FridayBotApplication friday = new FridayBotApplication(null);
-		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
-		friday.postConstruct();
-
-		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(null, FridayBotApplication.SLUX_ID,
-		        AdminBroadcastCommand.CMD_PREFIX + " hello everyone!");
-
-		TextMessage response = friday.handleTextMessageEvent(event);
-
-		assertNotNull(response);
-		assertTrue(response.getText().contains("Message broadcasted"));
-		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
-
-	}
-
-	@Test
 	public void testInfoCommand() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEvent(UUID.randomUUID().toString(),
-		        UUID.randomUUID().toString(), InfoCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEventGroupSource(
+		        UUID.randomUUID().toString(), UUID.randomUUID().toString(), InfoCommand.CMD_PREFIX);
 
 		TextMessage response = friday.handleTextMessageEvent(event);
 
@@ -140,14 +109,14 @@ public class TestUtilityCommand {
 		String userId = UUID.randomUUID().toString();
 
 		// Register command
-		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarRegisterCommand.CMD_PREFIX + " group1");
 
 		// Leave event
 		LeaveEvent event = MessageEventUtil.createLeaveEvent(groupId, userId);
 
 		// History command to test the real exit of the bot from the group
-		MessageEvent<TextMessageContent> historyWarCmd = MessageEventUtil.createMessageEvent(groupId, userId,
+		MessageEvent<TextMessageContent> historyWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarHistoryCommand.CMD_PREFIX);
 
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
@@ -161,4 +130,50 @@ public class TestUtilityCommand {
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 	}
+
+	@Test
+	public void testUserEvent() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
+		friday.getCommandIncomingMsgCounter().set(1000);
+		friday.getTotalIncomingMsgCounter().set(10000);
+
+		String userId = FridayBotApplication.SLUX_ID;
+
+		// Register command
+		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(
+		        UUID.randomUUID().toString(), userId, WarRegisterCommand.CMD_PREFIX + " group1");
+
+		// Admin help command
+		MessageEvent<TextMessageContent> adminHelpCmd = MessageEventUtil.createMessageEventUserSource(userId,
+		        AdminHelpCommand.CMD_PREFIX);
+
+		// Admin status command
+		MessageEvent<TextMessageContent> adminStatusCmd = MessageEventUtil.createMessageEventUserSource(userId,
+		        AdminStatusCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> adminStatusOperCmd = MessageEventUtil.createMessageEventUserSource(userId,
+		        AdminStatusCommand.CMD_PREFIX + " operational");
+		MessageEvent<TextMessageContent> adminStatusMaintCmd = MessageEventUtil.createMessageEventUserSource(userId,
+		        AdminStatusCommand.CMD_PREFIX + " maintenance");
+		MessageEvent<TextMessageContent> adminStatusInvalidCmd = MessageEventUtil.createMessageEventUserSource(userId,
+		        AdminStatusCommand.CMD_PREFIX + " invalid");
+
+		// Admin broadcast command
+		MessageEvent<TextMessageContent> adminBroadcastCmd = MessageEventUtil.createMessageEventUserSource(
+		        FridayBotApplication.SLUX_ID, AdminBroadcastCommand.CMD_PREFIX + " hello everyone!");
+
+		// TODO: finish this
+
+		/*
+		 * TextMessage response = friday.handleTextMessageEvent(event);
+		 * 
+		 * assertNotNull(response);
+		 * assertTrue(response.getText().contains("Message broadcasted"));
+		 * assertTrue(callback.takeAllMessages().contains("hello everyone!"));
+		 */
+
+	}
+
 }
