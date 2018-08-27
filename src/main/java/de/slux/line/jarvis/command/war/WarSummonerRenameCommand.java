@@ -89,7 +89,7 @@ public class WarSummonerRenameCommand extends AbstractCommand {
 			// Return the new placement
 			Map<Integer, WarSummoner> updatedSummoners = logic.getSummoners(senderId);
 			List<String> text = WarPlacementLogic.getSummonersText(updatedSummoners, true);
-			super.pushMultipleMessages(senderId, "", text);
+			return super.pushMultipleMessages(senderId, "", text);
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");
@@ -101,8 +101,6 @@ public class WarSummonerRenameCommand extends AbstractCommand {
 			LOG.error("Unexpected error: " + e, e);
 			return new TextMessage("Unexpected error: " + e);
 		}
-		
-		return null;
 	}
 
 	/*

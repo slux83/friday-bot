@@ -122,6 +122,28 @@ public abstract class AbstractCommand {
 		return userName;
 	}
 
+	protected TextMessage pushMultipleMessages(String senderId, String header, List<String> messages, boolean forcePush)
+	        throws Exception {
+		
+		if (messages.isEmpty())
+			return null;
+
+		TextMessage firstMessage = new TextMessage(header + messages.get(0));
+
+		if (messages.size() == 1 && !forcePush)
+			return firstMessage;
+
+		PushMessage pushMessage = new PushMessage(senderId, firstMessage);
+		this.messagingClient.pushMessage(pushMessage).get();
+
+		for (int i = 1; i < messages.size(); i++) {
+			pushMessage = new PushMessage(senderId, new TextMessage(messages.get(i)));
+			this.messagingClient.pushMessage(pushMessage).get();
+		}
+
+		return null;
+	}
+
 	/**
 	 * Pushes the messages with a header to the senderId
 	 * 
@@ -129,14 +151,10 @@ public abstract class AbstractCommand {
 	 * @param header
 	 * @param messages
 	 * @throws Exception
+	 * @return TextMessage if the messages contains only one text, otherwise
+	 *         null
 	 */
-	protected void pushMultipleMessages(String senderId, String header, List<String> messages) throws Exception {
-		PushMessage pushMessage = new PushMessage(senderId, new TextMessage(header + messages.get(0)));
-		this.messagingClient.pushMessage(pushMessage).get();
-
-		for (int i = 1; i < messages.size(); i++) {
-			pushMessage = new PushMessage(senderId, new TextMessage(messages.get(i)));
-			this.messagingClient.pushMessage(pushMessage).get();
-		}
+	protected TextMessage pushMultipleMessages(String senderId, String header, List<String> messages) throws Exception {
+		return pushMultipleMessages(senderId, header, messages, false);
 	}
 }

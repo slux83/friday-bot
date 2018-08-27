@@ -7,21 +7,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
-import com.linecorp.bot.model.event.source.GroupSource;
-import com.linecorp.bot.model.event.source.Source;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.jarvis.JarvisBotApplication;
-import de.slux.line.jarvis.command.war.WarAddSummonersCommand;
 import de.slux.line.jarvis.command.war.WarDeleteCommand;
 import de.slux.line.jarvis.command.war.WarHistoryCommand;
 import de.slux.line.jarvis.command.war.WarRegisterCommand;
@@ -29,8 +24,6 @@ import de.slux.line.jarvis.command.war.WarReportDeathCommand;
 import de.slux.line.jarvis.command.war.WarResetCommand;
 import de.slux.line.jarvis.command.war.WarSaveCommand;
 import de.slux.line.jarvis.command.war.WarSummaryDeathCommand;
-import de.slux.line.jarvis.command.war.WarSummonerNodeCommand;
-import de.slux.line.jarvis.command.war.WarSummonerRenameCommand;
 import de.slux.line.jarvis.command.war.WarUndoDeathCommand;
 import de.slux.line.jarvis.logic.war.WarDeathLogic;
 import de.slux.line.jarvis.test.util.LineMessagingClientMock;
@@ -103,15 +96,15 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("7"));
 
 		response = jarvis.handleTextMessageEvent(deathSummaryCmd);
-		assertNull(response);
-		assertTrue(callback.takeAllMessages().contains("5* dupe KP"));
+		assertTrue(response.getText().contains("5* dupe KP"));
+		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = jarvis.handleTextMessageEvent(undoDeathCmd);
 		assertTrue(response.getText().contains("WAR DEATH REPORT"));
 
 		response = jarvis.handleTextMessageEvent(deathSummaryCmd);
-		assertNull(response);
-		assertFalse(callback.takeAllMessages().contains("5* dupe KP"));
+		assertFalse(response.getText().contains("5* dupe KP"));
+		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = jarvis.handleTextMessageEvent(saveWarCmd);
 		assertTrue(response.getText().contains("DH DM"));
@@ -122,10 +115,9 @@ public class TestWarCommand {
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = jarvis.handleTextMessageEvent(historyWarCmd);
-		assertNull(response);
-		String allMessages = callback.takeAllMessages();
-		assertTrue(allMessages.contains("DH DM"));
-		assertTrue(allMessages.contains(WarDeathLogic.SDF.format(new Date())));
+		assertTrue(response.getText().contains("DH DM"));
+		assertTrue(response.getText().contains(WarDeathLogic.SDF.format(new Date())));
+		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = jarvis.handleTextMessageEvent(specificHistoryWarCmd);
 		assertNull(response);

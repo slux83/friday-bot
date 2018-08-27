@@ -57,7 +57,7 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 		try {
 			WarDeathLogic warModel = new WarDeathLogic();
 			List<String> summary = warModel.getSummary(senderId);
-			super.pushMultipleMessages(senderId, "", summary);
+			return super.pushMultipleMessages(senderId, "", summary);
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");
@@ -65,8 +65,6 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 			LOG.error("Unexpected error: " + e, e);
 			return new TextMessage("Unexpected error: " + e);
 		}
-
-		return null;
 	}
 
 	/*
