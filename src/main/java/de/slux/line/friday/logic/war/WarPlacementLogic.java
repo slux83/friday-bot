@@ -157,7 +157,7 @@ public class WarPlacementLogic {
 		}
 		
 		if (summoners.isEmpty()) {
-			sb.append("Nothing reported");
+			sb.append("Nothing to report");
 		}
 		
 		outcome.add(sb.toString());

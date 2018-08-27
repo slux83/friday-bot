@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,7 +186,7 @@ public class WarHistoryDao {
 
 			char placementPos = 'A';
 			int summonerPos = 0;
-			String lastSummonerName = null;
+			String lastSummonerName = UUID.randomUUID().toString();
 			while (rs.next()) {
 				String summonerName = rs.getString("player_name");
 				String allianceName = rs.getString("ally_tag");
