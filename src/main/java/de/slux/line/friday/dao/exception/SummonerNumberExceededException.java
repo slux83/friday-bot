@@ -8,16 +8,7 @@ package de.slux.line.friday.dao.exception;
  */
 public class SummonerNumberExceededException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * 
-	 */
-	public SummonerNumberExceededException() {
-	}
 
 	/**
 	 * @param message
@@ -25,20 +16,4 @@ public class SummonerNumberExceededException extends Exception {
 	public SummonerNumberExceededException(String message) {
 		super(message);
 	}
-
-	/**
-	 * @param cause
-	 */
-	public SummonerNumberExceededException(Throwable cause) {
-		super(cause);
-	}
-
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public SummonerNumberExceededException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
 }

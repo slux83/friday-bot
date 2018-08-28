@@ -6,6 +6,7 @@ package de.slux.line.friday.test.util;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.linecorp.bot.model.event.FollowEvent;
 import com.linecorp.bot.model.event.JoinEvent;
 import com.linecorp.bot.model.event.LeaveEvent;
 import com.linecorp.bot.model.event.MessageEvent;
@@ -71,6 +72,18 @@ public class MessageEventUtil {
 		Instant timestamp = Instant.now();
 		Source source = new GroupSource(groupId, userId);
 		return new JoinEvent(UUID.randomUUID().toString(), source, timestamp);
+	}
+
+	/**
+	 * Create a follow event
+	 * 
+	 * @param userId
+	 * @return the event of type {@link FollowEvent}
+	 */
+	public static FollowEvent createFollowEvent(String userId) {
+		Instant timestamp = Instant.now();
+		Source source = new UserSource(userId);
+		return new FollowEvent(UUID.randomUUID().toString(), source, timestamp);
 	}
 
 	/**

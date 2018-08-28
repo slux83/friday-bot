@@ -106,7 +106,7 @@ public class WarGroup {
 		TotalDeathReport totDeathReport = calculateDeathReport();
 
 		report.append("\nTotal lost points: " + totDeathReport.getTotalLostPoints());
-		report.append("\nTotal deaths : " + totDeathReport.getTotalDeaths());
+		report.append("\nTotal deaths: " + totDeathReport.getTotalDeaths());
 
 		return report.toString();
 	}

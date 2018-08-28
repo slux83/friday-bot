@@ -4,8 +4,6 @@
 package de.slux.line.friday.command;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,14 +53,11 @@ public class HelloUserCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		// Push back the message to the user
-		// TODO: this needs to be tested
 		CompletableFuture<BotApiResponse> response = super.messagingClient
 		        .pushMessage(new PushMessage(senderId, new TextMessage(getGroupWelcomeMessage(userId))));
 
 		try {
-			response.get(AbstractCommand.RESPONSE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-		} catch (TimeoutException e) {
-			LOG.warn("Timeout exceeded for " + this.getClass().getSimpleName() + " command: " + e);
+			response.get();
 		} catch (Exception e) {
 			LOG.error("Unknown error when getting the response of the " + this.getClass().getSimpleName() + " command",
 			        e);
@@ -82,15 +77,17 @@ public class HelloUserCommand extends AbstractCommand {
 
 		String userName = "Summoner";
 		try {
-			UserProfileResponse userProfile = userProfileFuture.get();
-			userName = userProfile.getDisplayName();
+			if (userProfileFuture != null) {
+				UserProfileResponse userProfile = userProfileFuture.get();
+				userName = userProfile.getDisplayName();
+			}
 		} catch (Exception e) {
-			LOG.warn("Cannot retrieve user profile for " + userId + ". Reason " + e);
+			LOG.warn("Cannot retrieve user profile for " + userId + ". Reason " + e, e);
 		}
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Hello " + userName + "!\n\n");
-		sb.append("Thanks for the add! I'm F.R.I.D.A.Y. the BOT and I'm here to assist you during the MCOC wars!\n");
+		sb.append("Thanks for the add! I'm F.R.I.D.A.Y. the BOT and I'm here to assist you during the MCOC wars and many things more!\n");
 		sb.append(
 		        "I'm a bot that works inside a Line chat group, so don't waste more time and invite me in your battle group chat!\n");
 

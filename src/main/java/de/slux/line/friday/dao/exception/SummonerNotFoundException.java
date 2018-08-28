@@ -10,16 +10,7 @@ package de.slux.line.friday.dao.exception;
  */
 public class SummonerNotFoundException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * 
-	 */
-	public SummonerNotFoundException() {
-	}
 
 	/**
 	 * @param message
@@ -28,18 +19,4 @@ public class SummonerNotFoundException extends Exception {
 		super(message);
 	}
 
-	/**
-	 * @param cause
-	 */
-	public SummonerNotFoundException(Throwable cause) {
-		super(cause);
-	}
-
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public SummonerNotFoundException(String message, Throwable cause) {
-		super(message, cause);
-	}
 }
