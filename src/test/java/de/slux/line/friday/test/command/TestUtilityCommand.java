@@ -3,6 +3,9 @@
  */
 package de.slux.line.friday.test.command;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
@@ -163,16 +166,62 @@ public class TestUtilityCommand {
 		// Admin broadcast command
 		MessageEvent<TextMessageContent> adminBroadcastCmd = MessageEventUtil.createMessageEventUserSource(
 		        FridayBotApplication.SLUX_ID, AdminBroadcastCommand.CMD_PREFIX + " hello everyone!");
+		MessageEvent<TextMessageContent> adminBroadcastNoArgCmd = MessageEventUtil
+		        .createMessageEventUserSource(FridayBotApplication.SLUX_ID, AdminBroadcastCommand.CMD_PREFIX);
 
-		// TODO: finish this
-
-		/*
-		 * TextMessage response = friday.handleTextMessageEvent(event);
-		 * 
-		 * assertNotNull(response);
-		 * assertTrue(response.getText().contains("Message broadcasted"));
-		 * assertTrue(callback.takeAllMessages().contains("hello everyone!"));
-		 */
+		/* Begin */
+		TextMessage response = friday.handleTextMessageEvent(registerCmd);
+		assertNotNull(response);
+		assertTrue(response.getText().contains("group1"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(adminHelpCmd);
+		assertNotNull(response);
+		assertTrue(response.getText().contains(AdminHelpCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(AdminBroadcastCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(AdminStatusCommand.CMD_PREFIX));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(adminStatusCmd);
+		assertNotNull(response);
+		assertFalse(response.getText().contains("WARNING"));
+		assertTrue(response.getText().contains("Version"));
+		assertTrue(response.getText().contains("OPERATIONAL"));
+		System.out.println(response);
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(adminStatusMaintCmd);
+		assertNotNull(response);
+		assertFalse(response.getText().contains("WARNING"));
+		assertTrue(response.getText().contains("Version"));
+		assertTrue(response.getText().contains("MAINTENANCE"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(adminStatusOperCmd);
+		assertNotNull(response);
+		assertFalse(response.getText().contains("WARNING"));
+		assertTrue(response.getText().contains("Version"));
+		assertTrue(response.getText().contains("OPERATIONAL"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(adminStatusInvalidCmd);
+		assertNotNull(response);
+		assertTrue(response.getText().contains("WARNING"));
+		assertTrue(response.getText().contains("Version"));
+		assertTrue(response.getText().contains("OPERATIONAL"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(adminBroadcastCmd);
+		assertNotNull(response);
+		assertTrue(response.getText().contains("Message broadcasted"));
+		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
+		
+		response = friday.handleTextMessageEvent(adminBroadcastNoArgCmd);
+		assertNotNull(response);
+		assertTrue(response.getText().contains("Please provide a message to broadcast"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		
 
 	}
 

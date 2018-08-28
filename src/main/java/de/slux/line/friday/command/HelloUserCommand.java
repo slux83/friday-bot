@@ -55,7 +55,7 @@ public class HelloUserCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		// Push back the message to the user
-		// FIXME add a proper message here
+		// TODO: this needs to be tested
 		CompletableFuture<BotApiResponse> response = super.messagingClient
 		        .pushMessage(new PushMessage(senderId, new TextMessage(getGroupWelcomeMessage(userId))));
 
@@ -93,6 +93,8 @@ public class HelloUserCommand extends AbstractCommand {
 		sb.append("Thanks for the add! I'm F.R.I.D.A.Y. the BOT and I'm here to assist you during the MCOC wars!\n");
 		sb.append(
 		        "I'm a bot that works inside a Line chat group, so don't waste more time and invite me in your battle group chat!\n");
+
+		// TODO: Add youtube intro video
 
 		return sb.toString();
 	}
