@@ -414,6 +414,7 @@ public class TestWarCommand {
 
 		response = friday.handleTextMessageEvent(saveWarCmd);
 		assertTrue(response.getText().contains("DH DM"));
+		assertFalse(response.getText(), response.getText().contains("war DH DM"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(resetWarCmd);

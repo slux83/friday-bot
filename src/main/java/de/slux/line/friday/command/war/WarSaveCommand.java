@@ -66,6 +66,7 @@ public class WarSaveCommand extends AbstractCommand {
 
 			args.remove(0);
 			args.remove(0);
+			args.remove(0);
 			allyTag = String.join(" ", args);
 
 			warModel.saveWar(senderId, allyTag);
