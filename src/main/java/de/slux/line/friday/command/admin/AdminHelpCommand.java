@@ -52,7 +52,7 @@ public class AdminHelpCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
-		StringBuilder sb = new StringBuilder("*** J.A.R.V.I.S. Admin HELP ***");
+		StringBuilder sb = new StringBuilder("*** F.R.I.D.A.Y. Admin HELP ***");
 
 		List<AbstractCommand> commands = FridayBotApplication.getInstance().getCommands();
 

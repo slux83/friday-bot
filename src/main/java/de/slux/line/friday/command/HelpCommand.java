@@ -51,7 +51,7 @@ public class HelpCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
-		StringBuilder sb = new StringBuilder("*** J.A.R.V.I.S. HELP ***");
+		StringBuilder sb = new StringBuilder("*** F.R.I.D.A.Y. HELP ***");
 
 		List<AbstractCommand> commands = FridayBotApplication.getInstance().getCommands();
 

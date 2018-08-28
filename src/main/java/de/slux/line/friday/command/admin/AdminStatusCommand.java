@@ -55,7 +55,7 @@ public class AdminStatusCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
-		StringBuilder sb = new StringBuilder("*** J.A.R.V.I.S. MCOC Line Bot Status ***\n\n");
+		StringBuilder sb = new StringBuilder("*** F.R.I.D.A.Y. MCOC Line Bot Status ***\n\n");
 
 		// Check if we need to change the status
 		List<String> args = super.extractArgs(message);

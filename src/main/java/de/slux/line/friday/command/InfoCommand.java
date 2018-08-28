@@ -98,7 +98,7 @@ public class InfoCommand extends AbstractCommand {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[" + CMD_PREFIX + "]\n");
-		sb.append("Prints informations about J.A.R.V.I.S. Line Bot, issue tracker, donations, etc...");
+		sb.append("Prints informations about F.R.I.D.A.Y. Line Bot, issue tracker, donations, etc...");
 
 		return sb.toString();
 	}
