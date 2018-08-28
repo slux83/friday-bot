@@ -24,7 +24,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarDeleteCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friady delete war";
+	public static final String CMD_PREFIX = "friday delete war";
 	private static Logger LOG = LoggerFactory.getLogger(WarDeleteCommand.class);
 
 	/**
