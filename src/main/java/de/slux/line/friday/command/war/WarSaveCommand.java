@@ -23,7 +23,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarSaveCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday save";
+	public static final String CMD_PREFIX = "friday save war";
 	private static Logger LOG = LoggerFactory.getLogger(WarSaveCommand.class);
 
 	/**
@@ -61,7 +61,7 @@ public class WarSaveCommand extends AbstractCommand {
 			WarDeathLogic warModel = new WarDeathLogic();
 			List<String> args = super.extractArgs(message);
 
-			if (args.size() < 3)
+			if (args.size() < 4)
 				return new TextMessage("Missing argument. Please specify the opponent alliance tag");
 
 			args.remove(0);
