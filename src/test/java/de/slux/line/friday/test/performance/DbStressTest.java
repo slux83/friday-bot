@@ -51,7 +51,7 @@ public class DbStressTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testHugeDbPerformances() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);

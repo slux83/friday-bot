@@ -15,6 +15,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.slux.line.friday.data.war.WarGroup.GroupFeature;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 
 /**
@@ -29,7 +30,7 @@ public class WarGroupDao {
 
 	private static final String RETRIEVE_DATA_STATEMENT = "SELECT id, group_name FROM war_group WHERE group_id = ? AND group_status = ?";
 
-	private static final String UPDATE_NAME_DATA_STATEMENT = "UPDATE war_group SET group_name = ? WHERE group_id = ?";
+	private static final String UPDATE_NAME_DATA_STATEMENT = "UPDATE war_group SET group_name = ?, group_status = ? WHERE group_id = ?";
 
 	private static final String UPDATE_STATUS_DATA_STATEMENT = "UPDATE war_group SET group_status = ? WHERE group_id = ?";
 
@@ -89,7 +90,8 @@ public class WarGroupDao {
 		try {
 			stmt = conn.prepareStatement(UPDATE_NAME_DATA_STATEMENT);
 			stmt.setString(1, Base64.getEncoder().encodeToString(groupName.getBytes()));
-			stmt.setString(2, groupId);
+			stmt.setInt(2, GroupStatus.GroupStatusActive.getValue());
+			stmt.setString(3, groupId);
 			stmt.executeUpdate();
 
 		} finally {
