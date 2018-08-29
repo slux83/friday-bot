@@ -143,7 +143,7 @@ public class WarPlacementLogic {
 				sb.append("  ");
 				sb.append(placement.getKey().toString());
 				sb.append(". ");
-				if (placement.getValue().getChampion() != null) {
+				if (placement.getValue().getChampion() != null && placement.getValue().getNode() > 0) {
 					sb.append(placement.getValue().getChampion());
 					sb.append(" (");
 					sb.append(placement.getValue().getNode().toString());

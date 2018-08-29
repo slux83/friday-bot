@@ -317,6 +317,10 @@ public class TestWarCommand {
 		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3B 12 5* undupe Sentinel");
 		MessageEvent<TextMessageContent> summoner3BisNodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3B 12 5* duped Ronan"); // replace
+		MessageEvent<TextMessageContent> summonerClear1NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3B 0 5* duped Ronan"); // clear
+		MessageEvent<TextMessageContent> summonerClear2NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 1E -1 4* dupe Mephisto"); // clear
 
 		// Summoner rename
 		MessageEvent<TextMessageContent> summonerRenameCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
@@ -405,6 +409,14 @@ public class TestWarCommand {
 		response = friday.handleTextMessageEvent(summoner3BisNodeCmd);
 		assertTrue(response.getText().contains("B. 5* duped Ronan (12)"));
 		assertFalse(response.getText().contains("B. 5* undupe Sentinel (12)"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(summonerClear1NodeCmd);
+		assertFalse(response.getText().contains("B. 5* duped Ronan"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(summonerClear2NodeCmd);
+		assertFalse(response.getText().contains("E. 4* dupe Mephisto"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summonerRenameCmd);
