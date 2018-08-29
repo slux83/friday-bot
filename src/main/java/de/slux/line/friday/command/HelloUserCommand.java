@@ -22,6 +22,7 @@ import com.linecorp.bot.model.response.BotApiResponse;
  */
 public class HelloUserCommand extends AbstractCommand {
 	private static Logger LOG = LoggerFactory.getLogger(HelloUserCommand.class);
+	public static final String INTRO_VIDEO_LINK = "https://youtu.be/cIB2IJXwA0Q";
 
 	/**
 	 * Ctor
@@ -91,7 +92,9 @@ public class HelloUserCommand extends AbstractCommand {
 		sb.append(
 		        "I'm a bot that works inside a Line chat group, so don't waste more time and invite me in your battle group chat!\n");
 
-		// TODO: Add youtube intro video
+		sb.append("\n");
+		sb.append("Introduction video: ");
+		sb.append(INTRO_VIDEO_LINK);
 
 		return sb.toString();
 	}

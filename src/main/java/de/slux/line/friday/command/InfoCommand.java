@@ -74,7 +74,9 @@ public class InfoCommand extends AbstractCommand {
 		sb.append("FRIDAY Bot is hosted on a dedicated server and it has some running costs.\n\n");
 		sb.append("PAYPAL: ");
 		sb.append(PAYPAL_LINK.replace("$GUID", senderId));
-		sb.append("\n");
+		sb.append("\n\n");
+		sb.append("Introduction video: ");
+		sb.append(HelloUserCommand.INTRO_VIDEO_LINK);
 
 		return sb.toString();
 	}
