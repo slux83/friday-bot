@@ -212,7 +212,7 @@ public class FridayBotApplication {
 
 		AbstractCommand command = getCommand(message);
 
-		if (!this.isOperational.get() && !(command instanceof DefaultCommand)) {
+		if (!this.isOperational.get() && !(command instanceof DefaultCommand) && !SLUX_ID.equals(userId)) {
 			return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
 		}
 

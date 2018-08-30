@@ -237,6 +237,8 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("MAINTENANCE"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		//TODO: Test that slux can send commands even under maintenance
+
 		response = friday.handleTextMessageEvent(adminStatusOperCmd);
 		assertNotNull(response);
 		assertFalse(response.getText().contains("WARNING"));
