@@ -96,4 +96,13 @@ public class HelloGroupCommand extends AbstractCommand {
 		return CommandType.CommandTypeEvent;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.slux.line.friday.command.AbstractCommand#getCommandPrefix()
+	 */
+	@Override
+	public String getCommandPrefix() {
+		return null;
+	}
 }

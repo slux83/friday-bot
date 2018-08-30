@@ -20,6 +20,7 @@ import com.linecorp.bot.model.profile.UserProfileResponse;
  */
 public abstract class AbstractCommand {
 	private static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
+	public static final String ALL_CMD_PREFIX = "friday";
 
 	/**
 	 * The type of the command
@@ -50,6 +51,13 @@ public abstract class AbstractCommand {
 	 * @return true if the message triggers the command, false otherwise
 	 */
 	public abstract boolean canTrigger(String message);
+
+	/**
+	 * Get the command prefix
+	 * 
+	 * @return the command prefix or null if none
+	 */
+	public abstract String getCommandPrefix();
 
 	/**
 	 * Execute this command

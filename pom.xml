@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -16,6 +17,7 @@
 		<junit.version>4.12</junit.version>
 		<mariadb-client.version>2.0.3</mariadb-client.version>
 		<commons-dbcp2.version>2.5.0</commons-dbcp2.version>
+		<commons-text.version>1.4</commons-text.version>
 	</properties>
 
 	<dependencies>
@@ -73,6 +75,14 @@
 			<artifactId>commons-dbcp2</artifactId>
 			<version>${commons-dbcp2.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>${commons-text.version}</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

@@ -17,6 +17,7 @@
 package de.slux.line.friday;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,10 +216,56 @@ public class FridayBotApplication {
 			return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
 		}
 
-		if (!(command instanceof DefaultCommand))
+		if (!(command instanceof DefaultCommand)) {
 			this.commandIncomingMsgCounter.incrementAndGet();
+		} else if (message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX)) {
+			// Try to see if the user was close to one of the existing commands
+			return getClosestGroupCommandSuggestion(message);
+		}
 
 		return command.execute(userId, groupId, message);
+	}
+
+	/**
+	 * Get the closest group command suggestion if any
+	 * 
+	 * @param message
+	 * @return
+	 */
+	private TextMessage getClosestGroupCommandSuggestion(String message) {
+		double bestDistance = 0;
+		String bestPrefix = null;
+		for (AbstractCommand command : this.commands) {
+			if (command.getCommandPrefix() != null && !command.getType().equals(CommandType.CommandTypeAdmin)) {
+				String prefix = command.getCommandPrefix();
+				int prefixChunks = prefix.split(" ").length;
+				List<String> messageChunks = Arrays.asList(message.toLowerCase().split(" "));
+
+				String messageCommand = null;
+				if (messageChunks.size() <= prefixChunks) {
+					// we take it all
+					messageCommand = String.join(" ", messageChunks);
+				} else {
+					// we only consider up to prefixChunks messageChunks
+					messageCommand = String.join(" ", messageChunks.subList(0, prefixChunks));
+				}
+
+				JaroWinklerDistance distance = new JaroWinklerDistance();
+				double cmdDistance = distance.apply(prefix, messageCommand);
+				if (bestDistance < cmdDistance) {
+					bestDistance = cmdDistance;
+					bestPrefix = prefix;
+					// LOG.info("Distance between '" + prefix + "' and '" +
+					// messageCommand + "' is " + cmdDistance);
+				}
+			}
+		}
+
+		if (bestDistance > 0.95d) {
+			return new TextMessage("Sorry, perhaps you mean '" + bestPrefix + "'?" + " " + bestDistance);
+		}
+
+		return null;
 	}
 
 	@EventMapping

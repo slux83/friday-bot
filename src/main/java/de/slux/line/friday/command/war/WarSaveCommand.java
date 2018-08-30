@@ -108,4 +108,14 @@ public class WarSaveCommand extends AbstractCommand {
 
 		return sb.toString();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.slux.line.friday.command.AbstractCommand#getCommandPrefix()
+	 */
+	@Override
+	public String getCommandPrefix() {
+		return CMD_PREFIX;
+	}
 }
