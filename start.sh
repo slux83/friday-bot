@@ -22,7 +22,10 @@ java -Dline.bot.channelSecret="$LINE_CHANNEL_SECRET" \
      -Dfriday.db.port="$DB_PORT" \
      -Dfriday.db.name="$DB_NAME" \
      $JAVA_OPTS \
-     -cp "target/friday-bot-${FRIDAY_VERSION}.jar:target/libs/*" ${MAIN} 
+     -cp "target/friday-bot-${FRIDAY_VERSION}.jar:target/libs/*" ${MAIN} > /dev/null 2>&1 &
+
+# get the app pid
+echo $! > friday.pid
 
 
 
