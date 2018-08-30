@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+import com.google.common.base.Strings;
 import com.linecorp.bot.model.event.LeaveEvent;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
@@ -506,5 +507,27 @@ public class TestWarCommand {
 		response = friday.handleTextMessageEvent(historyWarCmd);
 		assertTrue(response.getText().contains("No records found"));
 		assertTrue(callback.takeAllMessages().isEmpty());
+	}
+
+	@Test
+	public void testTextTooLong() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
+
+		String groupId = UUID.randomUUID().toString();
+		String userId = UUID.randomUUID().toString();
+
+		String longName = Strings.repeat("long", 100);
+		
+		// Register command
+		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        WarRegisterCommand.CMD_PREFIX + " " + longName);
+
+		/* Begin */
+		TextMessage response = friday.handleTextMessageEvent(registerCmd);
+		assertTrue(response.getText().contains("Data too long"));
+		
 	}
 }
