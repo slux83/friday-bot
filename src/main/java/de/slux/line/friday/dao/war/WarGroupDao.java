@@ -15,6 +15,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarGroup.GroupFeature;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 
@@ -34,7 +35,7 @@ public class WarGroupDao {
 
 	private static final String UPDATE_STATUS_DATA_STATEMENT = "UPDATE war_group SET group_status = ? WHERE group_id = ?";
 
-	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name FROM war_group";
+	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name, group_status, group_features FROM war_group";
 
 	public WarGroupDao(Connection conn) {
 		this.conn = conn;
@@ -198,21 +199,33 @@ public class WarGroupDao {
 	 * @return the map of groups (with key=guid and value=name)
 	 * @throws SQLException
 	 */
-	public Map<String, String> getAll() throws SQLException {
+	public Map<String, WarGroup> getAll() throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		Map<String, String> groups = new HashMap<>();
+		Map<String, WarGroup> groups = new HashMap<>();
 		try {
 
 			stmt = conn.prepareStatement(RETRIEVE_ALL_DATA_STATEMENT);
 			rs = stmt.executeQuery();
 
 			while (rs.next()) {
+				WarGroup wg = new WarGroup();
+
 				String guid = rs.getString("group_id");
 				String groupName = rs.getString("group_name");
 				groupName = new String(Base64.getDecoder().decode(groupName));
+				int status = rs.getInt("group_status");
+				int features = rs.getInt("group_features");
+				GroupStatus gs = WarGroup.statusOf(status);
+				GroupFeature gf = WarGroup.featureOf(features);
 
-				groups.put(guid, groupName);
+				wg.setGroupId(guid);
+				wg.setGroupName(groupName);
+				;
+				wg.setGroupStatus(gs);
+				wg.setGroupFeature(gf);
+
+				groups.put(guid, wg);
 			}
 		} finally {
 			try {

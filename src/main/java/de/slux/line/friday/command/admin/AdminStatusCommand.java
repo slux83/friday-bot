@@ -5,6 +5,7 @@ package de.slux.line.friday.command.admin;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,8 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
+import de.slux.line.friday.data.war.WarGroup;
+import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 
 /**
@@ -100,16 +103,21 @@ public class AdminStatusCommand extends AbstractCommand {
 		sb.append("Total Messages/sec: ");
 		sb.append(DECIMAL_FORMAT.format(msgTotalSec));
 		sb.append("\n");
-
-		sb.append("Total groups: ");
+		sb.append("Active/Total groups: ");
 		WarDeathLogic model = new WarDeathLogic();
-		int groupCounter = -1;
+		long groupCounter = -1;
+		long activeGroups = -1;
 		try {
-			groupCounter = model.getAllGroups().size();
+			Map<String, WarGroup> groups = model.getAllGroups();
+			activeGroups = groups.values().stream()
+			        .filter(g -> g.getGroupStatus().equals(GroupStatus.GroupStatusActive)).count();
+			groupCounter = groups.size();
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);
 		}
-		sb.append(groupCounter != -1 ? Integer.toString(groupCounter) : "unknown");
+		sb.append(activeGroups != -1 ? Long.toString(activeGroups) : "unknown");
+		sb.append("/");
+		sb.append(groupCounter != -1 ? Long.toString(groupCounter) : "unknown");
 		sb.append("\n");
 
 		LOG.info("Messages/sec: " + DECIMAL_FORMAT.format(msgCmdSec));

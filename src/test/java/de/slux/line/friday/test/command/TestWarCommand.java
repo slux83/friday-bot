@@ -410,11 +410,11 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("B. 5* duped Ronan (12)"));
 		assertFalse(response.getText().contains("B. 5* undupe Sentinel (12)"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		response = friday.handleTextMessageEvent(summonerClear1NodeCmd);
 		assertFalse(response.getText().contains("B. 5* duped Ronan"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		response = friday.handleTextMessageEvent(summonerClear2NodeCmd);
 		assertFalse(response.getText().contains("E. 4* dupe Mephisto"));
 		assertTrue(callback.takeAllMessages().isEmpty());
@@ -484,15 +484,15 @@ public class TestWarCommand {
 		// History command to test the real exit of the bot from the group
 		MessageEvent<TextMessageContent> historyWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarHistoryCommand.CMD_PREFIX);
-		
+
 		/* Begin */
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("successfully registered using the name group1"));
-		
+
 		response = friday.handleTextMessageEvent(historyWarCmd);
 		assertTrue(response.getText().contains("No records found"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		friday.handleDefaultMessageEvent(leaveEvent);
 		assertTrue(callback.takeAllMessages().isEmpty());
 
@@ -502,7 +502,7 @@ public class TestWarCommand {
 
 		response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("successfully registered using the name group1"));
-		
+
 		response = friday.handleTextMessageEvent(historyWarCmd);
 		assertTrue(response.getText().contains("No records found"));
 		assertTrue(callback.takeAllMessages().isEmpty());

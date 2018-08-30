@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.UUID;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ public class DbStressTest {
 	 * 
 	 * @throws Exception
 	 */
-	//@Test
+	// @Test
 	public void testHugeDbPerformances() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);
@@ -61,7 +60,7 @@ public class DbStressTest {
 		int totalGroups = 500 * 3; // X alliances with 3 BGs each
 		int totalWars = 20; // X wars total for each group
 		String userId = UUID.randomUUID().toString();
-		
+
 		for (int i = 1; i <= totalGroups; i++) {
 			long begin = System.currentTimeMillis();
 			String groupId = UUID.randomUUID().toString();
@@ -126,11 +125,11 @@ public class DbStressTest {
 				response = friday.handleTextMessageEvent(resetWarCmd);
 				assertTrue(response.getText().contains("War reports cleared"));
 				assertTrue(callback.takeAllMessages().isEmpty());
-				
+
 			}
-			
+
 			long timeDiffMs = Math.abs(System.currentTimeMillis() - begin);
-			System.err.println("Processed group N." + i + " in " + (timeDiffMs/1000.0) + " sec(s)");
+			System.err.println("Processed group N." + i + " in " + (timeDiffMs / 1000.0) + " sec(s)");
 		}
 
 	}

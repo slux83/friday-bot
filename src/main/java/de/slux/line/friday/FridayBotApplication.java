@@ -243,7 +243,7 @@ public class FridayBotApplication {
 			if (!command.getType().equals(CommandType.CommandTypeAdmin) && command.canTrigger(text.trim()))
 				return command;
 		}
- 
+
 		return new DefaultCommand(this.lineMessagingClient);
 	}
 

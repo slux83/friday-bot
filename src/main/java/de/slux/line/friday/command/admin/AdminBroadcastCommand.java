@@ -18,6 +18,8 @@ import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.response.BotApiResponse;
 
 import de.slux.line.friday.command.AbstractCommand;
+import de.slux.line.friday.data.war.WarGroup;
+import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 
 /**
@@ -70,11 +72,12 @@ public class AdminBroadcastCommand extends AbstractCommand {
 		bcastMessage = bcastMessage.replaceFirst(prefixPos1, "");
 
 		// Get all groups
-		Map<String, String> groups = Collections.emptyMap();
+		Map<String, WarGroup> groups = Collections.emptyMap();
 		try {
 			groups = new WarDeathLogic().getAllGroups();
+
 			if (LOG.isDebugEnabled())
-				LOG.debug(groups.toString());
+				LOG.debug("All groups: " + groups.values());
 
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);
@@ -82,21 +85,31 @@ public class AdminBroadcastCommand extends AbstractCommand {
 		}
 
 		int totalSent = 0;
-		for (Entry<String, String> group : groups.entrySet()) {
+		int activeCounter = 0;
+		for (Entry<String, WarGroup> group : groups.entrySet()) {
 			try {
-				PushMessage pushMessage = new PushMessage(group.getKey(), new TextMessage(bcastMessage));
-				CompletableFuture<BotApiResponse> response = super.messagingClient.pushMessage(pushMessage);
+				if (group.getValue().getGroupStatus().equals(GroupStatus.GroupStatusActive)) {
+					activeCounter++;
+					PushMessage pushMessage = new PushMessage(group.getKey(), new TextMessage(bcastMessage));
 
-				// It will throw an exception if the bot is not any longer in
-				// the chat room
-				response.get();
-				totalSent++;
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Broadcasting message to " + group.getValue());
+					}
+
+					CompletableFuture<BotApiResponse> response = super.messagingClient.pushMessage(pushMessage);
+
+					// TODO: deal with this when we have 100+ groups.
+					// Send messages in parallel, 500/min max
+					response.get();
+					totalSent++;
+				}
 			} catch (Exception e) {
 				LOG.warn("Cannot push message to group " + group + ". Reason: " + e);
 			}
 		}
 
-		return new TextMessage("Message broadcasted " + totalSent + "/" + groups.size());
+		return new TextMessage("Message broadcasted [sent/active (total)]\n" + totalSent + "/" + activeCounter + " ("
+		        + groups.size() + ")");
 	}
 
 	/*

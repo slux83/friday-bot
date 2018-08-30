@@ -64,7 +64,7 @@ public class WarDeathLogic {
 	 * @return the map of groups
 	 * @throws Exception
 	 */
-	public Map<String, String> getAllGroups() throws Exception {
+	public Map<String, WarGroup> getAllGroups() throws Exception {
 		Connection conn = DbConnectionPool.getConnection();
 
 		WarGroupDao dao = new WarGroupDao(conn);

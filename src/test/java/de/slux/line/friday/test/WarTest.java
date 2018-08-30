@@ -81,7 +81,7 @@ public class WarTest {
 		assertNotEquals(-1, group2Key);
 		assertNotEquals(-1, group3Key);
 
-		Map<String, String> groups = this.warModel.getAllGroups();
+		Map<String, WarGroup> groups = this.warModel.getAllGroups();
 		assertFalse(groups.isEmpty());
 		System.out.println(groups);
 

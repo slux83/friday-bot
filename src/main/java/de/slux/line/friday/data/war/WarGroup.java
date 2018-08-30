@@ -11,7 +11,8 @@ import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 
 /**
- * The status of the war of a specific group
+ * The status of the war of a specific group. This is also used to gather group
+ * information in general
  * 
  * @author slux
  */
@@ -60,6 +61,10 @@ public class WarGroup {
 	}
 
 	private List<WarDeath> deathReports;
+	private String groupId;
+	private String groupName;
+	private GroupStatus groupStatus;
+	private GroupFeature groupFeature;
 
 	/**
 	 * Ctor
@@ -234,6 +239,109 @@ public class WarGroup {
 			return totalDeaths;
 		}
 
+	}
+
+	/**
+	 * @return the groupId
+	 */
+	public String getGroupId() {
+		return groupId;
+	}
+
+	/**
+	 * @param groupId
+	 *            the groupId to set
+	 */
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
+	}
+
+	/**
+	 * @return the groupName
+	 */
+	public String getGroupName() {
+		return groupName;
+	}
+
+	/**
+	 * @param groupName
+	 *            the groupName to set
+	 */
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	/**
+	 * @return the groupStatus
+	 */
+	public GroupStatus getGroupStatus() {
+		return groupStatus;
+	}
+
+	/**
+	 * @param groupStatus
+	 *            the groupStatus to set
+	 */
+	public void setGroupStatus(GroupStatus groupStatus) {
+		this.groupStatus = groupStatus;
+	}
+
+	/**
+	 * @return the groupFeature
+	 */
+	public GroupFeature getGroupFeature() {
+		return groupFeature;
+	}
+
+	/**
+	 * @param groupFeature
+	 *            the groupFeature to set
+	 */
+	public void setGroupFeature(GroupFeature groupFeature) {
+		this.groupFeature = groupFeature;
+	}
+
+	/**
+	 * get the status from the integer
+	 * 
+	 * @param status
+	 * @return the status enum or null
+	 */
+	public static GroupStatus statusOf(int status) {
+		if (GroupStatus.GroupStatusActive.getValue() == status) {
+			return GroupStatus.GroupStatusActive;
+		}
+
+		if (GroupStatus.GroupStatusInactive.getValue() == status) {
+			return GroupStatus.GroupStatusInactive;
+		}
+
+		return null;
+	}
+
+	/**
+	 * get the feature from the integer
+	 * 
+	 * @param feature
+	 * @return the feature enum or null
+	 */
+	public static GroupFeature featureOf(int feature) {
+		if (GroupFeature.GroupFeatureWar.getValue() == feature) {
+			return GroupFeature.GroupFeatureWar;
+		}
+
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "WarGroup [deathReports=" + deathReports + ", groupId=" + groupId + ", groupName=" + groupName
+		        + ", groupStatus=" + groupStatus + ", groupFeature=" + groupFeature + "]";
 	}
 
 }

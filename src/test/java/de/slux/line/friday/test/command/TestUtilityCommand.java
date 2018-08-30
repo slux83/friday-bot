@@ -4,12 +4,16 @@
 package de.slux.line.friday.test.command;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.linecorp.bot.model.event.FollowEvent;
 import com.linecorp.bot.model.event.JoinEvent;
@@ -34,6 +38,17 @@ import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
  * @author slux
  */
 public class TestUtilityCommand {
+	/**
+	 * Reduce logging level
+	 * 
+	 * @throws Exception
+	 */
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) root;
+		logbackLogger.setLevel(ch.qos.logback.classic.Level.INFO);
+	}
 
 	@Test
 	public void testAdminStatusConstruction() throws Exception {
@@ -112,10 +127,10 @@ public class TestUtilityCommand {
 
 		// Register command
 		FollowEvent followEvent = MessageEventUtil.createFollowEvent(userId);
-		
+
 		friday.handleDefaultMessageEvent(followEvent);
 		String pushedMessages = callback.takeAllMessages();
-		
+
 		System.out.print(pushedMessages);
 		assertTrue(pushedMessages.contains("Hello Summoner!"));
 
@@ -155,7 +170,7 @@ public class TestUtilityCommand {
 	}
 
 	@Test
-	public void testUserEvent() throws Exception {
+	public void testAdminUserEvent() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
@@ -164,10 +179,11 @@ public class TestUtilityCommand {
 		friday.getTotalIncomingMsgCounter().set(10000);
 
 		String userId = FridayBotApplication.SLUX_ID;
+		String groupId = UUID.randomUUID().toString();
 
 		// Register command
-		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(
-		        UUID.randomUUID().toString(), userId, WarRegisterCommand.CMD_PREFIX + " group1");
+		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        WarRegisterCommand.CMD_PREFIX + " group1");
 
 		// Admin help command
 		MessageEvent<TextMessageContent> adminHelpCmd = MessageEventUtil.createMessageEventUserSource(userId,
@@ -182,6 +198,9 @@ public class TestUtilityCommand {
 		        AdminStatusCommand.CMD_PREFIX + " maintenance");
 		MessageEvent<TextMessageContent> adminStatusInvalidCmd = MessageEventUtil.createMessageEventUserSource(userId,
 		        AdminStatusCommand.CMD_PREFIX + " invalid");
+
+		// Leave event
+		LeaveEvent leaveEvent = MessageEventUtil.createLeaveEvent(groupId, userId);
 
 		// Admin broadcast command
 		MessageEvent<TextMessageContent> adminBroadcastCmd = MessageEventUtil.createMessageEventUserSource(
@@ -208,6 +227,7 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("Version"));
 		assertTrue(response.getText().contains("OPERATIONAL"));
 		System.out.println(response);
+		String statusResponse = response.getText().substring(response.getText().indexOf("Active/Total"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(adminStatusMaintCmd);
@@ -233,6 +253,8 @@ public class TestUtilityCommand {
 
 		response = friday.handleTextMessageEvent(adminBroadcastCmd);
 		assertNotNull(response);
+		String bcastResponse = response.getText();
+		System.out.println(bcastResponse);
 		assertTrue(response.getText().contains("Message broadcasted"));
 		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
 
@@ -241,6 +263,22 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("Please provide a message to broadcast"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
-	}
+		friday.handleDefaultMessageEvent(leaveEvent);
+		assertTrue(callback.takeAllMessages().isEmpty());
 
+		response = friday.handleTextMessageEvent(adminBroadcastCmd);
+		assertNotNull(response);
+		assertTrue(response.getText().contains("Message broadcasted"));
+		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
+		// One less active group
+		assertNotEquals(bcastResponse, response.getText());
+		System.out.println(response.getText());
+
+		response = friday.handleTextMessageEvent(adminStatusCmd);
+		assertNotNull(response);
+		assertTrue(response.getText().contains("Version"));
+		System.out.println(response);
+		assertNotEquals(statusResponse, response.getText().substring(response.getText().indexOf("Active/Total")));
+		assertTrue(callback.takeAllMessages().isEmpty());
+	}
 }
