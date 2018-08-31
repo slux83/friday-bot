@@ -85,6 +85,8 @@ public class HelloUserCommand extends AbstractCommand {
 		} catch (Exception e) {
 			LOG.warn("Cannot retrieve user profile for " + userId + ". Reason " + e, e);
 		}
+		
+		LOG.info("New follower: " + userName + " (" + userId + ")");
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Hello " + userName + "!\n\n");
