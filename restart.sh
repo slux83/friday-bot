@@ -1,9 +1,11 @@
 #!/bin/bash
 
-./stop.sh
+DIR=$(dirname "$(readlink -f "$BASH_SOURCE")")
+
+$DIR/stop.sh
 
 sleep 3
 
-./my_app.sh &
+$DIR/start.sh &
 
 

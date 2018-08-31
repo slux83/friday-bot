@@ -1,5 +1,6 @@
 #!/bin/bash
 
+DIR=$(dirname "$(readlink -f "$BASH_SOURCE")")
 MAIN="de.slux.line.friday.FridayBotApplication"
 JAVA_OPTS=""
 LINE_CHANNEL_TOKEN="ujk+j34cFZyA9qW0DYhKJ8P7+6FkmnEyWbcu7xhUmwhwVanjpjalsUfVgtHcrnXfhiAV2VIRIC0wAyYF7BBFvoKaenklkRi38/F+34qcyBXQVFMgTyrlmp8ILBLVgduDHvTehU9yf1RwOQ71cSBXhAdB04t89/1O/w1cDnyilFU="
@@ -22,10 +23,13 @@ java -Dline.bot.channelSecret="$LINE_CHANNEL_SECRET" \
      -Dfriday.db.port="$DB_PORT" \
      -Dfriday.db.name="$DB_NAME" \
      $JAVA_OPTS \
-     -cp "target/friday-bot-${FRIDAY_VERSION}.jar:target/libs/*" ${MAIN} > /dev/null 2>&1 &
+     -cp "${DIR}/target/friday-bot-${FRIDAY_VERSION}.jar:${DIR}/target/libs/*" ${MAIN} > /dev/null 2>&1 &
 
 # get the app pid
-echo $! > friday.pid
+rm -f ${DIR}/FRIDAY.pid
+echo $! > "${DIR}/FRIDAY.pid"
+
+echo "*** FRIDAY BOT ${FRIDAY_VERSION} started with PID `cat ${DIR}/FRIDAY.pid` ***"
 
 
 

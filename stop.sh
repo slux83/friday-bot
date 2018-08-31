@@ -1,19 +1,25 @@
 #!/bin/bash
-PID_PATH=app.pid
-appName="FRIDAY BOT"
+DIR=$(dirname "$(readlink -f "$BASH_SOURCE")")
+PID_PATH=${DIR}/FRIDAY.pid
+APP_NAME="FRIDAY BOT"
 
 if [ ! -f "$PID_PATH" ]; then
-   echo "Process Id FilePath($PID_PATH) Not found"
+   echo "PID $PID_PATH Not found"
 else
-    pid=`cat $PID_PATH`
-    if [ ! -e "/proc/$pid" -a "/proc/$pid/exe" ]; then
-        echo "$appName was not running.";
+    PID="`cat $PID_PATH`"
+    if [ "$PID" = "" ]; then
+        echo "$APP_NAME is not running"
+	exit 0
+    fi
+    if [ ! -e "/proc/$PID" -a "/proc/$PID/exe" ]; then
+        echo "$APP_NAME was not running.";
     else
-       kill -2 $pid;
-       echo "Gracefully stopping $appName with PID $pid..."
+       # send SIGTERM
+       kill -15 $PID;
+       echo "Gracefully stopping $APP_NAME with PID ${PID}..."
 
        # wait 30 secs for the shutdown then kill the app
-       sleep 30
-       kill -9 $pid
+       sleep 10
+       kill -9 $pid > /dev/null 2>&1
     fi
 fi
