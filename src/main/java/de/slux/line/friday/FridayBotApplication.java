@@ -262,7 +262,7 @@ public class FridayBotApplication {
 		}
 
 		if (bestDistance > 0.95d) {
-			return new TextMessage("Sorry, perhaps you mean '" + bestPrefix);
+			return new TextMessage("Sorry, perhaps you mean '" + bestPrefix + "'");
 		}
 
 		return new TextMessage("Sorry, I didn't understand. Try with " + HelpCommand.CMD_PREFIX);
