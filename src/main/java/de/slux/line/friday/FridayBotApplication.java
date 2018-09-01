@@ -48,6 +48,7 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.DefaultCommand;
+import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.GoodbyeGroupCommand;
 import de.slux.line.friday.command.HelloGroupCommand;
 import de.slux.line.friday.command.HelloUserCommand;
@@ -67,6 +68,7 @@ import de.slux.line.friday.command.war.WarSummaryDeathCommand;
 import de.slux.line.friday.command.war.WarSummonerNodeCommand;
 import de.slux.line.friday.command.war.WarSummonerRenameCommand;
 import de.slux.line.friday.command.war.WarUndoDeathCommand;
+import de.slux.line.friday.scheduler.McocSchedulerImporter;
 
 @SpringBootApplication
 @LineMessageHandler
@@ -93,6 +95,7 @@ public class FridayBotApplication {
 	private AtomicLong totalIncomingMsgCounter;
 	private AtomicBoolean isOperational;
 	private List<AbstractCommand> commands;
+	private McocSchedulerImporter scheduler;
 
 	public static void main(String[] args) {
 		SpringApplication.run(FridayBotApplication.class, args);
@@ -117,6 +120,14 @@ public class FridayBotApplication {
 		this.totalIncomingMsgCounter = new AtomicLong();
 		this.isOperational = new AtomicBoolean(true);
 
+		// Initialize scheduler
+		try {
+			this.scheduler = new McocSchedulerImporter();
+		} catch (Exception e) {
+			LOG.error("Cannot initialize MCOC scheduler: " + e, e);
+			throw new RuntimeException(e);
+		}
+
 		// Initialise all commands (the order is important for the help)
 		this.commands = new ArrayList<>();
 
@@ -128,6 +139,7 @@ public class FridayBotApplication {
 		// Utility commands
 		this.commands.add(new HelpCommand(this.lineMessagingClient));
 		this.commands.add(new InfoCommand(this.lineMessagingClient));
+		this.commands.add(new EventInfoCommand(this.lineMessagingClient, this.scheduler));
 
 		// War commands
 		this.commands.add(new WarRegisterCommand(this.lineMessagingClient));
@@ -187,12 +199,15 @@ public class FridayBotApplication {
 	private TextMessage handleUserSource(String message, String userId, MessageEvent<TextMessageContent> event) {
 
 		if (SLUX_ID.equals(userId)) {
+			// Admin commands
 			AbstractCommand command = getAdminCommand(message);
 
 			if (!(command instanceof DefaultCommand))
 				this.commandIncomingMsgCounter.incrementAndGet();
 
 			return command.execute(userId, null, message);
+		} else {
+			// TODO: Normal user command
 		}
 
 		return null;
@@ -289,6 +304,23 @@ public class FridayBotApplication {
 
 		for (AbstractCommand command : this.commands) {
 			if (!command.getType().equals(CommandType.CommandTypeAdmin) && command.canTrigger(text.trim()))
+				return command;
+		}
+
+		return new DefaultCommand(this.lineMessagingClient);
+	}
+
+	/**
+	 * Select the command that matches the text
+	 * 
+	 * @param text
+	 * @return the command or {@link DefaultCommand}
+	 */
+	private AbstractCommand getUserCommand(String text) {
+
+		for (AbstractCommand command : this.commands) {
+			if ((command.getType().equals(CommandType.CommandTypeShared)
+			        || command.getType().equals(CommandType.CommandTypeUser)) && command.canTrigger(text.trim()))
 				return command;
 		}
 

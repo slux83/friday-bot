@@ -42,7 +42,6 @@ import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.logic.war.WarDeathLogic;
-import de.slux.line.friday.logic.war.WarPlacementLogic;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
