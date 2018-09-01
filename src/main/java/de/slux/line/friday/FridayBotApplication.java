@@ -71,7 +71,7 @@ import de.slux.line.friday.command.war.WarUndoDeathCommand;
 @SpringBootApplication
 @LineMessageHandler
 public class FridayBotApplication {
-	public static String FRIDAY_VERSION = "0.0.1-beta4";
+	public static String FRIDAY_VERSION = "0.0.1";
 	public static final int MAX_LINE_MESSAGE_SIZE = 1500;
 
 	private static Logger LOG = LoggerFactory.getLogger(FridayBotApplication.class);
