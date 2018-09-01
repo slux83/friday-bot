@@ -520,7 +520,7 @@ public class TestWarCommand {
 		String userId = UUID.randomUUID().toString();
 
 		String longName = Strings.repeat("long", 100);
-		
+
 		// Register command
 		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarRegisterCommand.CMD_PREFIX + " " + longName);
@@ -528,6 +528,6 @@ public class TestWarCommand {
 		/* Begin */
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("Data too long"));
-		
+
 	}
 }

@@ -55,7 +55,11 @@ public class GoodbyeGroupCommand extends AbstractCommand {
 			LOG.info("FRIDAY is leaving the group: " + senderId);
 
 			WarDeathLogic warModel = new WarDeathLogic();
+			// First we want to clear all the current war entries (not the
+			// history for now)
+			warModel.resetFor(senderId);
 			warModel.updateGroupStatus(senderId, GroupStatus.GroupStatusInactive);
+
 		} catch (Exception e) {
 			LOG.error("Erro while setting the status of the group '" + senderId + "'" + this.getClass().getSimpleName(),
 			        e);
@@ -73,7 +77,7 @@ public class GoodbyeGroupCommand extends AbstractCommand {
 	public CommandType getType() {
 		return CommandType.CommandTypeEvent;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

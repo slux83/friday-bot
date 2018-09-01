@@ -8,6 +8,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Connection;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.BeforeClass;
@@ -28,9 +30,19 @@ import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
 import de.slux.line.friday.command.admin.AdminHelpCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
+import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarHistoryCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
+import de.slux.line.friday.command.war.WarReportDeathCommand;
 import de.slux.line.friday.command.war.WarSummaryDeathCommand;
+import de.slux.line.friday.command.war.WarSummonerNodeCommand;
+import de.slux.line.friday.dao.DbConnectionPool;
+import de.slux.line.friday.dao.war.WarSummonerDao;
+import de.slux.line.friday.data.war.WarGroup;
+import de.slux.line.friday.data.war.WarGroup.GroupStatus;
+import de.slux.line.friday.data.war.WarSummoner;
+import de.slux.line.friday.logic.war.WarDeathLogic;
+import de.slux.line.friday.logic.war.WarPlacementLogic;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
@@ -158,16 +170,56 @@ public class TestUtilityCommand {
 		MessageEvent<TextMessageContent> historyWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarHistoryCommand.CMD_PREFIX);
 
+		// Report death command
+		MessageEvent<TextMessageContent> deathCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        WarReportDeathCommand.CMD_PREFIX + " 2 55 5* dupe Dormammu");
+
+		// Summoner placement command
+		MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, WarAddSummonersCommand.CMD_PREFIX + " slux83, John Doe, Nemesis The Best, Tony 88");
+
+		// Summoner node
+		MessageEvent<TextMessageContent> summonerNodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3A 55 5* dupe IMIW");
+
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("successfully registered using the name group1"));
+
+		// We want to test that the leave event clears the current war stuff
+		response = friday.handleTextMessageEvent(deathCmd);
+		assertTrue(response.getText().contains("160"));
+		assertTrue(response.getText().contains("2"));
+
+		response = friday.handleTextMessageEvent(summonersAddCmd);
+		assertTrue(response.getText().contains("slux83"));
+		assertTrue(response.getText().contains("Tony 88"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(summonerNodeCmd);
+		assertTrue(response.getText().contains("A. 5* dupe IMIW (55)"));
+		assertTrue(callback.takeAllMessages().isEmpty());
 
 		friday.handleDefaultMessageEvent(event);
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		// After the bot has been kicked from the group, the stuff we inserted
+		// should not exist
+		WarDeathLogic deathLogic = new WarDeathLogic();
+		int keyOfUnactiveGroup = WarDeathLogic.getKeyOfGroup(groupId, GroupStatus.GroupStatusInactive);
+		WarGroup groupModel = deathLogic.getReportModel(keyOfUnactiveGroup);
+		String deathReport = groupModel.getReport();
+		assertFalse(deathReport.contains("160"));
+		assertFalse(deathReport.contains("2"));
+		assertTrue(deathReport.contains("Total deaths: 0"));
+
+		Connection conn = DbConnectionPool.getConnection();
+		WarSummonerDao dao = new WarSummonerDao(conn);
+		Map<Integer, WarSummoner> placement = dao.getAll(keyOfUnactiveGroup);
+		assertTrue(placement.isEmpty());
+
 		response = friday.handleTextMessageEvent(historyWarCmd);
 		assertTrue(response.getText().contains("This group is unregistered"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-
 	}
 
 	@Test
