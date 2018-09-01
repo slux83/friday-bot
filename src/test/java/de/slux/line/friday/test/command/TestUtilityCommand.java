@@ -30,6 +30,7 @@ import de.slux.line.friday.command.admin.AdminHelpCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarHistoryCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
+import de.slux.line.friday.command.war.WarSummaryDeathCommand;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
@@ -185,6 +186,13 @@ public class TestUtilityCommand {
 		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarRegisterCommand.CMD_PREFIX + " group1");
 
+		// Death summary command
+		MessageEvent<TextMessageContent> deathSummaryCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, WarSummaryDeathCommand.CMD_PREFIX);
+
+		MessageEvent<TextMessageContent> deathSummaryNoAdminCmd = MessageEventUtil.createMessageEventGroupSource(
+		        groupId, UUID.randomUUID().toString(), WarSummaryDeathCommand.CMD_PREFIX);
+
 		// Admin help command
 		MessageEvent<TextMessageContent> adminHelpCmd = MessageEventUtil.createMessageEventUserSource(userId,
 		        AdminHelpCommand.CMD_PREFIX);
@@ -237,7 +245,14 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("MAINTENANCE"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
-		//TODO: Test that slux can send commands even under maintenance
+		// Test that admin can send commands even under maintenance
+		response = friday.handleTextMessageEvent(deathSummaryCmd);
+		assertTrue(response.getText().contains("Nothing to report"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(deathSummaryNoAdminCmd);
+		assertTrue(response.getText().contains("maintenance"));
+		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(adminStatusOperCmd);
 		assertNotNull(response);
