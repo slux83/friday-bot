@@ -3,6 +3,7 @@
  */
 package de.slux.line.friday.command.war;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -62,53 +63,77 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 			// we can use this command only to print the last version
 			WarPlacementLogic logic = new WarPlacementLogic();
 
-			List<String> args = extractArgs(message);
+			List<String> commandArgs = extractArgs(message);
 
 			// clear up prefix
-			args.remove(0);
-			args.remove(0);
+			commandArgs.remove(0);
+			commandArgs.remove(0);
 
-			if (args.size() < 3) {
+			if (commandArgs.size() < 3) {
 				return new TextMessage("Missing arguments, please use " + HelpCommand.CMD_PREFIX
 				        + " to see the list of commands and arguments");
 			}
 
-			String arg1 = args.remove(0).trim();
-			String arg2 = args.remove(0).trim();
+			// Deal with multi-insert
+			String content = String.join(" ", commandArgs);
+			List<String> commands = Arrays.asList(content.split(","));
 
-			// Validate the position
-			if (!arg1.matches(POSITION_REGEX)) {
-				return new TextMessage("Invalid argument '" + arg1
-				        + "'. Specify the number of the summoner and the position of the placement. E.g. '1A', '3B', '7E', etc...");
+			int totalUpdates = 0;
+			int validUpdates = 0;
+			StringBuilder warnings = new StringBuilder();
+			for (String command : commands) {
+				try {
+					totalUpdates++;
+					List<String> args = super.extractArgs(command.trim());
+					String arg1 = args.remove(0).trim();
+					String arg2 = args.remove(0).trim();
+
+					// Validate the position
+					if (!arg1.matches(POSITION_REGEX)) {
+						warnings.append("- Invalid argument '" + arg1 + "\n");
+						continue;
+					}
+
+					String summonerNum = arg1.substring(0, arg1.length() - 1);
+					char placement = arg1.charAt(arg1.length() - 1);
+
+					int summoner = -1;
+
+					// Already validated by the regex
+					summoner = Integer.parseInt(summonerNum);
+
+					int node = -1;
+
+					try {
+						node = Integer.parseInt(arg2);
+					} catch (NumberFormatException e) {
+						warnings.append("- Invalid node number. Expected integer, got " + arg2 + "\n");
+						continue;
+					}
+
+					logic.editPlacement(senderId, summoner, placement, node, String.join(" ", args));
+					validUpdates++;
+
+				} catch (WarDaoUnregisteredException e) {
+					return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
+					        + "' for info on how to register your chat room");
+				} catch (SummonerNotFoundException e) {
+					warnings.append("- " + e.getMessage() + "\n");
+				}
 			}
 
-			String summonerNum = arg1.substring(0, arg1.length() - 1);
-			char placement = arg1.charAt(arg1.length() - 1);
-
-			int summoner = -1;
-
-			// Already validated by the regex
-			summoner = Integer.parseInt(summonerNum);
-
-			int node = -1;
-
-			try {
-				node = Integer.parseInt(arg2);
-			} catch (NumberFormatException e) {
-				return new TextMessage("Invalid node number. Expected integer, got " + arg2);
+			// Something went wrong
+			if (totalUpdates != validUpdates) {
+				// We push a warning message
+				super.pushMultipleMessages(senderId,
+				        "Only " + validUpdates + " out of " + totalUpdates + " have been applied:\n",
+				        Arrays.asList(warnings.toString()), true);
 			}
-
-			logic.editPlacement(senderId, summoner, placement, node, String.join(" ", args));
 
 			// Return the new placement
 			Map<Integer, WarSummoner> updatedSummoners = logic.getSummoners(senderId);
 			List<String> text = WarPlacementLogic.getSummonersText(updatedSummoners, true);
 			return super.pushMultipleMessages(senderId, "", text);
-		} catch (WarDaoUnregisteredException e) {
-			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-			        + "' for info on how to register your chat room");
-		} catch (SummonerNotFoundException e) {
-			return new TextMessage(e.getMessage());
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);
 			return new TextMessage("Unexpected error: " + e);

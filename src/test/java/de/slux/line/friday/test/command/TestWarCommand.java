@@ -172,20 +172,20 @@ public class TestWarCommand {
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summoner1NodeCmd);
-		assertTrue(response.getText().contains("Invalid argument"));
-		assertTrue(callback.takeAllMessages().isEmpty());
+		assertTrue(response.getText().contains("Nothing to report"));
+		assertTrue(callback.takeAllMessages().contains("Invalid argument"));
 
 		response = friday.handleTextMessageEvent(summoner2NodeCmd);
-		assertTrue(response.getText().contains("cannot find the specified summoner at position 10"));
-		assertTrue(callback.takeAllMessages().isEmpty());
+		assertTrue(response.getText().contains("Nothing to report"));
+		assertTrue(callback.takeAllMessages().contains("cannot find the specified summoner at position 10"));
 
 		response = friday.handleTextMessageEvent(summoner3NodeCmd);
-		assertTrue(response.getText().contains("Invalid argument"));
-		assertTrue(callback.takeAllMessages().isEmpty());
+		assertTrue(response.getText().contains("Nothing to report"));
+		assertTrue(callback.takeAllMessages().contains("Invalid argument"));
 
 		response = friday.handleTextMessageEvent(summoner4NodeCmd);
-		assertTrue(response.getText().contains("Invalid node number"));
-		assertTrue(callback.takeAllMessages().isEmpty());
+		assertTrue(response.getText().contains("Nothing to report"));
+		assertTrue(callback.takeAllMessages().contains("Invalid node number"));
 
 		response = friday.handleTextMessageEvent(summoner5NodeCmd);
 		assertTrue(response.getText().contains("Missing arguments"));
