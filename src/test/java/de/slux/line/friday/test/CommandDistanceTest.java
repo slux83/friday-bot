@@ -47,31 +47,31 @@ public class CommandDistanceTest {
 		        "friday war 4Loki");
 		MessageEvent<TextMessageContent> cmd9 = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        "friday save 4Loki");
-		
+
 		TextMessage response = friday.handleTextMessageEvent(cmd1);
 		System.out.println(response);
-		
+
 		response = friday.handleTextMessageEvent(cmd2);
 		System.out.println(response);
-		
+
 		response = friday.handleTextMessageEvent(cmd3);
 		System.out.println(response);
-		
+
 		response = friday.handleTextMessageEvent(cmd4);
 		System.out.println(response);
-		
+
 		response = friday.handleTextMessageEvent(cmd5);
 		System.out.println(response);
-		
+
 		response = friday.handleTextMessageEvent(cmd6);
 		System.out.println(response);
-		
+
 		response = friday.handleTextMessageEvent(cmd7);
 		System.out.println(response);
-		
+
 		response = friday.handleTextMessageEvent(cmd8);
 		System.out.println(response);
-		
+
 		response = friday.handleTextMessageEvent(cmd9);
 		System.out.println(response);
 

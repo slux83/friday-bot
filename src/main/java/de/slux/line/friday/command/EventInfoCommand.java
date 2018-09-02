@@ -72,7 +72,7 @@ public class EventInfoCommand extends AbstractCommand {
 				}
 
 				String response = getMessageForEvents(todayEvents);
-				return new TextMessage("MCOC Today's events:\n\n" + response);
+				return new TextMessage("MCOC Today's events:\n" + response);
 			} else {
 				List<String> args = super.extractArgs(message);
 				// Clear up prefix
@@ -85,33 +85,33 @@ public class EventInfoCommand extends AbstractCommand {
 					Calendar c = Calendar.getInstance();
 					c.setTime(new Date());
 					c.add(Calendar.DAY_OF_MONTH, 1);
-					
+
 					String tomorrow = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
 					McocDayInfo tomorrowEvents = this.schedulerImporter.getMcocScheduler().get(tomorrow);
-					
+
 					if (tomorrowEvents == null) {
 						return new TextMessage("Nothing found for tomorrow");
 					}
 
 					String response = getMessageForEvents(tomorrowEvents);
-					return new TextMessage("MCOC Tomorrow's events:\n\n" + response);
+					return new TextMessage("MCOC Tomorrow's events:\n" + response);
 				} else if (WEEK_ARG.equalsIgnoreCase(eventQualifier)) {
 					// Show the week events
 					Calendar c = Calendar.getInstance();
-					c.setTime(new Date());
-					
+
 					StringBuilder sb = new StringBuilder("MCOC Week events:\n\n");
 					for (int i = 0; i < 8; i++) {
-						c.add(Calendar.DAY_OF_MONTH, 1);
+						c.setTime(new Date());
+						c.add(Calendar.DAY_OF_MONTH, i);
 						String day = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
 						McocDayInfo dayEvents = this.schedulerImporter.getMcocScheduler().get(day);
-						
+
 						if (dayEvents == null) {
 							LOG.error("Missing events for day " + day);
 							sb.append("Missing data\n");
 							continue;
 						}
-						
+
 						String eventText = getMessageForEvents(dayEvents);
 						sb.append(" * ");
 						sb.append(day);
@@ -119,20 +119,22 @@ public class EventInfoCommand extends AbstractCommand {
 						sb.append(eventText);
 						sb.append("\n");
 					}
-					
+
 					if (sb.toString().length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
 						LOG.error("BUG: weekly events produced a super long message that has to be split");
 					}
 
 					return new TextMessage(sb.toString());
+				} else {
+					// Something unknown
+					return new TextMessage("Sorry, I can't provide events for '" + eventQualifier
+					        + "'. Only 'tomorrow' or 'week' arguments are accepted\n");
 				}
 			}
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);
 			return new TextMessage("Unexpected error: " + e);
 		}
-
-		return null;
 	}
 
 	/**
@@ -189,7 +191,7 @@ public class EventInfoCommand extends AbstractCommand {
 				sb.append("Arena: T4 Basic\n");
 				break;
 		}
-		
+
 		switch (events.getOneDayEventStatus()) {
 			case ALLY_HELP:
 				sb.append("1-Day: Alliance Help\n");
@@ -200,7 +202,7 @@ public class EventInfoCommand extends AbstractCommand {
 			case OFF:
 				break;
 		}
-		
+
 		switch (events.getThreeDaysEventStatus()) {
 			case COMPLETION:
 				sb.append("3-Days: Completion\n");
@@ -213,7 +215,7 @@ public class EventInfoCommand extends AbstractCommand {
 				break;
 			case OFF:
 				break;
-			
+
 		}
 
 		return sb.toString();
@@ -237,7 +239,7 @@ public class EventInfoCommand extends AbstractCommand {
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <tomorrow> OR <week>\n");
+		sb.append("[" + CMD_PREFIX + " <tomorrow> OR <week>]\n");
 		sb.append("Shows the MCOC events for today (default with no arguments), tomorrow or the week.\n");
 		sb.append("Example '" + CMD_PREFIX + "' or '" + CMD_PREFIX + " week'");
 

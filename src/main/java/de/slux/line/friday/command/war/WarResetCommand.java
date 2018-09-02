@@ -89,7 +89,7 @@ public class WarResetCommand extends AbstractCommand {
 
 		return sb.toString();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

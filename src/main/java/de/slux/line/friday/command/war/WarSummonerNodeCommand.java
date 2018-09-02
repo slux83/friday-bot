@@ -139,7 +139,7 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 
 		return sb.toString();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

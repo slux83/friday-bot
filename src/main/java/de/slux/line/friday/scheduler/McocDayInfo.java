@@ -43,9 +43,8 @@ public class McocDayInfo {
 	 * @param catArena
 	 * @throws ParseException
 	 */
-	public static McocDayInfo createMcocDayInfo(String aqStatus,
-			String awStatus, String catArena, String oneDayEvent,
-			String threeDaysEvent) throws ParseException {
+	public static McocDayInfo createMcocDayInfo(String aqStatus, String awStatus, String catArena, String oneDayEvent,
+	        String threeDaysEvent) throws ParseException {
 
 		McocDayInfo mdi = new McocDayInfo();
 
@@ -62,8 +61,7 @@ public class McocDayInfo {
 		else if (aqStatus.equals("on - d5"))
 			mdi.aqStatus = AqStatus.DAY5;
 		else
-			throw new ParseException("The AQ status " + aqStatus
-					+ " is not valid.", -1);
+			throw new ParseException("The AQ status " + aqStatus + " is not valid.", -1);
 
 		if (awStatus.contains("Maint"))
 			mdi.awStatus = AWStatus.MAINTENANCE;
@@ -72,8 +70,7 @@ public class McocDayInfo {
 		else if (awStatus.equals("Attack"))
 			mdi.awStatus = AWStatus.ATTACK;
 		else
-			throw new ParseException("The AW status " + awStatus
-					+ " is not valid.", -1);
+			throw new ParseException("The AW status " + awStatus + " is not valid.", -1);
 
 		if (catArena.equals("Basic"))
 			mdi.catArenaStatus = CatalystArena.T4B;
@@ -108,10 +105,9 @@ public class McocDayInfo {
 	 */
 	@Override
 	public String toString() {
-		return "MCOC Day Events:\n aqStatus=" + aqStatus + "\n awStatus=" + awStatus
-				+ "\n catArenaStatus=" + catArenaStatus + "\n oneDayEventStatus="
-				+ oneDayEventStatus + "\n threeDaysEventStatus="
-				+ threeDaysEventStatus;
+		return "MCOC Day Events:\n aqStatus=" + aqStatus + "\n awStatus=" + awStatus + "\n catArenaStatus="
+		        + catArenaStatus + "\n oneDayEventStatus=" + oneDayEventStatus + "\n threeDaysEventStatus="
+		        + threeDaysEventStatus;
 	}
 
 	/**

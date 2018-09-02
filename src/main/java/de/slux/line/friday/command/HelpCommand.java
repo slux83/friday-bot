@@ -60,11 +60,12 @@ public class HelpCommand extends AbstractCommand {
 
 			// Help for groups
 			if (senderId != null && (c.getType().equals(CommandType.CommandTypeWar)
-			        || c.getType().equals(CommandType.CommandTypeUtility))) {
+			        || c.getType().equals(CommandType.CommandTypeUtility)
+			        || c.getType().equals(CommandType.CommandTypeShared))) {
 				sb.append("\n\n");
 				sb.append(c.getHelp());
 			}
-			
+
 			if (senderId == null && (c.getType().equals(CommandType.CommandTypeUser)
 			        || c.getType().equals(CommandType.CommandTypeShared))) {
 				sb.append("\n\n");

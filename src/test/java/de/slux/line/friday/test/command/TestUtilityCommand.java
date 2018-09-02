@@ -9,6 +9,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,6 +27,7 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
+import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
@@ -42,6 +45,7 @@ import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.logic.war.WarDeathLogic;
+import de.slux.line.friday.scheduler.McocSchedulerImporter;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
@@ -94,6 +98,77 @@ public class TestUtilityCommand {
 		System.out.println(AdminStatusCommand
 		        .calculateUptime((((1000 * 60 * 60 * 24 * 10) + 1000 * 60 * 60) + 1000 * 60 * 12) + 1000 * 40));
 
+	}
+
+	@Test
+	public void testUserSchedulerCommand() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
+
+		// User help
+		MessageEvent<TextMessageContent> eventUserHelp = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), HelpCommand.CMD_PREFIX);
+
+		// Today's events
+		MessageEvent<TextMessageContent> eventTodayEvents = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX);
+
+		// Tomorrow's events
+		MessageEvent<TextMessageContent> eventTomorrowEvents = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " tomoRRow");
+
+		// Week events
+		MessageEvent<TextMessageContent> eventWeekEvents = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " weeK");
+		// Wrong events
+		MessageEvent<TextMessageContent> eventWrongEvents = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " Monthly");
+
+		TextMessage response = friday.handleTextMessageEvent(eventUserHelp);
+		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
+		assertFalse(response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(eventTodayEvents);
+		assertTrue(response.getText().contains("MCOC Today's events"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		System.out.println(response.getText());
+
+		response = friday.handleTextMessageEvent(eventTomorrowEvents);
+		assertTrue(response.getText().contains("MCOC Tomorrow's events"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		System.out.println(response.getText());
+
+		response = friday.handleTextMessageEvent(eventWrongEvents);
+		assertFalse(response.getText().contains("MCOC Tomorrow's events"));
+		assertTrue(response.getText().contains("Sorry"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		System.err.println(response.getText());
+
+		response = friday.handleTextMessageEvent(eventWeekEvents);
+		assertTrue(response.getText().contains("MCOC Week events"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		String firstDay = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
+		c.add(Calendar.DAY_OF_MONTH, 7);
+		String lastDay = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
+		c.add(Calendar.DAY_OF_MONTH, 1);
+		String overBoundaryDay = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
+		assertTrue(response.getText().contains(firstDay));
+		assertTrue(response.getText().contains(lastDay));
+		assertFalse(response.getText().contains(overBoundaryDay));
+		assertTrue(response.getText().contains("AQ Status"));
+		assertTrue(response.getText().contains("AW Status"));
+		assertTrue(response.getText().contains("Loyalty"));
+		assertTrue(response.getText().contains("Item Use"));
+		assertTrue(response.getText().contains("Team Use"));
+		assertTrue(response.getText().contains("T1 Alpha"));
+		assertTrue(response.getText().contains("T4 Basic"));
+		System.out.println(response.getText());
 	}
 
 	@Test

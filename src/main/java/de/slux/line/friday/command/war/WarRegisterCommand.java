@@ -101,7 +101,7 @@ public class WarRegisterCommand extends AbstractCommand {
 
 		return sb.toString();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

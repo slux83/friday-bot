@@ -123,7 +123,7 @@ public class WarAddSummonersCommand extends AbstractCommand {
 
 		return sb.toString();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -122,7 +122,7 @@ public class WarDeleteCommand extends AbstractCommand {
 
 		return sb.toString();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

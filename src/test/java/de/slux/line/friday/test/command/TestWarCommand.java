@@ -7,6 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
+import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarDeleteCommand;
@@ -32,6 +34,7 @@ import de.slux.line.friday.command.war.WarSummonerNodeCommand;
 import de.slux.line.friday.command.war.WarSummonerRenameCommand;
 import de.slux.line.friday.command.war.WarUndoDeathCommand;
 import de.slux.line.friday.logic.war.WarDeathLogic;
+import de.slux.line.friday.scheduler.McocSchedulerImporter;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
@@ -67,7 +70,9 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("successfully registered using the name group1"));
 
 		response = friday.handleTextMessageEvent(helpCmd);
+		System.out.println(response.getText());
 		assertTrue(response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
 	}
 
@@ -529,5 +534,79 @@ public class TestWarCommand {
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("Data too long"));
 
+	}
+
+	@Test
+	public void testGroupSchedulerCommand() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
+
+		String groupId = UUID.randomUUID().toString();
+		String userId = UUID.randomUUID().toString();
+
+		// User help
+		MessageEvent<TextMessageContent> eventUserHelp = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        HelpCommand.CMD_PREFIX);
+
+		// Today's events
+		MessageEvent<TextMessageContent> eventTodayEvents = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, EventInfoCommand.CMD_PREFIX);
+
+		// Tomorrow's events
+		MessageEvent<TextMessageContent> eventTomorrowEvents = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, EventInfoCommand.CMD_PREFIX + " tomoRRow");
+
+		// Week events
+		MessageEvent<TextMessageContent> eventWeekEvents = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, EventInfoCommand.CMD_PREFIX + " weeK");
+		// Wrong events
+		MessageEvent<TextMessageContent> eventWrongEvents = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, EventInfoCommand.CMD_PREFIX + " Monthly");
+
+		TextMessage response = friday.handleTextMessageEvent(eventUserHelp);
+		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(eventTodayEvents);
+		assertTrue(response.getText().contains("MCOC Today's events"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		System.out.println(response.getText());
+
+		response = friday.handleTextMessageEvent(eventTomorrowEvents);
+		assertTrue(response.getText().contains("MCOC Tomorrow's events"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		System.out.println(response.getText());
+
+		response = friday.handleTextMessageEvent(eventWrongEvents);
+		assertFalse(response.getText().contains("MCOC Tomorrow's events"));
+		assertTrue(response.getText().contains("Sorry"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		System.err.println(response.getText());
+
+		response = friday.handleTextMessageEvent(eventWeekEvents);
+		assertTrue(response.getText().contains("MCOC Week events"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		String firstDay = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
+		c.add(Calendar.DAY_OF_MONTH, 7);
+		String lastDay = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
+		c.add(Calendar.DAY_OF_MONTH, 1);
+		String overBoundaryDay = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
+		assertTrue(response.getText().contains(firstDay));
+		assertTrue(response.getText().contains(lastDay));
+		assertFalse(response.getText().contains(overBoundaryDay));
+		assertTrue(response.getText().contains("AQ Status"));
+		assertTrue(response.getText().contains("AW Status"));
+		assertTrue(response.getText().contains("Loyalty"));
+		assertTrue(response.getText().contains("Item Use"));
+		assertTrue(response.getText().contains("Team Use"));
+		assertTrue(response.getText().contains("T1 Alpha"));
+		assertTrue(response.getText().contains("T4 Basic"));
+		System.out.println(response.getText());
 	}
 }

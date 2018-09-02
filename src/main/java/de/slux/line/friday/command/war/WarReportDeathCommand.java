@@ -124,7 +124,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 
 		return sb.toString();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
