@@ -57,7 +57,16 @@ public class HelpCommand extends AbstractCommand {
 
 		LOG.info("Constructing help using " + commands.size() + " command(s)");
 		for (AbstractCommand c : commands) {
-			if (c.getType().equals(CommandType.CommandTypeWar) || c.getType().equals(CommandType.CommandTypeUtility)) {
+
+			// Help for groups
+			if (senderId != null && (c.getType().equals(CommandType.CommandTypeWar)
+			        || c.getType().equals(CommandType.CommandTypeUtility))) {
+				sb.append("\n\n");
+				sb.append(c.getHelp());
+			}
+			
+			if (senderId == null && (c.getType().equals(CommandType.CommandTypeUser)
+			        || c.getType().equals(CommandType.CommandTypeShared))) {
 				sb.append("\n\n");
 				sb.append(c.getHelp());
 			}
@@ -73,7 +82,7 @@ public class HelpCommand extends AbstractCommand {
 	 */
 	@Override
 	public CommandType getType() {
-		return CommandType.CommandTypeUtility;
+		return CommandType.CommandTypeShared;
 	}
 
 	/*

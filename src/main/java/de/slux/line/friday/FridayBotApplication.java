@@ -197,20 +197,26 @@ public class FridayBotApplication {
 	 * @return the text to send back to the user
 	 */
 	private TextMessage handleUserSource(String message, String userId, MessageEvent<TextMessageContent> event) {
+		AbstractCommand command = null;
 
 		if (SLUX_ID.equals(userId)) {
 			// Admin commands
-			AbstractCommand command = getAdminCommand(message);
-
-			if (!(command instanceof DefaultCommand))
-				this.commandIncomingMsgCounter.incrementAndGet();
-
-			return command.execute(userId, null, message);
+			command = getAdminCommand(message);
 		} else {
-			// TODO: Normal user command
+			// Normal user command
+			command = getUserCommand(message);
 		}
 
-		return null;
+		if (!(command instanceof DefaultCommand)) {
+			this.commandIncomingMsgCounter.incrementAndGet();
+		} else if (message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX)) {
+			// Try to see if the user was close to one of the existing commands
+			return getClosestCommandSuggestion(message, Arrays.asList(CommandType.CommandTypeAdmin,
+			        CommandType.CommandTypeUtility, CommandType.CommandTypeWar));
+		}
+
+		return command.execute(userId, null, message);
+
 	}
 
 	/**
@@ -225,7 +231,7 @@ public class FridayBotApplication {
 	private TextMessage handleGroupSource(String message, String userId, MessageEvent<TextMessageContent> event,
 	        final String groupId) {
 
-		AbstractCommand command = getCommand(message);
+		AbstractCommand command = getGroupCommand(message);
 
 		if (!this.isOperational.get() && !(command instanceof DefaultCommand) && !SLUX_ID.equals(userId)) {
 			return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
@@ -235,7 +241,7 @@ public class FridayBotApplication {
 			this.commandIncomingMsgCounter.incrementAndGet();
 		} else if (message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX)) {
 			// Try to see if the user was close to one of the existing commands
-			return getClosestGroupCommandSuggestion(message);
+			return getClosestCommandSuggestion(message, Arrays.asList(CommandType.CommandTypeAdmin));
 		}
 
 		return command.execute(userId, groupId, message);
@@ -245,13 +251,15 @@ public class FridayBotApplication {
 	 * Get the closest group command suggestion if any
 	 * 
 	 * @param message
+	 * @param command
+	 *            types to exclude
 	 * @return
 	 */
-	private TextMessage getClosestGroupCommandSuggestion(String message) {
+	private TextMessage getClosestCommandSuggestion(String message, List<CommandType> exclude) {
 		double bestDistance = 0;
 		String bestPrefix = null;
 		for (AbstractCommand command : this.commands) {
-			if (command.getCommandPrefix() != null && !command.getType().equals(CommandType.CommandTypeAdmin)) {
+			if (command.getCommandPrefix() != null && !exclude.contains(command.getType())) {
 				String prefix = command.getCommandPrefix();
 				int prefixChunks = prefix.split(" ").length;
 				List<String> messageChunks = Arrays.asList(message.toLowerCase().split(" "));
@@ -289,7 +297,7 @@ public class FridayBotApplication {
 		LOG.info("event source USER-ID=" + event.getSource().getUserId());
 		LOG.info("event source SENDER_ID=" + event.getSource().getSenderId());
 
-		AbstractCommand command = getCommand(event.getClass().getSimpleName());
+		AbstractCommand command = getGroupCommand(event.getClass().getSimpleName());
 
 		command.execute(event.getSource().getUserId(), event.getSource().getSenderId(), null);
 	}
@@ -300,7 +308,7 @@ public class FridayBotApplication {
 	 * @param text
 	 * @return the command or {@link DefaultCommand}
 	 */
-	private AbstractCommand getCommand(String text) {
+	private AbstractCommand getGroupCommand(String text) {
 
 		for (AbstractCommand command : this.commands) {
 			if (!command.getType().equals(CommandType.CommandTypeAdmin) && command.canTrigger(text.trim()))
