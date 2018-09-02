@@ -126,7 +126,7 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 			if (totalUpdates != validUpdates) {
 				// We push a warning message
 				super.pushMultipleMessages(senderId,
-				        "Only " + validUpdates + " out of " + totalUpdates + " have been applied:\n",
+				        validUpdates + "/" + totalUpdates + " updates have been applied:\n",
 				        Arrays.asList(warnings.toString()), true);
 			}
 
