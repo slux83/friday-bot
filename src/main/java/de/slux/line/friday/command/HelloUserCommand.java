@@ -93,7 +93,8 @@ public class HelloUserCommand extends AbstractCommand {
 		sb.append(
 		        "Thanks for the add! I'm F.R.I.D.A.Y. the BOT and I'm here to assist you during the MCOC wars and many things more!\n");
 		sb.append(
-		        "I'm a bot that works inside a Line chat group, so don't waste more time and invite me in your battle group chat!\n");
+		        "I'm a bot that works best inside a Line chat group, so don't waste more time and invite me in your battle group chat!\n");
+		sb.append("Type 'friday help' to see what I can do outside a chat group.\n");
 
 		sb.append("\n");
 		sb.append("How-To videos: ");

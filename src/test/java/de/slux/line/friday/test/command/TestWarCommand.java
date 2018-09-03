@@ -342,13 +342,13 @@ public class TestWarCommand {
 
 		// Summoner node
 		MessageEvent<TextMessageContent> summoner1NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3A 55 5* dupe IMIW");
+		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3a 55 5* dupe IMIW");
 		MessageEvent<TextMessageContent> summoner2NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 1E 22 4* dupe Mephisto");
 		MessageEvent<TextMessageContent> summoner3NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3B 12 5* undupe Sentinel");
 		MessageEvent<TextMessageContent> summoner3BisNodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3B 12 5* duped Ronan"); // replace
+		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3b 12 5* duped Ronan"); // replace
 		MessageEvent<TextMessageContent> summonerClear1NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3B 0 5* duped Ronan"); // clear
 		MessageEvent<TextMessageContent> summonerClear2NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,

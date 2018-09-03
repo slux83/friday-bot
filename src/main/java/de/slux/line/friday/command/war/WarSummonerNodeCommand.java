@@ -90,7 +90,7 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 				try {
 					totalUpdates++;
 					List<String> args = super.extractArgs(command.trim());
-					String arg1 = args.remove(0).trim();
+					String arg1 = args.remove(0).trim().toUpperCase();
 					String arg2 = args.remove(0).trim();
 
 					// Validate the position

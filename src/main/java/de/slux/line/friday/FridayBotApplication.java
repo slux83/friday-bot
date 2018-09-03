@@ -128,7 +128,7 @@ public class FridayBotApplication {
 			throw new RuntimeException(e);
 		}
 
-		// Initialise all commands (the order is important for the help)
+		// Initialize all commands (the order is important for the help)
 		this.commands = new ArrayList<>();
 
 		// Event based commands (not part of the help)
