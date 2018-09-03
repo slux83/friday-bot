@@ -61,6 +61,7 @@ public class WarAddSummonersCommand extends AbstractCommand {
 		try {
 			// we can use this command only to print the last version
 			WarPlacementLogic logic = new WarPlacementLogic();
+			List<String> summonerNames = new ArrayList<>();
 			if (!message.equalsIgnoreCase(CMD_PREFIX)) {
 				List<String> args = extractArgs(message);
 				// clear up prefix
@@ -73,19 +74,19 @@ public class WarAddSummonersCommand extends AbstractCommand {
 				}
 				String summoners = String.join(" ", args);
 				String[] summonerNamesSplit = summoners.split(",");
-				List<String> summonerNames = new ArrayList<>();
 				for (String s : summonerNamesSplit) {
 					summonerNames.add(s.trim());
 				}
 
 				// Add names
 				logic.addSummoners(senderId, summonerNames);
+				return new TextMessage("Added " + summonerNames.size() + " new summoner(s)");
 			}
 
-			// Return the new placement
+			// Return the placement
 			Map<Integer, WarSummoner> updatedSummoners = logic.getSummoners(senderId);
-			List<String> text = WarPlacementLogic.getSummonersText(updatedSummoners, true);
-			return super.pushMultipleMessages(senderId, "", text);
+			List<String> text = WarPlacementLogic.getSummonersText(updatedSummoners);
+			return super.pushMultipleMessages(senderId, "*** CURRENT WAR PLACEMENTS ***\n\n", text);
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");

@@ -4,7 +4,6 @@
 package de.slux.line.friday.command.war;
 
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,6 @@ import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.dao.exception.SummonerNotFoundException;
 import de.slux.line.friday.dao.exception.WarDaoUnregisteredException;
-import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.logic.war.WarPlacementLogic;
 
 /**
@@ -85,11 +83,7 @@ public class WarSummonerRenameCommand extends AbstractCommand {
 			}
 
 			logic.renameSummoner(senderId, summonerPosition, String.join(" ", args));
-
-			// Return the new placement
-			Map<Integer, WarSummoner> updatedSummoners = logic.getSummoners(senderId);
-			List<String> text = WarPlacementLogic.getSummonersText(updatedSummoners, true);
-			return super.pushMultipleMessages(senderId, "", text);
+			return new TextMessage("Summoner renamed");
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
 			        + "' for info on how to register your chat room");

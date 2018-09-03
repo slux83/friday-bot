@@ -262,8 +262,8 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("2"));
 
 		response = friday.handleTextMessageEvent(summonersAddCmd);
-		assertTrue(response.getText().contains("slux83"));
-		assertTrue(response.getText().contains("Tony 88"));
+		assertTrue(response.getText().contains("Added 4 new summoner"));
+		assertFalse(response.getText().contains("Tony 88"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summonerNodeCmd);

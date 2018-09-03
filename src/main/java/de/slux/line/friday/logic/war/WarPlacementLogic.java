@@ -125,9 +125,9 @@ public class WarPlacementLogic {
 	 * @param isCurrent
 	 * @return the string(s) for the map
 	 */
-	public static List<String> getSummonersText(Map<Integer, WarSummoner> summoners, boolean isCurrent) {
+	public static List<String> getSummonersText(Map<Integer, WarSummoner> summoners) {
 		List<String> outcome = new ArrayList<>();
-		StringBuilder sb = new StringBuilder(isCurrent ? "*** CURRENT WAR PLACEMENTS ***\n\n" : "");
+		StringBuilder sb = new StringBuilder();
 		for (Entry<Integer, WarSummoner> entry : summoners.entrySet()) {
 			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
 				outcome.add(sb.toString());
@@ -164,4 +164,5 @@ public class WarPlacementLogic {
 
 		return outcome;
 	}
+
 }

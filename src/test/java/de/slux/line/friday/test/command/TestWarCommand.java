@@ -202,23 +202,21 @@ public class TestWarCommand {
 
 		// Multi-insert. We need to add valid summoners first
 		response = friday.handleTextMessageEvent(summonersAddCmd);
-		assertTrue(response.getText().contains("slux83"));
-		assertTrue(response.getText().contains("Tony 88"));
+		assertTrue(response.getText().contains("Added 4 new summoner"));
+		assertFalse(response.getText().contains("Tony 88"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summonerNodeMulti1Cmd);
-		// 2A 11 5* Elektra, 2Z 31 4* domino,6C 53 NC,4C 58 Thor, 1E Elektro
 		String pushedMessages = callback.takeAllMessages();
 		assertFalse(pushedMessages.isEmpty());
 		assertTrue(pushedMessages.contains("2/5"));
 		assertTrue(pushedMessages.contains("2Z"));
 		assertTrue(pushedMessages.contains("position 6"));
 		assertTrue(pushedMessages.contains("Invalid node number"));
-		// TODO: edit the false ones when issue #7 has been implemented
-		// assertFalse(response.getText().contains("A. 5* dupe IMIW (55)"));
+		assertFalse(response.getText().contains("A. 5* dupe IMIW (55)"));
 		assertTrue(response.getText().contains("John Doe"));
 		assertTrue(response.getText().contains("Tony 88"));
-		// assertFalse(response.getText().contains("slux83"));
+		assertFalse(response.getText().contains("slux83"));
 		assertTrue(response.getText().contains("A. 5* Elektra (11)"));
 		assertTrue(response.getText().contains("C. Thor (58)"));
 		assertFalse(response.getText().contains("C. NC (53)"));
@@ -426,8 +424,8 @@ public class TestWarCommand {
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summonersAddCmd);
-		assertTrue(response.getText().contains("slux83"));
-		assertTrue(response.getText().contains("Tony 88"));
+		assertTrue(response.getText().contains("Added 4 new summoner"));
+		assertFalse(response.getText().contains("Tony 88"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summoner1NodeCmd);
@@ -456,19 +454,17 @@ public class TestWarCommand {
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summonerNodeMulti1Cmd);
-		// TODO: edit the false ones when issue #7 has been implemented
-		// assertFalse(response.getText().contains("A. 5* dupe IMIW (55)"));
+		assertFalse(response.getText().contains("A. 5* dupe IMIW (55)"));
 		assertTrue(response.getText().contains("John Doe"));
 		assertTrue(response.getText().contains("Tony 88"));
-		// assertFalse(response.getText().contains("slux83"));
+		assertFalse(response.getText().contains("slux83"));
 		assertTrue(response.getText().contains("A. 5* Elektra (11)"));
 		assertTrue(response.getText().contains("B. 4* domino (31)"));
 		assertTrue(response.getText().contains("C. NC (53)"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summonerRenameCmd);
-		assertTrue(response.getText().contains("3. Foo Bar 1"));
-		assertFalse(response.getText().contains("3. Nemesis The Best"));
+		assertTrue(response.getText().contains("Summoner renamed"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(saveWarCmd);

@@ -4,8 +4,12 @@
 package de.slux.line.friday.command.war;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +85,7 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 			int totalUpdates = 0;
 			int validUpdates = 0;
 			StringBuilder warnings = new StringBuilder();
+			Map<Integer, Set<Character>> changes = new HashMap<>();
 			for (String command : commands) {
 				try {
 					totalUpdates++;
@@ -112,6 +117,12 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 					}
 
 					logic.editPlacement(senderId, summoner, placement, node, String.join(" ", args));
+					Set<Character> slots = changes.get(summoner);
+					if (slots == null) {
+						slots = new HashSet<>();
+						changes.put(summoner, slots);
+					}
+					slots.add(placement);
 					validUpdates++;
 
 				} catch (WarDaoUnregisteredException e) {
@@ -132,8 +143,16 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 
 			// Return the new placement
 			Map<Integer, WarSummoner> updatedSummoners = logic.getSummoners(senderId);
-			List<String> text = WarPlacementLogic.getSummonersText(updatedSummoners, true);
-			return super.pushMultipleMessages(senderId, "", text);
+
+			// Filter out the unaffected items
+			updatedSummoners.entrySet().removeIf(entry -> !changes.containsKey(entry.getKey()));
+			for (Entry<Integer, WarSummoner> entry : updatedSummoners.entrySet()) {
+				Set<Character> placements = changes.get(entry.getKey());
+				entry.getValue().getPlacements().entrySet().removeIf(e -> !placements.contains(e.getKey()));
+			}
+
+			List<String> text = WarPlacementLogic.getSummonersText(updatedSummoners);
+			return super.pushMultipleMessages(senderId, "Updated entries:\n\n", text);
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);
 			return new TextMessage("Unexpected error: " + e);

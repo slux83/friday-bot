@@ -108,7 +108,7 @@ public class WarHistoryCommand extends AbstractCommand {
 				for (Entry<String, Map<Integer, WarSummoner>> placements : historyPlacement.entrySet()) {
 					String allyTag = placements.getKey();
 					Map<Integer, WarSummoner> placementTable = placements.getValue();
-					List<String> text = WarPlacementLogic.getSummonersText(placementTable, false);
+					List<String> text = WarPlacementLogic.getSummonersText(placementTable);
 					super.pushMultipleMessages(senderId, "*** " + day.trim() + " - " + allyTag + " ***\n\n", text,
 					        true);
 				}
