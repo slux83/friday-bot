@@ -3,6 +3,8 @@
  */
 package de.slux.line.friday.command.admin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  */
 public class AdminBroadcastCommand extends AbstractCommand {
 	public static final String CMD_PREFIX = "friday broadcast";
+	private static final int MAX_MESSAGE_BURST = 30;
 	private static Logger LOG = LoggerFactory.getLogger(AdminBroadcastCommand.class);
 
 	/**
@@ -86,25 +89,52 @@ public class AdminBroadcastCommand extends AbstractCommand {
 
 		int totalSent = 0;
 		int activeCounter = 0;
+		List<CompletableFuture<BotApiResponse>> asyncMessages = new ArrayList<>();
 		for (Entry<String, WarGroup> group : groups.entrySet()) {
-			try {
-				if (group.getValue().getGroupStatus().equals(GroupStatus.GroupStatusActive)) {
-					activeCounter++;
-					PushMessage pushMessage = new PushMessage(group.getKey(), new TextMessage(bcastMessage));
+			if (group.getValue().getGroupStatus().equals(GroupStatus.GroupStatusActive)) {
+				activeCounter++;
+				PushMessage pushMessage = new PushMessage(group.getKey(), new TextMessage(bcastMessage));
 
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Broadcasting message to " + group.getValue());
-					}
-
-					CompletableFuture<BotApiResponse> response = super.messagingClient.pushMessage(pushMessage);
-
-					// TODO: deal with this when we have 100+ groups.
-					// Send messages in parallel, 500/min max
-					response.get();
-					totalSent++;
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Broadcasting message to " + group.getValue());
 				}
-			} catch (Exception e) {
-				LOG.warn("Cannot push message to group " + group + ". Reason: " + e);
+
+				if (asyncMessages.size() > MAX_MESSAGE_BURST) {
+					// We need to consume the ones sent so far
+					for (CompletableFuture<BotApiResponse> resp : asyncMessages) {
+						try {
+							resp.get();
+							totalSent++;
+						} catch (Exception e) {
+							LOG.warn("Cannot push message to group. Reason: " + e);
+						}
+					}
+					asyncMessages.clear();
+
+					try {
+						super.pushMultipleMessages(userId, "",
+						        Arrays.asList("Message broadcasted so far [sent/active (total)]\n" + totalSent + "/"
+						                + activeCounter + " (" + groups.size() + ")"),
+						        true);
+					} catch (Exception e) {
+						LOG.error("Cannot push progress notification to the user", e);
+					}
+				}
+
+				// Push the message
+				asyncMessages.add(super.messagingClient.pushMessage(pushMessage));
+			}
+		}
+
+		// We wait the confirmation of the remaining ones
+		if (!asyncMessages.isEmpty()) {
+			for (CompletableFuture<BotApiResponse> resp : asyncMessages) {
+				try {
+					resp.get();
+					totalSent++;
+				} catch (Exception e) {
+					LOG.warn("Cannot push message to group. Reason: " + e);
+				}
 			}
 		}
 

@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -391,11 +392,18 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("OPERATIONAL"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		// Get all groups
+		Map<String, WarGroup> groups = Collections.emptyMap();
+		groups = new WarDeathLogic().getAllGroups();
+		int totalGroups = groups.size();
+		groups.entrySet().removeIf(g -> g.getValue().getGroupStatus().equals(GroupStatus.GroupStatusInactive));
+		int totalActiveGroups = groups.size();
 		response = friday.handleTextMessageEvent(adminBroadcastCmd);
 		assertNotNull(response);
 		String bcastResponse = response.getText();
 		System.out.println(bcastResponse);
-		assertTrue(response.getText().contains("Message broadcasted"));
+		assertTrue(bcastResponse.contains(totalActiveGroups + "/" + totalActiveGroups + " (" + totalGroups + ")"));
+		assertTrue(bcastResponse.contains("Message broadcasted"));
 		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
 
 		response = friday.handleTextMessageEvent(adminBroadcastNoArgCmd);
@@ -403,16 +411,19 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("Please provide a message to broadcast"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		// One group becomes inactive
 		friday.handleDefaultMessageEvent(leaveEvent);
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(adminBroadcastCmd);
 		assertNotNull(response);
+		System.out.println(response.getText());
 		assertTrue(response.getText().contains("Message broadcasted"));
+		assertTrue(response.getText()
+		        .contains((totalActiveGroups - 1) + "/" + (totalActiveGroups - 1) + " (" + totalGroups + ")"));
 		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
 		// One less active group
 		assertNotEquals(bcastResponse, response.getText());
-		System.out.println(response.getText());
 
 		response = friday.handleTextMessageEvent(adminStatusCmd);
 		assertNotNull(response);
