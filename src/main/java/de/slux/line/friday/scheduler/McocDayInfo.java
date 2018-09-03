@@ -24,7 +24,7 @@ public class McocDayInfo {
 	}
 
 	public enum ThreeDaysEvent {
-		OFF, COMPLETION, ITEMUSE, TEAMUSE
+		OFF, COMPLETION, ITEMUSE, TEAMUSE, ARENA_WINS
 	}
 
 	private AqStatus aqStatus;
@@ -92,6 +92,8 @@ public class McocDayInfo {
 			mdi.threeDaysEventStatus = ThreeDaysEvent.ITEMUSE;
 		else if (threeDaysEvent.equals("Team Use"))
 			mdi.threeDaysEventStatus = ThreeDaysEvent.TEAMUSE;
+		else if (threeDaysEvent.equals("Arena Wins"))
+			mdi.threeDaysEventStatus = ThreeDaysEvent.ARENA_WINS;
 		else
 			mdi.threeDaysEventStatus = ThreeDaysEvent.OFF;
 

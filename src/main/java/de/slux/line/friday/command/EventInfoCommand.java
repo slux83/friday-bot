@@ -213,7 +213,12 @@ public class EventInfoCommand extends AbstractCommand {
 			case TEAMUSE:
 				sb.append("3-Days: Team Use\n");
 				break;
+			case ARENA_WINS:
+				sb.append("3-Days: Arena Wins\n");
+				break;
 			case OFF:
+				break;
+			default:
 				break;
 
 		}
