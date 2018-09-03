@@ -105,6 +105,8 @@ public class TestWarCommand {
 		// Summoner placement command
 		MessageEvent<TextMessageContent> summonersTooLongAddCmd = MessageEventUtil.createMessageEventGroupSource(
 		        groupId, userId, WarAddSummonersCommand.CMD_PREFIX + " 1,2,3,4,5,6,7,8,9,10,11");
+		MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, WarAddSummonersCommand.CMD_PREFIX + " slux83, John Doe, Nemesis The Best, Tony 88");
 
 		// Summoner node
 		MessageEvent<TextMessageContent> summoner1NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
@@ -119,6 +121,9 @@ public class TestWarCommand {
 		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3B 55");
 		MessageEvent<TextMessageContent> summoner6NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, WarSummonerNodeCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> summonerNodeMulti1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, WarSummonerNodeCommand.CMD_PREFIX
+		                + " 2A 11 5* Elektra, 2Z 31 4* domino,6C 53 NC,4C 58 Thor, 1E Elektro");
 
 		// Summoner rename
 		MessageEvent<TextMessageContent> summonerRename1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId,
@@ -177,7 +182,7 @@ public class TestWarCommand {
 
 		response = friday.handleTextMessageEvent(summoner2NodeCmd);
 		assertTrue(response.getText().contains("Nothing to report"));
-		assertTrue(callback.takeAllMessages().contains("cannot find the specified summoner at position 10"));
+		assertTrue(callback.takeAllMessages().contains("Invalid summoner at position 10"));
 
 		response = friday.handleTextMessageEvent(summoner3NodeCmd);
 		assertTrue(response.getText().contains("Nothing to report"));
@@ -195,8 +200,31 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("Missing arguments"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		// Multi-insert. We need to add valid summoners first
+		response = friday.handleTextMessageEvent(summonersAddCmd);
+		assertTrue(response.getText().contains("slux83"));
+		assertTrue(response.getText().contains("Tony 88"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(summonerNodeMulti1Cmd);
+		// 2A 11 5* Elektra, 2Z 31 4* domino,6C 53 NC,4C 58 Thor, 1E Elektro
+		String pushedMessages = callback.takeAllMessages();
+		assertFalse(pushedMessages.isEmpty());
+		assertTrue(pushedMessages.contains("2/5"));
+		assertTrue(pushedMessages.contains("2Z"));
+		assertTrue(pushedMessages.contains("position 6"));
+		assertTrue(pushedMessages.contains("Invalid node number"));
+		// TODO: edit the false ones when issue #7 has been implemented
+		// assertFalse(response.getText().contains("A. 5* dupe IMIW (55)"));
+		assertTrue(response.getText().contains("John Doe"));
+		assertTrue(response.getText().contains("Tony 88"));
+		// assertFalse(response.getText().contains("slux83"));
+		assertTrue(response.getText().contains("A. 5* Elektra (11)"));
+		assertTrue(response.getText().contains("C. Thor (58)"));
+		assertFalse(response.getText().contains("C. NC (53)"));
+
 		response = friday.handleTextMessageEvent(summonerRename1Cmd);
-		assertTrue(response.getText().contains("cannot find the specified summoner at position 20"));
+		assertTrue(response.getText().contains("Invalid summoner at position 20"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summonerRename2Cmd);
@@ -327,6 +355,8 @@ public class TestWarCommand {
 		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3B 0 5* duped Ronan"); // clear
 		MessageEvent<TextMessageContent> summonerClear2NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 1E -1 4* dupe Mephisto"); // clear
+		MessageEvent<TextMessageContent> summonerNodeMulti1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 2A 11 5* Elektra,   2B   31  4* domino,4C 53 NC");
 
 		// Summoner rename
 		MessageEvent<TextMessageContent> summonerRenameCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
@@ -423,6 +453,17 @@ public class TestWarCommand {
 
 		response = friday.handleTextMessageEvent(summonerClear2NodeCmd);
 		assertFalse(response.getText().contains("E. 4* dupe Mephisto"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(summonerNodeMulti1Cmd);
+		// TODO: edit the false ones when issue #7 has been implemented
+		// assertFalse(response.getText().contains("A. 5* dupe IMIW (55)"));
+		assertTrue(response.getText().contains("John Doe"));
+		assertTrue(response.getText().contains("Tony 88"));
+		// assertFalse(response.getText().contains("slux83"));
+		assertTrue(response.getText().contains("A. 5* Elektra (11)"));
+		assertTrue(response.getText().contains("B. 4* domino (31)"));
+		assertTrue(response.getText().contains("C. NC (53)"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summonerRenameCmd);
@@ -588,6 +629,7 @@ public class TestWarCommand {
 		System.err.println(response.getText());
 
 		response = friday.handleTextMessageEvent(eventWeekEvents);
+		System.out.println(response.getText());
 		assertTrue(response.getText().contains("MCOC Week events"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 		Calendar c = Calendar.getInstance();
@@ -602,11 +644,7 @@ public class TestWarCommand {
 		assertFalse(response.getText().contains(overBoundaryDay));
 		assertTrue(response.getText().contains("AQ Status"));
 		assertTrue(response.getText().contains("AW Status"));
-		assertTrue(response.getText().contains("Loyalty"));
-		assertTrue(response.getText().contains("Item Use"));
-		assertTrue(response.getText().contains("Team Use"));
-		assertTrue(response.getText().contains("T1 Alpha"));
-		assertTrue(response.getText().contains("T4 Basic"));
-		System.out.println(response.getText());
+		assertTrue(response.getText().contains("3-Days"));
+		assertTrue(response.getText().contains("1-Day"));
 	}
 }

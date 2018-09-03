@@ -149,6 +149,7 @@ public class TestUtilityCommand {
 		System.err.println(response.getText());
 
 		response = friday.handleTextMessageEvent(eventWeekEvents);
+		System.out.println(response.getText());
 		assertTrue(response.getText().contains("MCOC Week events"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 		Calendar c = Calendar.getInstance();
@@ -163,12 +164,8 @@ public class TestUtilityCommand {
 		assertFalse(response.getText().contains(overBoundaryDay));
 		assertTrue(response.getText().contains("AQ Status"));
 		assertTrue(response.getText().contains("AW Status"));
-		assertTrue(response.getText().contains("Loyalty"));
-		assertTrue(response.getText().contains("Item Use"));
-		assertTrue(response.getText().contains("Team Use"));
-		assertTrue(response.getText().contains("T1 Alpha"));
-		assertTrue(response.getText().contains("T4 Basic"));
-		System.out.println(response.getText());
+		assertTrue(response.getText().contains("3-Days"));
+		assertTrue(response.getText().contains("1-Day"));
 	}
 
 	@Test

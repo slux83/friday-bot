@@ -230,7 +230,7 @@ public class WarSummonerDao {
 		Map<Integer, WarSummoner> summoners = getAll(groupId);
 		WarSummoner summoner = summoners.get(summonerPos);
 		if (summoner == null) {
-			throw new SummonerNotFoundException("Sorry, cannot find the specified summoner at position " + summonerPos);
+			throw new SummonerNotFoundException("Invalid summoner at position " + summonerPos);
 		}
 
 		int summonerDbKey = summoner.getId();
@@ -281,7 +281,7 @@ public class WarSummonerDao {
 		Map<Integer, WarSummoner> summoners = getAll(groupId);
 		WarSummoner summoner = summoners.get(summonerPos);
 		if (summoner == null) {
-			throw new SummonerNotFoundException("Sorry, cannot find the specified summoner at position " + summonerPos);
+			throw new SummonerNotFoundException("Invalid summoner at position " + summonerPos);
 		}
 
 		WarSummonerPlacement placement = summoner.getPlacements().get(placementPos);

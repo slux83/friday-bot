@@ -90,7 +90,7 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 
 					// Validate the position
 					if (!arg1.matches(POSITION_REGEX)) {
-						warnings.append("- Invalid argument '" + arg1 + "\n");
+						warnings.append("- Invalid argument '" + arg1 + "'\n");
 						continue;
 					}
 
@@ -107,7 +107,7 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 					try {
 						node = Integer.parseInt(arg2);
 					} catch (NumberFormatException e) {
-						warnings.append("- Invalid node number. Expected integer, got " + arg2 + "\n");
+						warnings.append("- Invalid node number. Expected integer, got '" + arg2 + "'\n");
 						continue;
 					}
 
