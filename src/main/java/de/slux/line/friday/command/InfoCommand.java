@@ -75,7 +75,7 @@ public class InfoCommand extends AbstractCommand {
 		sb.append("PAYPAL: ");
 		sb.append(PAYPAL_LINK.replace("$GUID", senderId));
 		sb.append("\n\n");
-		sb.append("Introduction video: ");
+		sb.append("How-To videos: ");
 		sb.append(HelloUserCommand.INTRO_VIDEO_LINK);
 
 		return sb.toString();
