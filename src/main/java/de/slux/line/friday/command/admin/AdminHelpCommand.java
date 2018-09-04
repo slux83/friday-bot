@@ -58,7 +58,7 @@ public class AdminHelpCommand extends AbstractCommand {
 
 		LOG.info("Constructing admin help using " + commands.size() + " command(s)");
 		for (AbstractCommand c : commands) {
-			if (c.getType().equals(CommandType.CommandTypeAdmin)) {
+			if (c.getType().equals(CommandType.CommandTypeAdmin) || c.getType().equals(CommandType.CommandTypeShared)) {
 				sb.append("\n\n");
 				sb.append(c.getHelp());
 			}

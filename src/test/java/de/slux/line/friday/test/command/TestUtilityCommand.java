@@ -321,6 +321,10 @@ public class TestUtilityCommand {
 		MessageEvent<TextMessageContent> adminHelpCmd = MessageEventUtil.createMessageEventUserSource(userId,
 		        AdminHelpCommand.CMD_PREFIX);
 
+		// Today's events
+		MessageEvent<TextMessageContent> eventTodayEvents = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX);
+
 		// Admin status command
 		MessageEvent<TextMessageContent> adminStatusCmd = MessageEventUtil.createMessageEventUserSource(userId,
 		        AdminStatusCommand.CMD_PREFIX);
@@ -351,6 +355,7 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains(AdminHelpCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(AdminBroadcastCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(AdminStatusCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(adminStatusCmd);
@@ -391,6 +396,11 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("Version"));
 		assertTrue(response.getText().contains("OPERATIONAL"));
 		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(eventTodayEvents);
+		assertTrue(response.getText().contains("MCOC Today's events"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		System.out.println(response.getText());
 
 		// Get all groups
 		Map<String, WarGroup> groups = Collections.emptyMap();

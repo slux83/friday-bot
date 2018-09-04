@@ -353,7 +353,8 @@ public class FridayBotApplication {
 	private AbstractCommand getAdminCommand(String text) {
 
 		for (AbstractCommand command : this.commands) {
-			if (command.getType().equals(CommandType.CommandTypeAdmin) && command.canTrigger(text.trim()))
+			if ((command.getType().equals(CommandType.CommandTypeAdmin)
+			        || command.getType().equals(CommandType.CommandTypeAdmin)) && command.canTrigger(text.trim()))
 				return command;
 		}
 
