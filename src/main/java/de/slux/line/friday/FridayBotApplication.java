@@ -80,6 +80,9 @@ public class FridayBotApplication {
 	private static FridayBotApplication INSTANCE = null;
 	public static final String SLUX_ID = "Ufea80d366e42a0e4b7e3d228ed133e89";
 
+	// If we need to start under maintenance
+	public static final String FRIDAY_MAINTENANCE_KEY = "friday.maintenance";
+
 	public static synchronized FridayBotApplication getInstance() {
 		return INSTANCE;
 	}
@@ -118,7 +121,9 @@ public class FridayBotApplication {
 		this.startup = new Date();
 		this.commandIncomingMsgCounter = new AtomicLong();
 		this.totalIncomingMsgCounter = new AtomicLong();
-		this.isOperational = new AtomicBoolean(true);
+
+		// Check if we are starting in maintenance directly
+		this.isOperational = new AtomicBoolean(System.getProperty(FRIDAY_MAINTENANCE_KEY) == null);
 
 		// Initialize scheduler
 		try {
@@ -205,6 +210,10 @@ public class FridayBotApplication {
 		} else {
 			// Normal user command
 			command = getUserCommand(message);
+		}
+
+		if (!this.isOperational.get() && !(command instanceof DefaultCommand) && !SLUX_ID.equals(userId)) {
+			return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
 		}
 
 		if (!(command instanceof DefaultCommand)) {

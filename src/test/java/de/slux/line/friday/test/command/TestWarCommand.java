@@ -313,6 +313,32 @@ public class TestWarCommand {
 	}
 
 	@Test
+	public void testStartupUnderMaintenance() throws Exception {
+		System.setProperty(FridayBotApplication.FRIDAY_MAINTENANCE_KEY, "true");
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
+
+		String groupId = UUID.randomUUID().toString();
+		String userId = UUID.randomUUID().toString();
+
+		// We clear it for the rest of the tests
+		System.clearProperty(FridayBotApplication.FRIDAY_MAINTENANCE_KEY);
+
+		// Register command
+		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        WarRegisterCommand.CMD_PREFIX + " group1");
+
+		TextMessage response = friday.handleTextMessageEvent(registerCmd);
+		assertFalse(response.getText().contains("successfully registered using the name group1"));
+		assertTrue(response.getText().contains("standby"));
+		assertTrue(response.getText().contains("maintenance"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+	}
+
+	@Test
 	public void testNominalWarDeathReportingWorkflowCommands() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);
