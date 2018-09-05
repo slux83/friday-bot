@@ -6,6 +6,7 @@ package de.slux.line.friday.test.command;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
@@ -28,11 +29,11 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
+import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
-import de.slux.line.friday.command.admin.AdminHelpCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarHistoryCommand;
@@ -295,7 +296,7 @@ public class TestUtilityCommand {
 	}
 
 	@Test
-	public void testAdminUserEvent() throws Exception {
+	public void testAdminAndUserEvent() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
@@ -317,9 +318,12 @@ public class TestUtilityCommand {
 		MessageEvent<TextMessageContent> deathSummaryNoAdminCmd = MessageEventUtil.createMessageEventGroupSource(
 		        groupId, UUID.randomUUID().toString(), WarSummaryDeathCommand.CMD_PREFIX);
 
+		MessageEvent<TextMessageContent> userHelpCmd = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), HelpCommand.CMD_PREFIX);
+
 		// Admin help command
 		MessageEvent<TextMessageContent> adminHelpCmd = MessageEventUtil.createMessageEventUserSource(userId,
-		        AdminHelpCommand.CMD_PREFIX);
+		        HelpCommand.CMD_PREFIX);
 
 		// Today's events
 		MessageEvent<TextMessageContent> eventTodayEvents = MessageEventUtil
@@ -344,6 +348,16 @@ public class TestUtilityCommand {
 		MessageEvent<TextMessageContent> adminBroadcastNoArgCmd = MessageEventUtil
 		        .createMessageEventUserSource(FridayBotApplication.SLUX_ID, AdminBroadcastCommand.CMD_PREFIX);
 
+		// Admin and User invalid (but close) commands
+		MessageEvent<TextMessageContent> adminCloseCmd = MessageEventUtil
+		        .createMessageEventUserSource(FridayBotApplication.SLUX_ID, AbstractCommand.ALL_CMD_PREFIX + " broad");
+		MessageEvent<TextMessageContent> userCloseCmd = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), AbstractCommand.ALL_CMD_PREFIX + " hel");
+		MessageEvent<TextMessageContent> userNotCloseCmd = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), AbstractCommand.ALL_CMD_PREFIX + " broad");
+		MessageEvent<TextMessageContent> userInvalidCmd = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), "Hello!");
+
 		/* Begin */
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
 		assertNotNull(response);
@@ -352,7 +366,7 @@ public class TestUtilityCommand {
 
 		response = friday.handleTextMessageEvent(adminHelpCmd);
 		assertNotNull(response);
-		assertTrue(response.getText().contains(AdminHelpCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(AdminBroadcastCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(AdminStatusCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
@@ -383,11 +397,45 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("maintenance"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		response = friday.handleTextMessageEvent(userHelpCmd);
+		assertTrue(response.getText().contains("maintenance"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
 		response = friday.handleTextMessageEvent(adminStatusOperCmd);
 		assertNotNull(response);
 		assertFalse(response.getText().contains("WARNING"));
 		assertTrue(response.getText().contains("Version"));
 		assertTrue(response.getText().contains("OPERATIONAL"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(userCloseCmd);
+		System.out.println(response.getText());
+		assertTrue(response.getText().contains("Sorry, perhaps"));
+		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(userNotCloseCmd);
+		System.out.println(response.getText());
+		assertFalse(response.getText().contains("Sorry, perhaps"));
+		assertTrue(response.getText().contains("I didn't understand"));
+		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(userInvalidCmd);
+		assertNull(response);
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(adminCloseCmd);
+		System.out.println(response.getText());
+		assertTrue(response.getText().contains("Sorry, perhaps"));
+		assertTrue(response.getText().contains(AdminBroadcastCommand.CMD_PREFIX));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(userHelpCmd);
+		System.out.println(response.getText());
+		assertFalse(response.getText().contains("maintenance"));
+		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(adminStatusInvalidCmd);

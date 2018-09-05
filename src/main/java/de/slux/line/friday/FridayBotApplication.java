@@ -55,7 +55,6 @@ import de.slux.line.friday.command.HelloUserCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
-import de.slux.line.friday.command.admin.AdminHelpCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarDeleteCommand;
@@ -160,7 +159,6 @@ public class FridayBotApplication {
 		this.commands.add(new WarSummonerRenameCommand(this.lineMessagingClient));
 
 		// Admin commands
-		this.commands.add(new AdminHelpCommand(this.lineMessagingClient));
 		this.commands.add(new AdminBroadcastCommand(this.lineMessagingClient));
 		this.commands.add(new AdminStatusCommand(this.lineMessagingClient));
 
@@ -212,7 +210,7 @@ public class FridayBotApplication {
 			command = getUserCommand(message);
 		}
 
-		if (!this.isOperational.get() && !(command instanceof DefaultCommand) && !SLUX_ID.equals(userId)) {
+		if (!this.isOperational.get() && !SLUX_ID.equals(userId)) {
 			return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
 		}
 
@@ -220,8 +218,13 @@ public class FridayBotApplication {
 			this.commandIncomingMsgCounter.incrementAndGet();
 		} else if (message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX)) {
 			// Try to see if the user was close to one of the existing commands
-			return getClosestCommandSuggestion(message, Arrays.asList(CommandType.CommandTypeAdmin,
-			        CommandType.CommandTypeUtility, CommandType.CommandTypeWar));
+			List<CommandType> adminExcludedCommands = Arrays.asList(CommandType.CommandTypeUtility,
+			        CommandType.CommandTypeWar);
+			List<CommandType> userExcludedCommands = Arrays.asList(CommandType.CommandTypeUtility,
+			        CommandType.CommandTypeAdmin, CommandType.CommandTypeWar);
+
+			return getClosestCommandSuggestion(message,
+			        SLUX_ID.equals(userId) ? adminExcludedCommands : userExcludedCommands);
 		}
 
 		return command.execute(userId, null, message);
@@ -242,7 +245,8 @@ public class FridayBotApplication {
 
 		AbstractCommand command = getGroupCommand(message);
 
-		if (!this.isOperational.get() && !(command instanceof DefaultCommand) && !SLUX_ID.equals(userId)) {
+		if (!this.isOperational.get() && message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX)
+		        && !SLUX_ID.equals(userId)) {
 			return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
 		}
 
@@ -354,7 +358,7 @@ public class FridayBotApplication {
 
 		for (AbstractCommand command : this.commands) {
 			if ((command.getType().equals(CommandType.CommandTypeAdmin)
-			        || command.getType().equals(CommandType.CommandTypeAdmin)) && command.canTrigger(text.trim()))
+			        || command.getType().equals(CommandType.CommandTypeShared)) && command.canTrigger(text.trim()))
 				return command;
 		}
 

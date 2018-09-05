@@ -66,8 +66,18 @@ public class HelpCommand extends AbstractCommand {
 				sb.append(c.getHelp());
 			}
 
+			// Help for normal users only
 			if (senderId == null && (c.getType().equals(CommandType.CommandTypeUser)
 			        || c.getType().equals(CommandType.CommandTypeShared))) {
+				sb.append("\n\n");
+				sb.append(c.getHelp());
+			}
+
+			// Help for admin only
+			if (senderId == null && FridayBotApplication.SLUX_ID.equals(userId)
+			        && (c.getType().equals(CommandType.CommandTypeUser)
+			                || c.getType().equals(CommandType.CommandTypeShared)
+			                || c.getType().equals(CommandType.CommandTypeAdmin))) {
 				sb.append("\n\n");
 				sb.append(c.getHelp());
 			}

@@ -4,6 +4,7 @@
 package de.slux.line.friday.test.command;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -20,6 +21,7 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
+import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
@@ -330,12 +332,26 @@ public class TestWarCommand {
 		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarRegisterCommand.CMD_PREFIX + " group1");
 
+		MessageEvent<TextMessageContent> invalidCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        "Hello guys");
+		MessageEvent<TextMessageContent> closeToSomeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " register");
+
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
 		assertFalse(response.getText().contains("successfully registered using the name group1"));
 		assertTrue(response.getText().contains("standby"));
 		assertTrue(response.getText().contains("maintenance"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		response = friday.handleTextMessageEvent(invalidCmd);
+		assertNull(response);
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(closeToSomeCmd);
+		assertNotNull(response);
+		assertTrue(response.getText().contains("maintenance"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		System.out.println(response.getText());
 	}
 
 	@Test
@@ -351,6 +367,12 @@ public class TestWarCommand {
 		// Register command
 		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        WarRegisterCommand.CMD_PREFIX + " group1");
+
+		// Invalid commands
+		MessageEvent<TextMessageContent> userCloseCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        AbstractCommand.ALL_CMD_PREFIX + " dea");
+		MessageEvent<TextMessageContent> userInvalid = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        "Hello fellas");
 
 		// Report death command
 		MessageEvent<TextMessageContent> death1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
@@ -526,6 +548,16 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("DH DM"));
 		assertTrue(response.getText().contains(WarDeathLogic.SDF.format(new Date())));
 		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(userCloseCmd);
+		assertTrue(response.getText().contains("perhaps"));
+		assertTrue(response.getText().contains(WarReportDeathCommand.CMD_PREFIX));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(userInvalid);
+		assertNull(response);
+		assertTrue(callback.takeAllMessages().isEmpty());
+
 	}
 
 	/**
