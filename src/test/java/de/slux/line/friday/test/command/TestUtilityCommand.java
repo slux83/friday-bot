@@ -237,7 +237,8 @@ public class TestUtilityCommand {
 		        WarRegisterCommand.CMD_PREFIX + " group1");
 
 		// Leave event
-		LeaveEvent event = MessageEventUtil.createLeaveEvent(groupId, userId);
+		LeaveEvent leaveEventRegistered = MessageEventUtil.createLeaveEvent(groupId, userId);
+		LeaveEvent leaveEventUnregistered = MessageEventUtil.createLeaveEvent(UUID.randomUUID().toString(), userId);
 
 		// History command to test the real exit of the bot from the group
 		MessageEvent<TextMessageContent> historyWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
@@ -272,7 +273,10 @@ public class TestUtilityCommand {
 		assertTrue(response.getText().contains("A. 5* dupe IMIW (55)"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
-		friday.handleDefaultMessageEvent(event);
+		friday.handleDefaultMessageEvent(leaveEventRegistered);
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		friday.handleDefaultMessageEvent(leaveEventUnregistered);
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		// After the bot has been kicked from the group, the stuff we inserted

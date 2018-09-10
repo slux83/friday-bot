@@ -54,13 +54,22 @@ public class GoodbyeGroupCommand extends AbstractCommand {
 		try {
 			LOG.info("FRIDAY is leaving the group: " + senderId);
 
-			WarDeathLogic warModel = new WarDeathLogic();
 			// First we want to clear all the current war entries (not the
-			// history for now)
-			warModel.resetFor(senderId);
+			// history for now), only if the group is registered
+			WarDeathLogic warModel = new WarDeathLogic();
+			if (WarDeathLogic.getKeyOfGroup(senderId, GroupStatus.GroupStatusActive) != -1)
+			{
+				LOG.info("Group " + senderId + " is leaving and it was registered.. Clearing up the current war data");
+				warModel.resetFor(senderId);
+			}
+			else {
+				LOG.info("Group " + senderId + " is leaving but it's not registered");
+			}
+			
 			warModel.updateGroupStatus(senderId, GroupStatus.GroupStatusInactive);
+		} catch (
 
-		} catch (Exception e) {
+		Exception e) {
 			LOG.error("Erro while setting the status of the group '" + senderId + "'" + this.getClass().getSimpleName(),
 			        e);
 		}
