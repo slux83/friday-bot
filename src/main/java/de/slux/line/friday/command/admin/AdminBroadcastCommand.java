@@ -106,7 +106,7 @@ public class AdminBroadcastCommand extends AbstractCommand {
 							resp.get();
 							totalSent++;
 						} catch (Exception e) {
-							LOG.warn("Cannot push message to group. Reason: " + e);
+							LOG.warn("Cannot push message to group. Reason: " + e, e);
 						}
 					}
 					asyncMessages.clear();
@@ -117,7 +117,7 @@ public class AdminBroadcastCommand extends AbstractCommand {
 						                + activeCounter + " (" + groups.size() + ")"),
 						        true);
 					} catch (Exception e) {
-						LOG.error("Cannot push progress notification to the user", e);
+						LOG.error("Cannot push progress notification to the user", e, e);
 					}
 				}
 
@@ -133,7 +133,7 @@ public class AdminBroadcastCommand extends AbstractCommand {
 					resp.get();
 					totalSent++;
 				} catch (Exception e) {
-					LOG.warn("Cannot push message to group. Reason: " + e);
+					LOG.warn("Cannot push message to group. Reason: " + e, e);
 				}
 			}
 		}
