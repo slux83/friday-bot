@@ -67,6 +67,7 @@ import de.slux.line.friday.command.war.WarSummaryDeathCommand;
 import de.slux.line.friday.command.war.WarSummonerNodeCommand;
 import de.slux.line.friday.command.war.WarSummonerRenameCommand;
 import de.slux.line.friday.command.war.WarUndoDeathCommand;
+import de.slux.line.friday.scheduler.EventScheduler;
 import de.slux.line.friday.scheduler.McocSchedulerImporter;
 
 @SpringBootApplication
@@ -98,6 +99,7 @@ public class FridayBotApplication {
 	private AtomicBoolean isOperational;
 	private List<AbstractCommand> commands;
 	private McocSchedulerImporter scheduler;
+	private EventScheduler eventScheduler;
 
 	public static void main(String[] args) {
 		SpringApplication.run(FridayBotApplication.class, args);
@@ -128,7 +130,14 @@ public class FridayBotApplication {
 		try {
 			this.scheduler = new McocSchedulerImporter();
 		} catch (Exception e) {
-			LOG.error("Cannot initialize MCOC scheduler: " + e, e);
+			LOG.error("Cannot initialize MCOC Scheduler Importer: " + e, e);
+			throw new RuntimeException(e);
+		}
+
+		try {
+			this.eventScheduler = new EventScheduler(this.scheduler);
+		} catch (Exception e) {
+			LOG.error("Cannot initialize MCOC Event Scheduler: " + e, e);
 			throw new RuntimeException(e);
 		}
 
@@ -414,6 +423,13 @@ public class FridayBotApplication {
 	 */
 	public AtomicBoolean getIsOperational() {
 		return isOperational;
+	}
+
+	/**
+	 * @return the eventScheduler
+	 */
+	public EventScheduler getEventScheduler() {
+		return this.eventScheduler;
 	}
 
 }

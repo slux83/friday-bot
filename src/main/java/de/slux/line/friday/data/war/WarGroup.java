@@ -46,8 +46,9 @@ public class WarGroup {
 	}
 
 	public enum GroupFeature {
-	    // Use bits (1, 2, 4, 8, 16, 32 and 64)
-		GroupFeatureWar(1);
+		GroupFeatureWar(1),
+		GroupFeatureEvent(2),
+		GroupFeatureWarEvent(3);
 
 		private final int value;
 

@@ -221,7 +221,6 @@ public class WarGroupDao {
 
 				wg.setGroupId(guid);
 				wg.setGroupName(groupName);
-				;
 				wg.setGroupStatus(gs);
 				wg.setGroupFeature(gf);
 
