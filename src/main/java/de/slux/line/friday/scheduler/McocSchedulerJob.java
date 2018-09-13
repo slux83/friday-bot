@@ -72,11 +72,6 @@ public class McocSchedulerJob implements Job {
 
 		FridayBotApplication app = FridayBotApplication.getInstance();
 
-		if (app == null) {
-			LOG.error("APP is null, can't do much!");
-			return;
-		}
-
 		McocDayInfo todayInfo = app.getEventScheduler().getMcocSchedulerImporter().getMcocScheduler().get(today);
 		McocDayInfo yesterdayInfo = app.getEventScheduler().getMcocSchedulerImporter().getMcocScheduler()
 		        .get(yesterday);
@@ -113,8 +108,7 @@ public class McocSchedulerJob implements Job {
 					break;
 			}
 		} catch (Exception e) {
-			LOG.error("Cannot create AQ job: " + e);
-			e.printStackTrace();
+			LOG.error("Cannot create AQ job: " + e, e);
 		}
 
 		try {
@@ -142,8 +136,7 @@ public class McocSchedulerJob implements Job {
 					break;
 			}
 		} catch (Exception e) {
-			LOG.error("Cannot create AW job: " + e);
-			e.printStackTrace();
+			LOG.error("Cannot create AW job: " + e, e);
 		}
 
 		// 1 day event
@@ -177,8 +170,7 @@ public class McocSchedulerJob implements Job {
 			        && yesterdayInfo.getThreeDaysEventStatus() != ThreeDaysEvent.TEAMUSE)
 				createGenericJob(context, "teamuse", "Team Use event just started!", 17, 30);
 		} catch (Exception e) {
-			LOG.error("Cannot create three day event job: " + e);
-			e.printStackTrace();
+			LOG.error("Cannot create three day event job: " + e, e);
 		}
 
 		// catalyst arena event
@@ -192,8 +184,7 @@ public class McocSchedulerJob implements Job {
 				createGenericJob(context, "t1a-arena", "T1 Alpha Arena just started!", 23, 0);
 
 		} catch (Exception e) {
-			LOG.error("Cannot create catalyst arena event job: " + e);
-			e.printStackTrace();
+			LOG.error("Cannot create catalyst arena event job: " + e, e);
 		}
 
 		LOG.info("MCOC Master Job completed.");

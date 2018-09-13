@@ -18,8 +18,10 @@ package de.slux.line.friday;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -36,12 +38,14 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
 import com.linecorp.bot.client.LineMessagingClient;
+import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.GroupSource;
 import com.linecorp.bot.model.event.source.UserSource;
 import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.model.response.BotApiResponse;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
@@ -67,6 +71,7 @@ import de.slux.line.friday.command.war.WarSummaryDeathCommand;
 import de.slux.line.friday.command.war.WarSummonerNodeCommand;
 import de.slux.line.friday.command.war.WarSummonerRenameCommand;
 import de.slux.line.friday.command.war.WarUndoDeathCommand;
+import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.scheduler.EventScheduler;
 import de.slux.line.friday.scheduler.McocSchedulerImporter;
 
@@ -82,6 +87,7 @@ public class FridayBotApplication {
 
 	// If we need to start under maintenance
 	public static final String FRIDAY_MAINTENANCE_KEY = "friday.maintenance";
+	private static final int MAX_MESSAGE_BURST = 50;
 
 	public static synchronized FridayBotApplication getInstance() {
 		return INSTANCE;
@@ -432,4 +438,68 @@ public class FridayBotApplication {
 		return this.eventScheduler;
 	}
 
+	/**
+	 * Push the message to all the groups
+	 * 
+	 * @param groups
+	 * @param message
+	 */
+	public void pushMultiMessages(Collection<WarGroup> groups, String message) {
+		List<CompletableFuture<BotApiResponse>> asyncMessages = new ArrayList<>();
+		int pushedCounter = 0;
+		int totalSent = 0;
+		Date now = new Date();
+
+		for (WarGroup group : groups) {
+			pushedCounter++;
+			PushMessage pushMessage = new PushMessage(group.getGroupId(), new TextMessage(message));
+
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Broadcasting message '" + message + "' to " + group);
+			}
+
+			if (asyncMessages.size() > MAX_MESSAGE_BURST) {
+				// We need to consume the ones sent so far
+				for (CompletableFuture<BotApiResponse> resp : asyncMessages) {
+					try {
+						resp.get();
+						totalSent++;
+					} catch (Exception e) {
+						LOG.warn("Cannot push message to group. Reason: " + e, e);
+					}
+				}
+				asyncMessages.clear();
+			}
+
+			// Push the message
+			asyncMessages.add(this.lineMessagingClient.pushMessage(pushMessage));
+		}
+
+		// We wait the confirmation of the remaining ones
+		if (!asyncMessages.isEmpty()) {
+			for (CompletableFuture<BotApiResponse> resp : asyncMessages) {
+				try {
+					resp.get();
+					totalSent++;
+				} catch (Exception e) {
+					LOG.warn("Cannot push message to group. Reason: " + e, e);
+				}
+			}
+		}
+
+		storePushStatistics(now, totalSent, pushedCounter, groups.size());
+	}
+
+	/**
+	 * Save the statistics of the broadcast push
+	 * 
+	 * @param time
+	 * @param totalSent
+	 * @param pushedCounter
+	 * @param numGroups
+	 */
+	private void storePushStatistics(Date time, int totalSent, int pushedCounter, int numGroups) {
+		// TODO Implement this
+
+	}
 }
