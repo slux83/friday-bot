@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `war_placement` (
 CREATE TABLE IF NOT EXISTS `war_summoner` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL,
-  `name` varchar(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_war_summoner_war_group` (`group_id`),
   CONSTRAINT `FK_war_summoner_war_group` FOREIGN KEY (`group_id`) REFERENCES `war_group` (`id`)
