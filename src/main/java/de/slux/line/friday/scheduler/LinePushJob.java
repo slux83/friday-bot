@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarGroup.GroupFeature;
+import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 
 /**
@@ -51,7 +52,8 @@ public class LinePushJob implements Job {
 		try {
 			WarDeathLogic logic = new WarDeathLogic();
 			Map<String, WarGroup> groups = logic.getAllGroups();
-			groups.entrySet().removeIf(e -> e.getValue().getGroupFeature().equals(GroupFeature.GroupFeatureWar));
+			groups.entrySet().removeIf(e -> e.getValue().getGroupFeature().equals(GroupFeature.GroupFeatureWar)
+			        || e.getValue().getGroupStatus().equals(GroupStatus.GroupStatusInactive));
 
 			FridayBotApplication.getInstance().pushMultiMessages(groups.values(), message);
 		} catch (Exception e) {

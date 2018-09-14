@@ -20,6 +20,7 @@ import de.slux.line.friday.dao.war.WarDeathDao;
 import de.slux.line.friday.dao.war.WarGroupDao;
 import de.slux.line.friday.dao.war.WarHistoryDao;
 import de.slux.line.friday.data.war.WarGroup;
+import de.slux.line.friday.data.war.WarGroup.GroupFeature;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.data.war.WarSummoner;
 
@@ -70,23 +71,6 @@ public class WarDeathLogic {
 		WarGroupDao dao = new WarGroupDao(conn);
 
 		return dao.getAll();
-	}
-
-	/**
-	 * Add a new group
-	 * 
-	 * @param groupId
-	 * @param groupName
-	 * @throws Exception
-	 */
-	public void addNewGroup(String groupId, String groupName) throws Exception {
-		Connection conn = DbConnectionPool.getConnection();
-
-		LOG.debug("Connection to the DB valid");
-
-		WarGroupDao dao = new WarGroupDao(conn);
-
-		dao.storeData(groupId, groupName);
 	}
 
 	/**
@@ -234,7 +218,7 @@ public class WarDeathLogic {
 	}
 
 	/**
-	 * Register the chat group
+	 * Register the chat group for war
 	 * 
 	 * @param groupId
 	 * @param groupName
@@ -245,9 +229,30 @@ public class WarDeathLogic {
 
 		LOG.debug("Connection to the DB valid");
 
+		Map<String, WarGroup> groups = getAllGroups();
+
 		WarGroupDao dao = new WarGroupDao(conn);
 
-		dao.storeData(groupId, groupName);
+		// new registration
+		if (!groups.containsKey(groupId)) {
+			dao.storeData(groupId, groupName, GroupFeature.GroupFeatureWar);
+			return;
+		}
+
+		WarGroup wg = groups.get(groupId);
+		switch (wg.getGroupFeature()) {
+			case GroupFeatureEvent:
+				// Name update + group feature update
+				dao.storeData(groupId, groupName, GroupFeature.GroupFeatureWarEvent);
+				new WarGroupDao(DbConnectionPool.getConnection()).updateGroupFeatures(groupId,
+				        GroupFeature.GroupFeatureWarEvent);
+				break;
+			case GroupFeatureWar:
+			case GroupFeatureWarEvent:
+				// Just name update
+				dao.storeData(groupId, groupName, wg.getGroupFeature());
+				break;
+		}
 
 	}
 

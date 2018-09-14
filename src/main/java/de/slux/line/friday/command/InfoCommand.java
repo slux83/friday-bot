@@ -112,6 +112,6 @@ public class InfoCommand extends AbstractCommand {
 	 */
 	@Override
 	public String getCommandPrefix() {
-		return null;
+		return CMD_PREFIX;
 	}
 }

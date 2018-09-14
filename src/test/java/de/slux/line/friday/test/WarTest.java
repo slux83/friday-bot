@@ -70,9 +70,9 @@ public class WarTest {
 
 	@Test
 	public void testWarModel() throws Exception {
-		this.warModel.addNewGroup(GROUP2_ID, "ALLY-BG2");
-		this.warModel.addNewGroup(GROUP1_ID, "ALLY-BG1");
-		this.warModel.addNewGroup(GROUP3_ID, "ALLY-BG3");
+		this.warModel.register(GROUP2_ID, "ALLY-BG2");
+		this.warModel.register(GROUP1_ID, "ALLY-BG1");
+		this.warModel.register(GROUP3_ID, "ALLY-BG3");
 
 		int group1Key = WarDeathLogic.getKeyOfGroup(GROUP1_ID, GroupStatus.GroupStatusActive);
 		int group2Key = WarDeathLogic.getKeyOfGroup(GROUP2_ID, GroupStatus.GroupStatusActive);

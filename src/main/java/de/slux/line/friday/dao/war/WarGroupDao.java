@@ -27,13 +27,15 @@ public class WarGroupDao {
 
 	private Connection conn;
 
-	private static final String ADD_DATA_STATEMENT = "INSERT INTO war_group (group_id, group_name) VALUES(?, ?)";
+	private static final String ADD_DATA_STATEMENT = "INSERT INTO war_group (group_id, group_name, group_features) VALUES(?, ?, ?)";
 
 	private static final String RETRIEVE_DATA_STATEMENT = "SELECT id, group_name FROM war_group WHERE group_id = ? AND group_status = ?";
 
 	private static final String UPDATE_NAME_DATA_STATEMENT = "UPDATE war_group SET group_name = ?, group_status = ? WHERE group_id = ?";
 
 	private static final String UPDATE_STATUS_DATA_STATEMENT = "UPDATE war_group SET group_status = ? WHERE group_id = ?";
+
+	private static final String UPDATE_FEATURES_DATA_STATEMENT = "UPDATE war_group SET group_features = ? WHERE group_id = ?";
 
 	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name, group_status, group_features FROM war_group";
 
@@ -48,13 +50,14 @@ public class WarGroupDao {
 	 * @param groupName
 	 * @throws SQLException
 	 */
-	public void storeData(String groupId, String groupName) throws SQLException {
+	public void storeData(String groupId, String groupName, GroupFeature groupFeatures) throws SQLException {
 		PreparedStatement stmt = null;
 
 		try {
 			stmt = conn.prepareStatement(ADD_DATA_STATEMENT);
 			stmt.setString(1, groupId);
 			stmt.setString(2, Base64.getEncoder().encodeToString(groupName.getBytes()));
+			stmt.setInt(3, groupFeatures.getValue());
 			stmt.execute();
 
 		} catch (SQLIntegrityConstraintViolationException ex) {
@@ -248,5 +251,32 @@ public class WarGroupDao {
 		}
 
 		return groups;
+	}
+
+	public void updateGroupFeatures(String groupId, GroupFeature feature) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(UPDATE_FEATURES_DATA_STATEMENT);
+			stmt.setInt(1, feature.getValue());
+			stmt.setString(2, groupId);
+			stmt.executeUpdate();
+
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+		}
+
+		LOG.info("Data updated successfully: " + groupId + " (new feature=" + feature + ")");
+
 	}
 }
