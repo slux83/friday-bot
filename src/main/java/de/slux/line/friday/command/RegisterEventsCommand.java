@@ -59,7 +59,12 @@ public class RegisterEventsCommand extends AbstractCommand {
 			ScheduleEventsLogic eventsLogic = new ScheduleEventsLogic();
 
 			Map<String, WarGroup> allGroups = warLogic.getAllGroups();
-			eventsLogic.register(allGroups.get(senderId), senderId);
+			boolean registrationOutcome = eventsLogic.register(allGroups.get(senderId), senderId);
+
+			if (!registrationOutcome) {
+				return new TextMessage("This group is already registered to receive notifications");
+			}
+
 		} catch (Exception e) {
 			LOG.error("Cannot register group '" + senderId + "' for events: " + e, e);
 			return new TextMessage("Something went wrong: " + e);

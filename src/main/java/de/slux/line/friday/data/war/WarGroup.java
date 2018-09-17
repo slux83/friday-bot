@@ -46,9 +46,7 @@ public class WarGroup {
 	}
 
 	public enum GroupFeature {
-		GroupFeatureWar(1),
-		GroupFeatureEvent(2),
-		GroupFeatureWarEvent(3);
+		GroupFeatureWar(1), GroupFeatureEvent(2), GroupFeatureWarEvent(3);
 
 		private final int value;
 
@@ -329,6 +327,14 @@ public class WarGroup {
 	public static GroupFeature featureOf(int feature) {
 		if (GroupFeature.GroupFeatureWar.getValue() == feature) {
 			return GroupFeature.GroupFeatureWar;
+		}
+
+		if (GroupFeature.GroupFeatureEvent.getValue() == feature) {
+			return GroupFeature.GroupFeatureEvent;
+		}
+
+		if (GroupFeature.GroupFeatureWarEvent.getValue() == feature) {
+			return GroupFeature.GroupFeatureWarEvent;
 		}
 
 		return null;

@@ -28,9 +28,11 @@ public class ScheduleEventsLogic {
 	 * @param existingGroup
 	 *            can be null
 	 * @param groupId
+	 * @return false if the group was already registered, true if the
+	 *         registration succeeded
 	 * @throws Exception
 	 */
-	public void register(WarGroup existingGroup, String groupId) throws Exception {
+	public boolean register(WarGroup existingGroup, String groupId) throws Exception {
 		if (existingGroup == null) {
 			// It's a new one
 			LOG.info("Registering the group " + groupId + " to receive schedule events");
@@ -41,7 +43,10 @@ public class ScheduleEventsLogic {
 			updateGroupFeature(groupId, GroupFeature.GroupFeatureWarEvent);
 		} else {
 			// Nothing to do.. the group is already registered
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
