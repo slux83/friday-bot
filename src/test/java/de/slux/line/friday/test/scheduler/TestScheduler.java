@@ -22,6 +22,7 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.RegisterEventsCommand;
+import de.slux.line.friday.command.UnregisterEventsCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
@@ -105,7 +106,7 @@ public class TestScheduler {
 	}
 
 	@Test
-	public void testRegisterForEvents() throws Exception {
+	public void testRegisterAndUnregisterForEvents() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
@@ -133,6 +134,16 @@ public class TestScheduler {
 		        userId, WarRegisterCommand.CMD_PREFIX + " group1");
 		MessageEvent<TextMessageContent> summonersPrintCmd = MessageEventUtil.createMessageEventGroupSource(group3Id,
 		        userId, WarAddSummonersCommand.CMD_PREFIX);
+
+		// Unregister
+		MessageEvent<TextMessageContent> unregisterInvalidGroupCmd = MessageEventUtil.createMessageEventGroupSource(
+		        UUID.randomUUID().toString(), userId, UnregisterEventsCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> unregisterGroup1Cmd = MessageEventUtil.createMessageEventGroupSource(group1Id,
+		        userId, UnregisterEventsCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> unregisterGroup2Cmd = MessageEventUtil.createMessageEventGroupSource(group2Id,
+		        userId, UnregisterEventsCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> unregisterGroup3Cmd = MessageEventUtil.createMessageEventGroupSource(group3Id,
+		        userId, UnregisterEventsCommand.CMD_PREFIX);
 
 		TextMessage response = friday.handleTextMessageEvent(registerNewCmd);
 		assertTrue(response.getText().contains("MCoC event notifications"));
@@ -174,6 +185,26 @@ public class TestScheduler {
 
 		response = friday.handleTextMessageEvent(summonersPrintCmd);
 		assertTrue(response.getText().contains("Nothing to report"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(unregisterInvalidGroupCmd);
+		assertTrue(response.getText().contains("was never registered"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(unregisterGroup1Cmd);
+		assertTrue(response.getText().contains("MCoC events have been disabled"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(unregisterGroup2Cmd);
+		assertTrue(response.getText().contains("MCoC events have been disabled"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(unregisterGroup3Cmd);
+		assertTrue(response.getText().contains("MCoC events have been disabled"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(unregisterGroup3Cmd);
+		assertTrue(response.getText().contains("was never registered"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 	}
 }

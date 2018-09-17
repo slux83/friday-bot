@@ -20,16 +20,16 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * 
  * @author slux
  */
-public class RegisterEventsCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday register events";
-	private static Logger LOG = LoggerFactory.getLogger(RegisterEventsCommand.class);
+public class UnregisterEventsCommand extends AbstractCommand {
+	public static final String CMD_PREFIX = "friday unregister events";
+	private static Logger LOG = LoggerFactory.getLogger(UnregisterEventsCommand.class);
 
 	/**
 	 * Ctor
 	 * 
 	 * @param messagingClient
 	 */
-	public RegisterEventsCommand(LineMessagingClient messagingClient) {
+	public UnregisterEventsCommand(LineMessagingClient messagingClient) {
 		super(messagingClient);
 	}
 
@@ -59,18 +59,18 @@ public class RegisterEventsCommand extends AbstractCommand {
 			ScheduleEventsLogic eventsLogic = new ScheduleEventsLogic();
 
 			Map<String, WarGroup> allGroups = warLogic.getAllGroups();
-			boolean registrationOutcome = eventsLogic.register(allGroups.get(senderId), senderId);
+			boolean registrationOutcome = eventsLogic.unregister(allGroups.get(senderId), senderId);
 
 			if (!registrationOutcome) {
-				return new TextMessage("This group is already registered to receive notifications");
+				return new TextMessage("This group was never registered to receive notifications");
 			}
 
 		} catch (Exception e) {
-			LOG.error("Cannot register group '" + senderId + "' for events: " + e, e);
+			LOG.error("Cannot unregister group '" + senderId + "' for events: " + e, e);
 			return new TextMessage("Something went wrong: " + e);
 		}
 
-		return new TextMessage("From now on this group will receive MCoC event notifications");
+		return new TextMessage("The notifications for MCoC events have been disabled");
 	}
 
 	/*
@@ -92,8 +92,7 @@ public class RegisterEventsCommand extends AbstractCommand {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[" + CMD_PREFIX + "]\n");
-		sb.append("Registers this group to receive MCOC event reminders like\n");
-		sb.append("Donations, AQ and AW reminders, Cat Arena, 1-3 Days events, etc...");
+		sb.append("Unregisters this group in order to stop receiving MCOC events");
 
 		return sb.toString();
 	}

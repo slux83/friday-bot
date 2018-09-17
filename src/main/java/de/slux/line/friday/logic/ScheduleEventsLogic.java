@@ -36,7 +36,7 @@ public class ScheduleEventsLogic {
 		if (existingGroup == null) {
 			// It's a new one
 			LOG.info("Registering the group " + groupId + " to receive schedule events");
-			register(groupId, "EVENTS");
+			register(groupId, "EVENTS ONLY");
 		} else if (existingGroup.getGroupFeature().equals(GroupFeature.GroupFeatureWar)) {
 			// We need to update it adding both
 			LOG.info("Registering (update) the group " + groupId + " to receive schedule events");
@@ -45,6 +45,26 @@ public class ScheduleEventsLogic {
 			// Nothing to do.. the group is already registered
 			return false;
 		}
+
+		return true;
+	}
+
+	/**
+	 * Unregister the group to events
+	 * 
+	 * @param existingGroup
+	 * @param groupId
+	 * @return false if the group was not registered, true otherwise
+	 */
+	public boolean unregister(WarGroup existingGroup, String groupId) throws Exception {
+		if (existingGroup == null || existingGroup.getGroupFeature().equals(GroupFeature.GroupFeatureWar)) {
+			// The group was never registered
+			LOG.info("Group " + groupId + " was never registered to receive schedule events");
+			return false;
+		}
+
+		// Go back to war only
+		updateGroupFeature(groupId, GroupFeature.GroupFeatureWar);
 
 		return true;
 	}
