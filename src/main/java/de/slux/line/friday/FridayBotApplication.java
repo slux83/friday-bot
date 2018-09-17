@@ -16,10 +16,12 @@
 
 package de.slux.line.friday;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -89,8 +91,10 @@ public class FridayBotApplication {
 
 	// If we need to start under maintenance
 	public static final String FRIDAY_MAINTENANCE_KEY = "friday.maintenance";
+	
 	public static final int MAX_MESSAGE_BURST = 50;
-
+	public static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	
 	public static synchronized FridayBotApplication getInstance() {
 		return INSTANCE;
 	}
@@ -108,6 +112,7 @@ public class FridayBotApplication {
 	private List<AbstractCommand> commands;
 	private McocSchedulerImporter scheduler;
 	private EventScheduler eventScheduler;
+	private LinkedList<String> lastPushedMessages;
 
 	public static void main(String[] args) {
 		SpringApplication.run(FridayBotApplication.class, args);
@@ -130,6 +135,7 @@ public class FridayBotApplication {
 		this.startup = new Date();
 		this.commandIncomingMsgCounter = new AtomicLong();
 		this.totalIncomingMsgCounter = new AtomicLong();
+		this.lastPushedMessages = new LinkedList<>();
 
 		// Check if we are starting in maintenance directly
 		this.isOperational = new AtomicBoolean(System.getProperty(FRIDAY_MAINTENANCE_KEY) == null);
@@ -503,7 +509,27 @@ public class FridayBotApplication {
 	 * @param numGroups
 	 */
 	private void storePushStatistics(Date time, int totalSent, int pushedCounter, int numGroups) {
-		// TODO Implement this
+		StringBuilder sb = new StringBuilder();
 
+		sb.append(SDF.format(time));
+		sb.append(": ");
+		sb.append("pushed(" + pushedCounter + ") ");
+		sb.append("sent(" + totalSent + ") ");
+		sb.append("active_groups(" + numGroups + ")");
+
+		this.lastPushedMessages.addFirst(sb.toString());
+
+		while (this.lastPushedMessages.size() > 5) {
+			this.lastPushedMessages.removeLast();
+		}
+	}
+
+	/**
+	 * Return the last pushed messages (statistics)
+	 * 
+	 * @return
+	 */
+	public LinkedList<String> getPushStatistics() {
+		return this.lastPushedMessages;
 	}
 }

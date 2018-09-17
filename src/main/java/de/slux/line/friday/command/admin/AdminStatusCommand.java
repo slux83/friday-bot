@@ -4,6 +4,7 @@
 package de.slux.line.friday.command.admin;
 
 import java.text.DecimalFormat;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -120,6 +121,11 @@ public class AdminStatusCommand extends AbstractCommand {
 		sb.append(groupCounter != -1 ? Long.toString(groupCounter) : "unknown");
 		sb.append("\n");
 
+		LinkedList<String> pushedMsgs = FridayBotApplication.getInstance().getPushStatistics();
+		sb.append("Last Pushed Messages:\n");
+		for (String p : pushedMsgs)
+			sb.append("# " + p + "\n");
+		
 		LOG.info("Messages/sec: " + DECIMAL_FORMAT.format(msgCmdSec));
 		LOG.info("Total groups: " + groupCounter);
 		LOG.info("Status: "

@@ -23,6 +23,7 @@ import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.RegisterEventsCommand;
 import de.slux.line.friday.command.UnregisterEventsCommand;
+import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
@@ -117,6 +118,10 @@ public class TestScheduler {
 		String group3Id = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
+		// Admin status command
+		MessageEvent<TextMessageContent> adminStatusCmd = MessageEventUtil
+		        .createMessageEventUserSource(FridayBotApplication.SLUX_ID, AdminStatusCommand.CMD_PREFIX);
+
 		// Register command new group
 		MessageEvent<TextMessageContent> registerNewCmd = MessageEventUtil.createMessageEventGroupSource(group1Id,
 		        userId, RegisterEventsCommand.CMD_PREFIX);
@@ -175,6 +180,12 @@ public class TestScheduler {
 		pushedMessages = callback.takeAllMessages();
 		assertTrue(pushedMessages.isEmpty());
 
+		response = friday.handleTextMessageEvent(adminStatusCmd);
+		assertTrue(response.getText().contains("pushed"));
+		assertTrue(response.getText().contains("sent"));
+		assertTrue(response.getText().contains("active_groups"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
 		response = friday.handleTextMessageEvent(registerBeforeWarCmd);
 		assertTrue(response.getText().contains("MCoC event notifications"));
 		assertTrue(callback.takeAllMessages().isEmpty());
@@ -190,19 +201,19 @@ public class TestScheduler {
 		response = friday.handleTextMessageEvent(unregisterInvalidGroupCmd);
 		assertTrue(response.getText().contains("was never registered"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		response = friday.handleTextMessageEvent(unregisterGroup1Cmd);
 		assertTrue(response.getText().contains("MCoC events have been disabled"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		response = friday.handleTextMessageEvent(unregisterGroup2Cmd);
 		assertTrue(response.getText().contains("MCoC events have been disabled"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		response = friday.handleTextMessageEvent(unregisterGroup3Cmd);
 		assertTrue(response.getText().contains("MCoC events have been disabled"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		response = friday.handleTextMessageEvent(unregisterGroup3Cmd);
 		assertTrue(response.getText().contains("was never registered"));
 		assertTrue(callback.takeAllMessages().isEmpty());
