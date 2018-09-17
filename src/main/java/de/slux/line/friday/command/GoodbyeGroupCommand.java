@@ -65,9 +65,7 @@ public class GoodbyeGroupCommand extends AbstractCommand {
 			}
 
 			warModel.updateGroupStatus(senderId, GroupStatus.GroupStatusInactive);
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			LOG.error("Erro while setting the status of the group '" + senderId + "'" + this.getClass().getSimpleName(),
 			        e);
 		}

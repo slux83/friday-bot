@@ -91,10 +91,10 @@ public class FridayBotApplication {
 
 	// If we need to start under maintenance
 	public static final String FRIDAY_MAINTENANCE_KEY = "friday.maintenance";
-	
+
 	public static final int MAX_MESSAGE_BURST = 50;
 	public static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-	
+
 	public static synchronized FridayBotApplication getInstance() {
 		return INSTANCE;
 	}

@@ -125,7 +125,7 @@ public class AdminStatusCommand extends AbstractCommand {
 		sb.append("Last Pushed Messages:\n");
 		for (String p : pushedMsgs)
 			sb.append("# " + p + "\n");
-		
+
 		LOG.info("Messages/sec: " + DECIMAL_FORMAT.format(msgCmdSec));
 		LOG.info("Total groups: " + groupCounter);
 		LOG.info("Status: "
