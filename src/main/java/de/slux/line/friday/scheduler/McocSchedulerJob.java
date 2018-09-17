@@ -147,8 +147,7 @@ public class McocSchedulerJob implements Job {
 			if (todayInfo.getOneDayEventStatus() == OneDayEvent.LOYALTY_SPEND)
 				createGenericJob(context, "ally_help", "Loyalty Spend event just started!", 18, 30);
 		} catch (Exception e) {
-			LOG.error("Cannot create one day event job: " + e);
-			e.printStackTrace();
+			LOG.error("Cannot create one day event job: " + e, e);
 		}
 
 		if (yesterdayInfo == null) {

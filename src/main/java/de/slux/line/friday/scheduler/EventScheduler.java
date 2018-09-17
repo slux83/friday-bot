@@ -54,6 +54,7 @@ public class EventScheduler {
 	 */
 	private void initScheduler() throws SchedulerException {
 		addDailyMcocMasterJob();
+		addDonationsJob();
 	}
 
 	/**
@@ -92,6 +93,39 @@ public class EventScheduler {
 			this.scheduler.scheduleJob(jobNow, triggerNow);
 		}
 
+	}
+
+	/**
+	 * We add donation reminder jobs
+	 * 
+	 * @throws SchedulerException
+	 */
+	private void addDonationsJob() throws SchedulerException {
+		String eventId = "donations reminder 1";
+		LOG.info("Adding event: " + eventId);
+
+		String treasuryMessage = "Treasury Awaits!\n$1 friendly reminder to donate to the Alliance Treasury.\n\nIf you have any issues with the requirements, please contact an officer";
+
+		// Wednesday reminder
+		JobDetail job1 = newJob(LinePushJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
+		        .usingJobData(MESSAGE_KEY, treasuryMessage.replace("$1", "First")).usingJobData(ID_KEY, eventId)
+		        .build();
+
+		Trigger trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId).startNow()
+		        .withSchedule(CronScheduleBuilder.weeklyOnDayAndHourAndMinute(DateBuilder.WEDNESDAY, 16, 0)).build();
+
+		// Saturday reminder
+		eventId = "donations reminder 2";
+		LOG.info("Adding event: " + eventId);
+		JobDetail job2 = newJob(LinePushJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
+		        .usingJobData(MESSAGE_KEY, treasuryMessage.replace("$1", "Second")).usingJobData(ID_KEY, eventId)
+		        .build();
+
+		Trigger trigger2 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId).startNow()
+		        .withSchedule(CronScheduleBuilder.weeklyOnDayAndHourAndMinute(DateBuilder.SATURDAY, 16, 0)).build();
+
+		scheduler.scheduleJob(job1, trigger1);
+		scheduler.scheduleJob(job2, trigger2);
 	}
 
 	/**
