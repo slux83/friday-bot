@@ -4,8 +4,6 @@
 package de.slux.line.friday.command;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +56,7 @@ public class HelloGroupCommand extends AbstractCommand {
 		        .pushMessage(new PushMessage(senderId, new TextMessage(getGroupWelcomeMessage(senderId))));
 
 		try {
-			response.get(AbstractCommand.RESPONSE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-		} catch (TimeoutException e) {
-			LOG.warn("Timeout exceeded for " + this.getClass().getSimpleName() + " command: " + e);
+			response.get();
 		} catch (Exception e) {
 			LOG.error("Unknown error when getting the response of the " + this.getClass().getSimpleName() + " command",
 			        e);

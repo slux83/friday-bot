@@ -57,15 +57,13 @@ public class GoodbyeGroupCommand extends AbstractCommand {
 			// First we want to clear all the current war entries (not the
 			// history for now), only if the group is registered
 			WarDeathLogic warModel = new WarDeathLogic();
-			if (WarDeathLogic.getKeyOfGroup(senderId, GroupStatus.GroupStatusActive) != -1)
-			{
+			if (WarDeathLogic.getKeyOfGroup(senderId, GroupStatus.GroupStatusActive) != -1) {
 				LOG.info("Group " + senderId + " is leaving and it was registered.. Clearing up the current war data");
 				warModel.resetFor(senderId);
-			}
-			else {
+			} else {
 				LOG.info("Group " + senderId + " is leaving but it's not registered");
 			}
-			
+
 			warModel.updateGroupStatus(senderId, GroupStatus.GroupStatusInactive);
 		} catch (
 

@@ -22,6 +22,7 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.RegisterEventsCommand;
+import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.logic.war.WarDeathLogic;
@@ -112,6 +113,7 @@ public class TestScheduler {
 
 		String group1Id = UUID.randomUUID().toString();
 		String group2Id = UUID.randomUUID().toString();
+		String group3Id = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
 		// Register command new group
@@ -123,6 +125,14 @@ public class TestScheduler {
 		        userId, WarRegisterCommand.CMD_PREFIX + " group1");
 		MessageEvent<TextMessageContent> registerExistingWithWarCmd = MessageEventUtil
 		        .createMessageEventGroupSource(group2Id, userId, RegisterEventsCommand.CMD_PREFIX);
+
+		// Register first the events and then the group for war tool
+		MessageEvent<TextMessageContent> registerBeforeWarCmd = MessageEventUtil.createMessageEventGroupSource(group3Id,
+		        userId, RegisterEventsCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> registerWarLaterCmd = MessageEventUtil.createMessageEventGroupSource(group3Id,
+		        userId, WarRegisterCommand.CMD_PREFIX + " group1");
+		MessageEvent<TextMessageContent> summonersPrintCmd = MessageEventUtil.createMessageEventGroupSource(group3Id,
+		        userId, WarAddSummonersCommand.CMD_PREFIX);
 
 		TextMessage response = friday.handleTextMessageEvent(registerNewCmd);
 		assertTrue(response.getText().contains("MCoC event notifications"));
@@ -153,5 +163,17 @@ public class TestScheduler {
 		pushJob.execute(new ContextDummy(true));
 		pushedMessages = callback.takeAllMessages();
 		assertTrue(pushedMessages.isEmpty());
+
+		response = friday.handleTextMessageEvent(registerBeforeWarCmd);
+		assertTrue(response.getText().contains("MCoC event notifications"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(registerWarLaterCmd);
+		assertTrue(response.getText().contains("successfully registered"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(summonersPrintCmd);
+		assertTrue(response.getText().contains("Nothing to report"));
+		assertTrue(callback.takeAllMessages().isEmpty());
 	}
 }

@@ -275,7 +275,7 @@ public class TestUtilityCommand {
 
 		friday.handleDefaultMessageEvent(leaveEventRegistered);
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		friday.handleDefaultMessageEvent(leaveEventUnregistered);
 		assertTrue(callback.takeAllMessages().isEmpty());
 
