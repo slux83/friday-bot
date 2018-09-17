@@ -88,7 +88,7 @@ public class FridayBotApplication {
 
 	// If we need to start under maintenance
 	public static final String FRIDAY_MAINTENANCE_KEY = "friday.maintenance";
-	private static final int MAX_MESSAGE_BURST = 50;
+	public static final int MAX_MESSAGE_BURST = 50;
 
 	public static synchronized FridayBotApplication getInstance() {
 		return INSTANCE;
