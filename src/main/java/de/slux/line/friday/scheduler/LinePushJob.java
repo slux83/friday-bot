@@ -38,7 +38,8 @@ public class LinePushJob implements Job {
 
 		// Misfire handler
 		Date startTime = context.getTrigger().getStartTime();
-		Date now = new Date();
+		Date now = new Date(FridayBotApplication.getInstance().getClockReference().millis());
+		
 
 		LOG.info("EVENT-ID=" + eventId + " START-TIME=" + startTime + " NOW=" + now + " Executing event message: "
 		        + message + " NEXT=" + nextTask);

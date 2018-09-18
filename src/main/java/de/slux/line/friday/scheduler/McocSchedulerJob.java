@@ -53,7 +53,7 @@ public class McocSchedulerJob implements Job {
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
 	 */
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		Date todaysDate = new Date();
+		Date todaysDate = new Date(FridayBotApplication.getInstance().getClockReference().millis());
 
 		String eventId = context.getJobDetail().getJobDataMap().get(EventScheduler.ID_KEY).toString();
 
@@ -67,7 +67,7 @@ public class McocSchedulerJob implements Job {
 		c.add(Calendar.DAY_OF_MONTH, -1);
 		String yesterday = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
 
-		LOG.info("EVENT-ID=" + eventId + " ST=" + context.getScheduledFireTime() + " NOW=" + new Date()
+		LOG.info("EVENT-ID=" + eventId + " ST=" + context.getScheduledFireTime() + " NOW=" + todaysDate
 		        + " Running MCOC Master Job for " + today);
 
 		FridayBotApplication app = FridayBotApplication.getInstance();

@@ -64,7 +64,7 @@ public class EventInfoCommand extends AbstractCommand {
 
 			// Today's events
 			if (message.equalsIgnoreCase(CMD_PREFIX)) {
-				Date now = new Date();
+				Date now = new Date(FridayBotApplication.getInstance().getClockReference().millis());
 				String today = McocSchedulerImporter.DATE_FORMAT.format(now);
 				McocDayInfo todayEvents = this.schedulerImporter.getMcocScheduler().get(today);
 				if (todayEvents == null) {
@@ -83,7 +83,7 @@ public class EventInfoCommand extends AbstractCommand {
 				if (TOMORROW_ARG.equalsIgnoreCase(eventQualifier)) {
 					// Show tomorrow's events
 					Calendar c = Calendar.getInstance();
-					c.setTime(new Date());
+					c.setTime(new Date(FridayBotApplication.getInstance().getClockReference().millis()));
 					c.add(Calendar.DAY_OF_MONTH, 1);
 
 					String tomorrow = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
@@ -101,7 +101,7 @@ public class EventInfoCommand extends AbstractCommand {
 
 					StringBuilder sb = new StringBuilder("MCOC Week events:\n\n");
 					for (int i = 0; i < 8; i++) {
-						c.setTime(new Date());
+						c.setTime(new Date(FridayBotApplication.getInstance().getClockReference().millis()));
 						c.add(Calendar.DAY_OF_MONTH, i);
 						String day = McocSchedulerImporter.DATE_FORMAT.format(c.getTime());
 						McocDayInfo dayEvents = this.schedulerImporter.getMcocScheduler().get(day);

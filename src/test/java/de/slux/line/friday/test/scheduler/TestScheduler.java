@@ -2,6 +2,9 @@ package de.slux.line.friday.test.scheduler;
 
 import static org.junit.Assert.assertTrue;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +24,7 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
+import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.RegisterEventsCommand;
 import de.slux.line.friday.command.UnregisterEventsCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
@@ -71,6 +75,40 @@ public class TestScheduler {
 			// TODO: we should delete the group completely from the DB
 			warModel.updateGroupStatus(groupId, GroupStatus.GroupStatusInactive);
 		}
+	}
+
+	@Test
+	public void testSchedulerInvalidDate() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		// EPOCH time
+		friday.setClockReference(Clock.fixed(Instant.EPOCH, ZoneId.systemDefault()));
+		friday.postConstruct();
+
+		String userId = UUID.randomUUID().toString();
+
+		// Today's
+		MessageEvent<TextMessageContent> todayEvents = MessageEventUtil.createMessageEventUserSource(userId,
+		        EventInfoCommand.CMD_PREFIX);
+		// Tomorrow's events
+		MessageEvent<TextMessageContent> eventTomorrowEvents = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " tomoRRow");
+		// Week events
+		MessageEvent<TextMessageContent> eventWeekEvents = MessageEventUtil
+		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " weeK");
+
+		TextMessage response = friday.handleTextMessageEvent(todayEvents);
+		assertTrue(response.getText().contains("Nothing found"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(eventTomorrowEvents);
+		assertTrue(response.getText().contains("Nothing found"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(eventWeekEvents);
+		assertTrue(response.getText().contains("Missing data"));
+		assertTrue(callback.takeAllMessages().isEmpty());
 	}
 
 	@Test

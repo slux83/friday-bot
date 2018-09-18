@@ -17,6 +17,7 @@
 package de.slux.line.friday;
 
 import java.text.SimpleDateFormat;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -113,6 +114,7 @@ public class FridayBotApplication {
 	private McocSchedulerImporter scheduler;
 	private EventScheduler eventScheduler;
 	private LinkedList<String> lastPushedMessages;
+	private Clock clockReference;
 
 	public static void main(String[] args) {
 		SpringApplication.run(FridayBotApplication.class, args);
@@ -132,7 +134,10 @@ public class FridayBotApplication {
 	public void postConstruct() {
 		// Save the instance
 		setInstance(this);
-		this.startup = new Date();
+		if (clockReference == null)
+			this.clockReference = Clock.systemDefaultZone();
+
+		this.startup = new Date(this.clockReference.millis());
 		this.commandIncomingMsgCounter = new AtomicLong();
 		this.totalIncomingMsgCounter = new AtomicLong();
 		this.lastPushedMessages = new LinkedList<>();
@@ -458,7 +463,7 @@ public class FridayBotApplication {
 		List<CompletableFuture<BotApiResponse>> asyncMessages = new ArrayList<>();
 		int pushedCounter = 0;
 		int totalSent = 0;
-		Date now = new Date();
+		Date now = new Date(this.clockReference.millis());
 
 		for (WarGroup group : groups) {
 			pushedCounter++;
@@ -531,5 +536,25 @@ public class FridayBotApplication {
 	 */
 	public LinkedList<String> getPushStatistics() {
 		return this.lastPushedMessages;
+	}
+
+	/**
+	 * Set the clock reference. Call this before calling the
+	 * {@link FridayBotApplication#postConstruct()}. This is mainly used for
+	 * testing
+	 * 
+	 * @param clock
+	 */
+	public void setClockReference(Clock clock) {
+		this.clockReference = clock;
+	}
+
+	/**
+	 * Get the clock reference
+	 * 
+	 * @return clockReference
+	 */
+	public Clock getClockReference() {
+		return this.clockReference;
 	}
 }
