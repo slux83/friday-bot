@@ -40,7 +40,7 @@ public class LinePushJob implements Job {
 		Date startTime = context.getTrigger().getStartTime();
 		Date now = new Date();
 
-		LOG.info("EVENT-ID=" + eventId + " Start-Time=" + startTime + " NOW=" + now + " Executing event message: "
+		LOG.info("EVENT-ID=" + eventId + " START-TIME=" + startTime + " NOW=" + now + " Executing event message: "
 		        + message + " NEXT=" + nextTask);
 
 		if (Math.abs(startTime.getTime() - now.getTime()) > MAX_MISFIRE_DELAY_MS) {

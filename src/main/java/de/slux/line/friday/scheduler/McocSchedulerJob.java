@@ -122,7 +122,7 @@ public class McocSchedulerJob implements Job {
 			switch (todayInfo.getAwStatus()) {
 				case PLACEMENT:
 					createAwJob(context,
-					        "Placement phase should be up by now.\nPlease wait for your BG officers to give you the go ahead to place your defenders!",
+					        "Placement phase should be up by now.\nPlease wait for your BG officer(s) to give you the go ahead to place your defenders!",
 					        todayInfo.getAwStatus());
 					break;
 
@@ -186,6 +186,19 @@ public class McocSchedulerJob implements Job {
 			LOG.error("Cannot create catalyst arena event job: " + e, e);
 		}
 
+		// Donations reminder on Wednesday and Saturday
+		c = Calendar.getInstance();
+		if (c.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY || c.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+			try {
+				String reminderOccurrence = (c.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) ? "First" : "Last";
+				String treasuryMessage = "Treasury Awaits!\n$1 friendly reminder to donate to the Alliance Treasury.\n\nIf you have any issues with the requirements, please contact an officer"
+				        .replaceAll("$1", reminderOccurrence);
+				createGenericJob(context, "donations-reminder-" + c.get(Calendar.DAY_OF_WEEK), treasuryMessage, 14, 0);
+			} catch (Exception e) {
+				LOG.error("Cannot create donation reminder event job: " + e, e);
+			}
+		}
+
 		LOG.info("MCOC Master Job completed.");
 
 	}
@@ -206,7 +219,6 @@ public class McocSchedulerJob implements Job {
 
 		LOG.info("Adding event: " + eventId);
 
-		// One shot AW reminder, just few minutes before 8 PM GMT-0
 		JobDetail job1 = newJob(LinePushJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 		        .usingJobData(EventScheduler.MESSAGE_KEY, message).usingJobData(EventScheduler.ID_KEY, eventId).build();
 		Trigger trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
@@ -230,7 +242,7 @@ public class McocSchedulerJob implements Job {
 		String eventId = "aw reminder " + awStatus;
 		LOG.info("Adding event: " + eventId);
 
-		// One shot AW reminder, just few minutes before 8 PM GMT-0
+		// One shot AW reminder
 		JobDetail job1 = newJob(LinePushJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 		        .usingJobData(EventScheduler.MESSAGE_KEY, awMessage).usingJobData(EventScheduler.ID_KEY, eventId)
 		        .build();
@@ -255,7 +267,7 @@ public class McocSchedulerJob implements Job {
 		String eventId = "aq reminder " + aqDay;
 		LOG.info("Adding event: " + eventId);
 
-		// One shot AQ reminder, just few minutes before 8 PM GMT-0
+		// One shot AQ reminder
 		JobDetail job1 = newJob(LinePushJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 		        .usingJobData(EventScheduler.MESSAGE_KEY, "AQ " + aqDay + " will start shortly! Get ready!")
 		        .usingJobData(EventScheduler.ID_KEY, eventId).build();
