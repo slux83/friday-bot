@@ -221,8 +221,9 @@ public class McocSchedulerJob implements Job {
 
 		JobDetail job1 = newJob(LinePushJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 		        .usingJobData(EventScheduler.MESSAGE_KEY, message).usingJobData(EventScheduler.ID_KEY, eventId).build();
+		int theHour = (hour + TIMEZONE_ADJUSTMENT_FROM_UTC) % 24;
 		Trigger trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
-		        .startAt(DateBuilder.todayAt(hour + TIMEZONE_ADJUSTMENT_FROM_UTC, minute, 0)).build();
+		        .startAt(DateBuilder.todayAt(theHour, minute, 0)).build();
 
 		s.scheduleJob(job1, trigger1);
 

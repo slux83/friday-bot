@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -142,6 +144,79 @@ public class TestScheduler {
 		}
 
 		assertTrue(masterJobFound);
+	}
+
+	@Test
+	public void testSchedulerJobsInvalidDate() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		// EPOCH time
+		friday.setClockReference(Clock.fixed(Instant.EPOCH, ZoneId.systemDefault()));
+		friday.postConstruct();
+
+		Thread.sleep(15000);
+
+		Scheduler scheduler = friday.getEventScheduler().getScheduler();
+		boolean masterJobFound = false;
+		for (String groupName : scheduler.getJobGroupNames()) {
+
+			for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+
+				String jobName = jobKey.getName();
+				String jobGroup = jobKey.getGroup();
+
+				// get job's trigger
+				List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+				Date nextFireTime = triggers.get(0).getNextFireTime();
+
+				System.out.println("[jobName] : " + jobName + " [groupName] : " + jobGroup + " - " + nextFireTime);
+
+				if (jobName.contains("mcoc schedule master")) {
+					masterJobFound = true;
+				}
+			}
+		}
+	}
+
+	@Test
+	public void testSchedulerJobsRollingDays() throws Exception {
+		
+		// Should be enough to touch all the events
+		for (int i = 0; i < 15; i++) {
+			MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+			FridayBotApplication friday = new FridayBotApplication(null);
+			friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+			// Time is moving
+			Instant instant = Instant.now().plus(i, ChronoUnit.DAYS);
+			friday.setClockReference(Clock.fixed(instant, ZoneId.systemDefault()));
+			friday.postConstruct();
+
+			Thread.sleep(15000);
+
+			Scheduler scheduler = friday.getEventScheduler().getScheduler();
+			boolean masterJobFound = false;
+			for (String groupName : scheduler.getJobGroupNames()) {
+
+				for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+
+					String jobName = jobKey.getName();
+					String jobGroup = jobKey.getGroup();
+
+					// get job's trigger
+					List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+					Date nextFireTime = triggers.get(0).getNextFireTime();
+
+					System.out.println("[jobName] : " + jobName + " [groupName] : " + jobGroup + " - " + nextFireTime);
+
+					if (jobName.contains("mcoc schedule master")) {
+						masterJobFound = true;
+					}
+				}
+			}
+
+			assertTrue(masterJobFound);
+		}
 	}
 
 	@Test
