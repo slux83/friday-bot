@@ -113,7 +113,7 @@ public class WarSummonerRenameCommand extends AbstractCommand {
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <pos> <name>\n");
+		sb.append("[" + CMD_PREFIX + " <pos> <name>]\n");
 		sb.append("Rename the summoner with <name> at position <pos>\n");
 		sb.append("Example " + CMD_PREFIX + " 6 John Doe");
 
