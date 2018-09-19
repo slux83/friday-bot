@@ -188,6 +188,7 @@ public class McocSchedulerJob implements Job {
 
 		// Donations reminder on Wednesday and Saturday
 		c = Calendar.getInstance();
+		c.setTimeInMillis(FridayBotApplication.getInstance().getClockReference().millis());
 		if (c.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY || c.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
 			try {
 				String reminderOccurrence = (c.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) ? "First" : "Last";

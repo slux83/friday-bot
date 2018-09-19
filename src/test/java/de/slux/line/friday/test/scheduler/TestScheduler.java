@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -145,7 +146,7 @@ public class TestScheduler {
 
 		assertTrue(masterJobFound);
 	}
-
+	
 	@Test
 	public void testSchedulerJobsInvalidDate() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
@@ -216,6 +217,8 @@ public class TestScheduler {
 			}
 
 			assertTrue(masterJobFound);
+			
+			friday.getEventScheduler().terminate();
 		}
 	}
 
