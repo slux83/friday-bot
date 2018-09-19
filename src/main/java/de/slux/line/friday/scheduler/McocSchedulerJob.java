@@ -192,8 +192,9 @@ public class McocSchedulerJob implements Job {
 		if (c.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY || c.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
 			try {
 				String reminderOccurrence = (c.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) ? "First" : "Last";
-				String treasuryMessage = "Treasury Awaits!\n$1 friendly reminder to donate to the Alliance Treasury.\n\nIf you have any issues with the requirements, please contact an officer"
-				        .replaceAll("$1", reminderOccurrence);
+				String treasuryMessage = String.format(
+				        "Treasury Awaits!\n%s friendly reminder to donate to the Alliance Treasury.\n\nIf you have any issues with the requirements, please contact an officer",
+				        reminderOccurrence);
 				createGenericJob(context, "donations-reminder-" + c.get(Calendar.DAY_OF_WEEK), treasuryMessage, 14, 0);
 			} catch (Exception e) {
 				LOG.error("Cannot create donation reminder event job: " + e, e);
