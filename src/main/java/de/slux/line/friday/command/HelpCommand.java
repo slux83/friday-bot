@@ -3,6 +3,7 @@
  */
 package de.slux.line.friday.command;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class HelpCommand extends AbstractCommand {
 		StringBuilder sb = new StringBuilder("*** F.R.I.D.A.Y. HELP ***");
 
 		List<AbstractCommand> commands = FridayBotApplication.getInstance().getCommands();
-
+		List<String> helpMessages = new ArrayList<>();
 		LOG.info("Constructing help using " + commands.size() + " command(s)");
 		for (AbstractCommand c : commands) {
 
@@ -82,9 +83,23 @@ public class HelpCommand extends AbstractCommand {
 				sb.append("\n\n");
 				sb.append(c.getHelp());
 			}
+			
+			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
+				helpMessages.add(sb.toString());
+				sb.setLength(0);
+			}
 		}
+		
+		if (sb.length() > 0)
+			helpMessages.add(sb.toString());
 
-		return new TextMessage(sb.toString());
+		try {
+			return super.pushMultipleMessages(senderId, "", helpMessages);
+		} catch (Exception e) {
+			LOG.error("Cannot send out the help output: " + e, e);
+		}
+		
+		return null;
 	}
 
 	/*

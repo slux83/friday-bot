@@ -65,17 +65,21 @@ public class TestWarCommand {
 		        HelpCommand.CMD_PREFIX);
 
 		TextMessage response = friday.handleTextMessageEvent(helpCmd);
-		assertTrue(response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
-		assertTrue(callback.takeAllMessages().isEmpty());
+		assertNull(response);
+		String help = callback.takeAllMessages();
+		assertFalse(help.isEmpty());
+		assertTrue(help.contains(WarAddSummonersCommand.CMD_PREFIX));
 
 		response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("successfully registered using the name group1"));
 
 		response = friday.handleTextMessageEvent(helpCmd);
-		System.out.println(response.getText());
-		assertTrue(response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
-		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
-		assertTrue(callback.takeAllMessages().isEmpty());
+		help = callback.takeAllMessages();
+		System.out.println(help);
+		assertNull(response);
+		assertFalse(help.isEmpty());
+		assertTrue(help.contains(WarAddSummonersCommand.CMD_PREFIX));
+		assertTrue(help.contains(EventInfoCommand.CMD_PREFIX));
 	}
 
 	@Test
@@ -661,10 +665,12 @@ public class TestWarCommand {
 		        userId, EventInfoCommand.CMD_PREFIX + " Monthly");
 
 		TextMessage response = friday.handleTextMessageEvent(eventUserHelp);
-		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
-		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
-		assertTrue(response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
-		assertTrue(callback.takeAllMessages().isEmpty());
+		String help = callback.takeAllMessages();
+		assertTrue(help.contains(EventInfoCommand.CMD_PREFIX));
+		assertTrue(help.contains(HelpCommand.CMD_PREFIX));
+		assertTrue(help.contains(WarAddSummonersCommand.CMD_PREFIX));
+		assertFalse(help.isEmpty());
+		assertNull(response);
 
 		response = friday.handleTextMessageEvent(eventTodayEvents);
 		assertTrue(response.getText().contains("MCOC Today's events"));
