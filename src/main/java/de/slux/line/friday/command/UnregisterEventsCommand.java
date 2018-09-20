@@ -21,7 +21,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class UnregisterEventsCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday unregister events";
+	public static final String CMD_PREFIX = "unregister events";
 	private static Logger LOG = LoggerFactory.getLogger(UnregisterEventsCommand.class);
 
 	/**
@@ -41,7 +41,7 @@ public class UnregisterEventsCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.equalsIgnoreCase(CMD_PREFIX);
+		return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -86,13 +86,15 @@ public class UnregisterEventsCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + "]\n");
-		sb.append("Unregisters this group in order to stop receiving MCOC events");
+		sb.append(CMD_PREFIX + "\n");
+		if (verbose) {
+			sb.append("Unregisters this group in order to stop receiving MCOC events");
+		}
 
 		return sb.toString();
 	}

@@ -30,7 +30,7 @@ import de.slux.line.friday.logic.war.WarPlacementLogic;
  * @author slux
  */
 public class WarSummonerNodeCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday node";
+	public static final String CMD_PREFIX = "node";
 	private static Logger LOG = LoggerFactory.getLogger(WarSummonerNodeCommand.class);
 	private static final String POSITION_REGEX = "^(10?|[1-9])[A-E]";
 
@@ -51,7 +51,7 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -74,8 +74,8 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 			commandArgs.remove(0);
 
 			if (commandArgs.size() < 3) {
-				return new TextMessage("Missing arguments, please use " + HelpCommand.CMD_PREFIX
-				        + " to see the list of commands and arguments");
+				return new TextMessage("Missing arguments, please use " + AbstractCommand.ALL_CMD_PREFIX + " "
+				        + HelpCommand.CMD_PREFIX + " to see the list of commands and arguments");
 			}
 
 			// Deal with multi-insert
@@ -126,8 +126,8 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 					validUpdates++;
 
 				} catch (WarDaoUnregisteredException e) {
-					return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-					        + "' for info on how to register your chat room");
+					return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX
+					        + " " + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
 				} catch (SummonerNotFoundException e) {
 					warnings.append("- " + e.getMessage() + "\n");
 				}
@@ -172,14 +172,16 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <position> <node> <champ>, ...]\n");
-		sb.append("Edit the champion information giving a node and the position in the placement table.\n");
-		sb.append("Example " + CMD_PREFIX + " 3B 55 5* dupe Medusa");
+		sb.append(CMD_PREFIX + " <position> <node> <champ>, ...\n");
+		if (verbose) {
+			sb.append("Edit the champion information giving a node and the position in the placement table.\n");
+			sb.append("Example " + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 3B 55 5* dupe Medusa");
+		}
 
 		return sb.toString();
 	}

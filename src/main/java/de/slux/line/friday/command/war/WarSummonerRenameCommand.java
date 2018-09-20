@@ -23,7 +23,7 @@ import de.slux.line.friday.logic.war.WarPlacementLogic;
  * @author slux
  */
 public class WarSummonerRenameCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday rename summoner";
+	public static final String CMD_PREFIX = "rename summoner";
 	private static Logger LOG = LoggerFactory.getLogger(WarSummonerRenameCommand.class);
 
 	/**
@@ -43,7 +43,7 @@ public class WarSummonerRenameCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -67,8 +67,8 @@ public class WarSummonerRenameCommand extends AbstractCommand {
 			args.remove(0);
 
 			if (args.size() < 2) {
-				return new TextMessage("Missing arguments, please use " + HelpCommand.CMD_PREFIX
-				        + " to see the list of commands and arguments");
+				return new TextMessage("Missing arguments, please use " + AbstractCommand.ALL_CMD_PREFIX + " "
+				        + HelpCommand.CMD_PREFIX + " to see the list of commands and arguments");
 			}
 
 			String arg1 = args.remove(0).trim();
@@ -85,8 +85,8 @@ public class WarSummonerRenameCommand extends AbstractCommand {
 			logic.renameSummoner(senderId, summonerPosition, String.join(" ", args));
 			return new TextMessage("Summoner renamed");
 		} catch (WarDaoUnregisteredException e) {
-			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-			        + "' for info on how to register your chat room");
+			return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
+			        + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
 		} catch (SummonerNotFoundException e) {
 			return new TextMessage(e.getMessage());
 		} catch (Exception e) {
@@ -108,14 +108,16 @@ public class WarSummonerRenameCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(verbose)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <pos> <name>]\n");
-		sb.append("Rename the summoner with <name> at position <pos>\n");
-		sb.append("Example " + CMD_PREFIX + " 6 John Doe");
+		sb.append(CMD_PREFIX + " <pos> <name>\n");
+		if (verbose) {
+			sb.append("Rename the summoner with <name> at position <pos>\n");
+			sb.append("Example " + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 6 John Doe");
+		}
 
 		return sb.toString();
 	}

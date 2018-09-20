@@ -25,7 +25,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class AdminBroadcastCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday broadcast";
+	public static final String CMD_PREFIX = "broadcast";
 	private static Logger LOG = LoggerFactory.getLogger(AdminBroadcastCommand.class);
 
 	/**
@@ -45,7 +45,7 @@ public class AdminBroadcastCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -103,13 +103,15 @@ public class AdminBroadcastCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <message>]\n");
-		sb.append("Send the message broadcast to all the registered rooms");
+		sb.append(CMD_PREFIX + " <message>\n");
+		if (verbose) {
+			sb.append("Send the message broadcast to all the registered rooms");
+		}
 
 		return sb.toString();
 	}

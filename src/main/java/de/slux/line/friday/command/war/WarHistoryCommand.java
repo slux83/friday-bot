@@ -30,7 +30,7 @@ import de.slux.line.friday.logic.war.WarPlacementLogic;
  * @author slux
  */
 public class WarHistoryCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday history";
+	public static final String CMD_PREFIX = "history";
 	private static Logger LOG = LoggerFactory.getLogger(WarHistoryCommand.class);
 
 	/**
@@ -50,7 +50,7 @@ public class WarHistoryCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -63,14 +63,14 @@ public class WarHistoryCommand extends AbstractCommand {
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
 		WarDeathLogic warModel = new WarDeathLogic();
-		if (message.equalsIgnoreCase(CMD_PREFIX)) {
+		if (message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX)) {
 			// Get all history
 			try {
 				List<String> history = warModel.getHistoryText(senderId);
 				return super.pushMultipleMessages(senderId, "", history);
 			} catch (WarDaoUnregisteredException e) {
-				return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-				        + "' for info on how to register your chat room");
+				return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
+				        + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
 			} catch (Exception e) {
 				LOG.error("Unexpected error: " + e, e);
 				return new TextMessage("Unexpected error: " + e);
@@ -117,8 +117,8 @@ public class WarHistoryCommand extends AbstractCommand {
 				return new TextMessage("Incorrect date syntax.\nPlease use the following date pattern: "
 				        + WarDeathLogic.SDF.toPattern());
 			} catch (WarDaoUnregisteredException e) {
-				return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-				        + "' for info on how to register your chat room");
+				return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
+				        + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
 			} catch (Exception e) {
 				LOG.error("Unexpected error: " + e, e);
 				return new TextMessage("Unexpected error: " + e);
@@ -141,14 +141,16 @@ public class WarHistoryCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <date?>]\n");
-		sb.append("Prints all the saved wars or a specific one, if <date> is provided.\n");
-		sb.append("Date format is yyyy-MM-dd e.g. 2018-05-24");
+		sb.append(CMD_PREFIX + " <date>?\n");
+		if (verbose) {
+			sb.append("Prints all the saved wars or a specific one, if <date> is provided.\n");
+			sb.append("Date format is yyyy-MM-dd e.g. 2018-05-24");
+		}
 
 		return sb.toString();
 	}

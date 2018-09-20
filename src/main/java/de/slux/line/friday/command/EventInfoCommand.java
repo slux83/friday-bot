@@ -23,7 +23,7 @@ import de.slux.line.friday.scheduler.McocSchedulerImporter;
  * @author slux
  */
 public class EventInfoCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday events";
+	public static final String CMD_PREFIX = "events";
 	private static final String TOMORROW_ARG = "tomorrow";
 	private static final String WEEK_ARG = "week";
 	private static Logger LOG = LoggerFactory.getLogger(EventInfoCommand.class);
@@ -48,7 +48,8 @@ public class EventInfoCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX + " ") || message.equalsIgnoreCase(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " ")
+		        || message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -63,7 +64,7 @@ public class EventInfoCommand extends AbstractCommand {
 		try {
 
 			// Today's events
-			if (message.equalsIgnoreCase(CMD_PREFIX)) {
+			if (message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX)) {
 				Date now = new Date(FridayBotApplication.getInstance().getClockReference().millis());
 				String today = McocSchedulerImporter.DATE_FORMAT.format(now);
 				McocDayInfo todayEvents = this.schedulerImporter.getMcocScheduler().get(today);
@@ -239,14 +240,16 @@ public class EventInfoCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <tomorrow> OR <week>]\n");
-		sb.append("Shows the MCOC events for today (default with no arguments), tomorrow or the week.\n");
-		sb.append("Example '" + CMD_PREFIX + "' or '" + CMD_PREFIX + " week'");
+		sb.append(CMD_PREFIX + " <tomorrow|week>\n");
+		if (verbose) {
+			sb.append("Shows the MCOC events for today (default with no arguments), tomorrow or the week.\n");
+			sb.append("Example '" + CMD_PREFIX + "' or '" + CMD_PREFIX + " week'");
+		}
 
 		return sb.toString();
 	}

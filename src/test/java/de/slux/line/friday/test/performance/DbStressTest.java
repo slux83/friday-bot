@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.UUID;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,7 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
+import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
 import de.slux.line.friday.command.war.WarReportDeathCommand;
@@ -28,9 +31,13 @@ import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
 
 /**
  * Testing the performances with a huge DB
+ * <p>
+ * This test class is ignored by default
+ * </p>
  * 
  * @author Slux
  */
+@Ignore
 public class DbStressTest {
 
 	/**
@@ -50,7 +57,7 @@ public class DbStressTest {
 	 * 
 	 * @throws Exception
 	 */
-	// @Test
+	@Test
 	public void testHugeDbPerformances() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);
@@ -67,7 +74,7 @@ public class DbStressTest {
 
 			// Register command
 			MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-			        userId, WarRegisterCommand.CMD_PREFIX + " group" + i);
+			        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group" + i);
 			TextMessage response = friday.handleTextMessageEvent(registerCmd);
 			assertTrue(response.getText().contains("successfully registered using the name group" + i));
 
@@ -77,7 +84,8 @@ public class DbStressTest {
 				// Add 55 kill reports
 				for (int z = 1; z <= 55; z++) {
 					MessageEvent<TextMessageContent> deathCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-					        userId, WarReportDeathCommand.CMD_PREFIX + " 1 " + z + " 5* duped Dormammu" + z);
+					        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 1 " + z
+					                + " 5* duped Dormammu" + z);
 
 					response = friday.handleTextMessageEvent(deathCmd);
 					assertTrue(response.getText().contains("Total deaths: " + z));
@@ -85,8 +93,8 @@ public class DbStressTest {
 				}
 
 				// Add summoners
-				MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil
-				        .createMessageEventGroupSource(groupId, userId, WarAddSummonersCommand.CMD_PREFIX
+				MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil.createMessageEventGroupSource(
+				        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarAddSummonersCommand.CMD_PREFIX
 				                + " summoner1, summoner2, summoner3, summoner4, summoner5, summoner6, summoner7, summoner8, summoner9, summoner10");
 				response = friday.handleTextMessageEvent(summonersAddCmd);
 				assertTrue(response.getText().contains("summoner1"));
@@ -98,8 +106,9 @@ public class DbStressTest {
 				for (int k = 1; k <= 10; k++) {
 					for (char pos = 'A'; pos <= 'E'; pos++) {
 						MessageEvent<TextMessageContent> summonerNodeCmd = MessageEventUtil
-						        .createMessageEventGroupSource(groupId, userId, WarSummonerNodeCommand.CMD_PREFIX + " "
-						                + k + Character.toString(pos) + " " + node + " 5* dupe Medusa");
+						        .createMessageEventGroupSource(groupId, userId,
+						                AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + " "
+						                        + k + Character.toString(pos) + " " + node + " 5* dupe Medusa");
 						response = friday.handleTextMessageEvent(summonerNodeCmd);
 						assertTrue(response.getText()
 						        .contains(Character.toString(pos) + ". 5* dupe Medusa (" + node + ")"));
@@ -112,7 +121,7 @@ public class DbStressTest {
 				// Save war command
 				String allyTag = "ALLY_" + Integer.toString(i) + "_" + Integer.toString(j);
 				MessageEvent<TextMessageContent> saveWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-				        userId, WarSaveCommand.CMD_PREFIX + " " + allyTag);
+				        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarSaveCommand.CMD_PREFIX + " " + allyTag);
 
 				response = friday.handleTextMessageEvent(saveWarCmd);
 				assertTrue(response.getText().contains(allyTag));
@@ -120,7 +129,7 @@ public class DbStressTest {
 
 				// Reset war command
 				MessageEvent<TextMessageContent> resetWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-				        userId, WarResetCommand.CMD_PREFIX);
+				        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarResetCommand.CMD_PREFIX);
 
 				response = friday.handleTextMessageEvent(resetWarCmd);
 				assertTrue(response.getText().contains("War reports cleared"));

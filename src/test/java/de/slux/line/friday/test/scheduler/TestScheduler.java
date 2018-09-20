@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -25,6 +26,7 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
+import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.RegisterEventsCommand;
 import de.slux.line.friday.command.UnregisterEventsCommand;
@@ -42,6 +44,7 @@ import de.slux.line.friday.test.util.scheduler.ContextDummy;
 /**
  * @author slux
  */
+//@Ignore
 public class TestScheduler {
 	private static Set<String> groupsToDelete = new HashSet<>();
 
@@ -59,7 +62,8 @@ public class TestScheduler {
 			// Register command new group
 			String groupId = UUID.randomUUID().toString();
 			MessageEvent<TextMessageContent> registerNewCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-			        userId, RegisterEventsCommand.CMD_PREFIX);
+			        userId, AbstractCommand.ALL_CMD_PREFIX + " "
+			                + RegisterEventsCommand.CMD_PREFIX);
 
 			TextMessage response = friday.handleTextMessageEvent(registerNewCmd);
 			assertTrue(response.getText().contains("MCoC event notifications"));
@@ -91,13 +95,15 @@ public class TestScheduler {
 
 		// Today's
 		MessageEvent<TextMessageContent> todayEvents = MessageEventUtil.createMessageEventUserSource(userId,
-		        EventInfoCommand.CMD_PREFIX);
+		        AbstractCommand.ALL_CMD_PREFIX + " " + EventInfoCommand.CMD_PREFIX);
 		// Tomorrow's events
-		MessageEvent<TextMessageContent> eventTomorrowEvents = MessageEventUtil
-		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " tomoRRow");
+		MessageEvent<TextMessageContent> eventTomorrowEvents = MessageEventUtil.createMessageEventUserSource(
+		        UUID.randomUUID().toString(),
+		        AbstractCommand.ALL_CMD_PREFIX + " " + EventInfoCommand.CMD_PREFIX + " tomoRRow");
 		// Week events
-		MessageEvent<TextMessageContent> eventWeekEvents = MessageEventUtil
-		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " weeK");
+		MessageEvent<TextMessageContent> eventWeekEvents = MessageEventUtil.createMessageEventUserSource(
+		        UUID.randomUUID().toString(),
+		        AbstractCommand.ALL_CMD_PREFIX + " " + EventInfoCommand.CMD_PREFIX + " weeK");
 
 		TextMessage response = friday.handleTextMessageEvent(todayEvents);
 		assertTrue(response.getText().contains("Nothing found"));
@@ -235,36 +241,37 @@ public class TestScheduler {
 		String userId = UUID.randomUUID().toString();
 
 		// Admin status command
-		MessageEvent<TextMessageContent> adminStatusCmd = MessageEventUtil
-		        .createMessageEventUserSource(FridayBotApplication.SLUX_ID, AdminStatusCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> adminStatusCmd = MessageEventUtil.createMessageEventUserSource(
+		        FridayBotApplication.SLUX_ID, AbstractCommand.ALL_CMD_PREFIX + " " + AdminStatusCommand.CMD_PREFIX);
 
 		// Register command new group
 		MessageEvent<TextMessageContent> registerNewCmd = MessageEventUtil.createMessageEventGroupSource(group1Id,
-		        userId, RegisterEventsCommand.CMD_PREFIX);
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + RegisterEventsCommand.CMD_PREFIX);
 
 		// Register command events with an already existing registration for war
 		MessageEvent<TextMessageContent> registerWarCmd = MessageEventUtil.createMessageEventGroupSource(group2Id,
-		        userId, WarRegisterCommand.CMD_PREFIX + " group1");
-		MessageEvent<TextMessageContent> registerExistingWithWarCmd = MessageEventUtil
-		        .createMessageEventGroupSource(group2Id, userId, RegisterEventsCommand.CMD_PREFIX);
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group1");
+		MessageEvent<TextMessageContent> registerExistingWithWarCmd = MessageEventUtil.createMessageEventGroupSource(
+		        group2Id, userId, AbstractCommand.ALL_CMD_PREFIX + " " + RegisterEventsCommand.CMD_PREFIX);
 
 		// Register first the events and then the group for war tool
 		MessageEvent<TextMessageContent> registerBeforeWarCmd = MessageEventUtil.createMessageEventGroupSource(group3Id,
-		        userId, RegisterEventsCommand.CMD_PREFIX);
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + RegisterEventsCommand.CMD_PREFIX);
 		MessageEvent<TextMessageContent> registerWarLaterCmd = MessageEventUtil.createMessageEventGroupSource(group3Id,
-		        userId, WarRegisterCommand.CMD_PREFIX + " group1");
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group1");
 		MessageEvent<TextMessageContent> summonersPrintCmd = MessageEventUtil.createMessageEventGroupSource(group3Id,
-		        userId, WarAddSummonersCommand.CMD_PREFIX);
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarAddSummonersCommand.CMD_PREFIX);
 
 		// Unregister
 		MessageEvent<TextMessageContent> unregisterInvalidGroupCmd = MessageEventUtil.createMessageEventGroupSource(
-		        UUID.randomUUID().toString(), userId, UnregisterEventsCommand.CMD_PREFIX);
+		        UUID.randomUUID().toString(), userId,
+		        AbstractCommand.ALL_CMD_PREFIX + " " + UnregisterEventsCommand.CMD_PREFIX);
 		MessageEvent<TextMessageContent> unregisterGroup1Cmd = MessageEventUtil.createMessageEventGroupSource(group1Id,
-		        userId, UnregisterEventsCommand.CMD_PREFIX);
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + UnregisterEventsCommand.CMD_PREFIX);
 		MessageEvent<TextMessageContent> unregisterGroup2Cmd = MessageEventUtil.createMessageEventGroupSource(group2Id,
-		        userId, UnregisterEventsCommand.CMD_PREFIX);
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + UnregisterEventsCommand.CMD_PREFIX);
 		MessageEvent<TextMessageContent> unregisterGroup3Cmd = MessageEventUtil.createMessageEventGroupSource(group3Id,
-		        userId, UnregisterEventsCommand.CMD_PREFIX);
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + UnregisterEventsCommand.CMD_PREFIX);
 
 		TextMessage response = friday.handleTextMessageEvent(registerNewCmd);
 		assertTrue(response.getText().contains("MCoC event notifications"));

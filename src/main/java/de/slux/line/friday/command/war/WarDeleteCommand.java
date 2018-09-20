@@ -24,7 +24,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarDeleteCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday delete war";
+	public static final String CMD_PREFIX = "delete war";
 	private static Logger LOG = LoggerFactory.getLogger(WarDeleteCommand.class);
 
 	/**
@@ -44,7 +44,7 @@ public class WarDeleteCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -110,15 +110,17 @@ public class WarDeleteCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <date> <ally_tag>]\n");
-		sb.append("Delete from the history a given alliance war for a given date.\n");
-		sb.append("Date format is yyyy-MM-dd e.g. 2018-05-24\n");
-		sb.append("Example " + CMD_PREFIX + " 2018-05-24 4Loki");
+		sb.append(CMD_PREFIX + " <date> <ally_tag>\n");
+		if (verbose) {
+			sb.append("Delete from the history a given alliance war for a given date.\n");
+			sb.append("Date format is yyyy-MM-dd e.g. 2018-05-24\n");
+			sb.append("Example " + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 2018-05-24 4Loki");
+		}
 
 		return sb.toString();
 	}

@@ -303,7 +303,7 @@ public class FridayBotApplication {
 		String bestPrefix = null;
 		for (AbstractCommand command : this.commands) {
 			if (command.getCommandPrefix() != null && !exclude.contains(command.getType())) {
-				String prefix = command.getCommandPrefix();
+				String prefix = AbstractCommand.ALL_CMD_PREFIX + " " + command.getCommandPrefix();
 				int prefixChunks = prefix.split(" ").length;
 				List<String> messageChunks = Arrays.asList(message.toLowerCase().split(" "));
 
@@ -331,7 +331,9 @@ public class FridayBotApplication {
 			return new TextMessage("Sorry, perhaps you mean '" + bestPrefix + "'");
 		}
 
-		return new TextMessage("Sorry, I didn't understand. Try with " + HelpCommand.CMD_PREFIX);
+		return new TextMessage("Sorry, I didn't understand. Try with " + AbstractCommand.ALL_CMD_PREFIX + " "
+		        + HelpCommand.CMD_PREFIX);
+
 	}
 
 	@EventMapping

@@ -3,7 +3,6 @@
  */
 package de.slux.line.friday.command;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ import de.slux.line.friday.FridayBotApplication;
  * @author slux
  */
 public class HelpCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday help";
+	public static final String CMD_PREFIX = "help";
 	private static Logger LOG = LoggerFactory.getLogger(HelpCommand.class);
 
 	/**
@@ -40,7 +39,7 @@ public class HelpCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.equalsIgnoreCase(CMD_PREFIX);
+		return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -52,10 +51,13 @@ public class HelpCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
-		StringBuilder sb = new StringBuilder("*** F.R.I.D.A.Y. HELP ***");
+		StringBuilder sb = new StringBuilder("*** F.R.I.D.A.Y. HELP ***\n");
+		sb.append("Use: ");
+		sb.append(AbstractCommand.ALL_CMD_PREFIX);
+		sb.append(" <option>\n\n");
+		sb.append("OPTIONS:\n");
 
 		List<AbstractCommand> commands = FridayBotApplication.getInstance().getCommands();
-		List<String> helpMessages = new ArrayList<>();
 		LOG.info("Constructing help using " + commands.size() + " command(s)");
 		for (AbstractCommand c : commands) {
 
@@ -63,16 +65,15 @@ public class HelpCommand extends AbstractCommand {
 			if (senderId != null && (c.getType().equals(CommandType.CommandTypeWar)
 			        || c.getType().equals(CommandType.CommandTypeUtility)
 			        || c.getType().equals(CommandType.CommandTypeShared))) {
-				sb.append("\n\n");
-				sb.append(c.getHelp());
+				// TODO: deal with verbose commands
+				sb.append("  " + c.getHelp(false));
 			}
 
 			// Help for normal users only
 			if (senderId == null && !FridayBotApplication.SLUX_ID.equals(userId)
 			        && (c.getType().equals(CommandType.CommandTypeUser)
 			                || c.getType().equals(CommandType.CommandTypeShared))) {
-				sb.append("\n\n");
-				sb.append(c.getHelp());
+				sb.append("  " + c.getHelp(false));
 			}
 
 			// Help for admin only
@@ -80,26 +81,12 @@ public class HelpCommand extends AbstractCommand {
 			        && (c.getType().equals(CommandType.CommandTypeUser)
 			                || c.getType().equals(CommandType.CommandTypeShared)
 			                || c.getType().equals(CommandType.CommandTypeAdmin))) {
-				sb.append("\n\n");
-				sb.append(c.getHelp());
+				sb.append("  " + c.getHelp(false));
 			}
 
-			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
-				helpMessages.add(sb.toString());
-				sb.setLength(0);
-			}
 		}
 
-		if (sb.length() > 0)
-			helpMessages.add(sb.toString());
-
-		try {
-			return super.pushMultipleMessages(senderId, "", helpMessages);
-		} catch (Exception e) {
-			LOG.error("Cannot send out the help output: " + e, e);
-		}
-
-		return null;
+		return new TextMessage(sb.toString());
 	}
 
 	/*
@@ -115,14 +102,15 @@ public class HelpCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + "]\n");
-		sb.append("Prints this help message");
-
+		sb.append(CMD_PREFIX + "\n");
+		if (verbose) {
+			sb.append("Prints this help message");
+		}
 		return sb.toString();
 	}
 

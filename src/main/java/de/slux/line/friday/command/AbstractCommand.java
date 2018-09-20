@@ -74,9 +74,11 @@ public abstract class AbstractCommand {
 	/**
 	 * Get the help for this command
 	 * 
+	 * @param verbose
+	 *            if the help has to be verbose and detailed
 	 * @return default implementation returns null;
 	 */
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		return null;
 	}
 

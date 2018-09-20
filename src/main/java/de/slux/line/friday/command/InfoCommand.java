@@ -14,7 +14,7 @@ import de.slux.line.friday.FridayBotApplication;
  * @author slux
  */
 public class InfoCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday info";
+	public static final String CMD_PREFIX = "info";
 
 	// Replace $GUID with the groupID
 	private static final String PAYPAL_LINK = "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=slux83@gmail.com&lc=US&item_name=friday%3A$GUID&no_note=0&cn=&currency_code=USD&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted";
@@ -37,7 +37,7 @@ public class InfoCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.equalsIgnoreCase(CMD_PREFIX);
+		return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -94,13 +94,15 @@ public class InfoCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + "]\n");
-		sb.append("Prints informations about F.R.I.D.A.Y. Line Bot, issue tracker, donations, etc...");
+		sb.append(CMD_PREFIX + "\n");
+		if (verbose) {
+			sb.append("Prints informations about F.R.I.D.A.Y. Line Bot, issue tracker, donations, etc...");
+		}
 
 		return sb.toString();
 	}

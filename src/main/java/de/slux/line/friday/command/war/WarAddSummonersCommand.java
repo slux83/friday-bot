@@ -26,7 +26,7 @@ import de.slux.line.friday.logic.war.WarPlacementLogic;
  * @author slux
  */
 public class WarAddSummonersCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday summoners";
+	public static final String CMD_PREFIX = "summoners";
 	private static Logger LOG = LoggerFactory.getLogger(WarAddSummonersCommand.class);
 
 	/**
@@ -46,7 +46,8 @@ public class WarAddSummonersCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX + " ") || message.equalsIgnoreCase(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " ")
+		        || message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -62,7 +63,7 @@ public class WarAddSummonersCommand extends AbstractCommand {
 			// we can use this command only to print the last version
 			WarPlacementLogic logic = new WarPlacementLogic();
 			List<String> summonerNames = new ArrayList<>();
-			if (!message.equalsIgnoreCase(CMD_PREFIX)) {
+			if (!message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX)) {
 				List<String> args = extractArgs(message);
 				// clear up prefix
 				args.remove(0);
@@ -111,16 +112,19 @@ public class WarAddSummonersCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <name1, name2, ...?>]\n");
-		sb.append("Add summoner names (max " + WarPlacementLogic.MAX_SUMMONERS
-		        + ") to the placement table for the current war.\n");
-		sb.append("Use '" + CMD_PREFIX + "' only to simply print the placement table.\n");
-		sb.append("Example " + CMD_PREFIX + " John Doe, FooBar, slux83");
+		sb.append(CMD_PREFIX + " <name1, name2, ...?>\n");
+		if (verbose) {
+			sb.append("Add summoner names (max " + WarPlacementLogic.MAX_SUMMONERS
+			        + ") to the placement table for the current war.\n");
+			sb.append("Use '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX
+			        + "' only to simply print the placement table.\n");
+			sb.append("Example " + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " John Doe, FooBar, slux83");
+		}
 
 		return sb.toString();
 	}

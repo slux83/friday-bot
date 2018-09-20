@@ -23,7 +23,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarSaveCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday save war";
+	public static final String CMD_PREFIX = "save war";
 	private static Logger LOG = LoggerFactory.getLogger(WarSaveCommand.class);
 
 	/**
@@ -43,7 +43,7 @@ public class WarSaveCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -72,12 +72,12 @@ public class WarSaveCommand extends AbstractCommand {
 			warModel.saveWar(senderId, allyTag);
 			return new TextMessage("War reports against '" + allyTag + "' saved successfully");
 		} catch (WarDaoUnregisteredException e) {
-			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-			        + "' for info on how to register your chat room");
+			return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
+			        + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
 		} catch (WarDaoDuplicatedAllianceTagException e) {
-			return new TextMessage(
-			        "Error: the alliance '" + allyTag + "' has been already registered today. Use the command '"
-			                + WarDeleteCommand.CMD_PREFIX + "' to delete the previeus one");
+			return new TextMessage("Error: the alliance '" + allyTag
+			        + "' has been already registered today. Use the command '" + AbstractCommand.ALL_CMD_PREFIX + " "
+			        + WarDeleteCommand.CMD_PREFIX + "' to delete the previeus one");
 		} catch (Exception e) {
 			LOG.error("Unexpected exception: " + e, e);
 			return new TextMessage("Unexpected error: " + e);
@@ -97,14 +97,16 @@ public class WarSaveCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <ally_tag>]\n");
-		sb.append("Saves the current reports in the archive for future reference.\n");
-		sb.append("Use this command only after the war has ended");
+		sb.append(CMD_PREFIX + " <ally_tag>\n");
+		if (verbose) {
+			sb.append("Saves the current reports in the archive for future reference.\n");
+			sb.append("Use this command only after the war has ended");
+		}
 
 		return sb.toString();
 	}

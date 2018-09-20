@@ -21,7 +21,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class RegisterEventsCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday register events";
+	public static final String CMD_PREFIX = "register events";
 	private static Logger LOG = LoggerFactory.getLogger(RegisterEventsCommand.class);
 
 	/**
@@ -41,7 +41,7 @@ public class RegisterEventsCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.equalsIgnoreCase(CMD_PREFIX);
+		return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -86,14 +86,16 @@ public class RegisterEventsCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + "]\n");
-		sb.append("Registers this group to receive MCOC event reminders like\n");
-		sb.append("Donations, AQ and AW reminders, Cat Arena, 1-3 Days events, etc...");
+		sb.append(CMD_PREFIX + "\n");
+		if (verbose) {
+			sb.append("Registers this group to receive MCOC event reminders like\n");
+			sb.append("Donations, AQ and AW reminders, Cat Arena, 1-3 Days events, etc...");
+		}
 
 		return sb.toString();
 	}

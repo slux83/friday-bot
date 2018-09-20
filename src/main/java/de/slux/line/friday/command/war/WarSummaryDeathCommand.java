@@ -22,7 +22,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarSummaryDeathCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday summary death";
+	public static final String CMD_PREFIX = "summary death";
 	private static Logger LOG = LoggerFactory.getLogger(WarSummaryDeathCommand.class);
 
 	/**
@@ -42,7 +42,7 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.equalsIgnoreCase(CMD_PREFIX);
+		return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -59,8 +59,8 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 			List<String> summary = warModel.getSummary(senderId);
 			return super.pushMultipleMessages(senderId, "", summary);
 		} catch (WarDaoUnregisteredException e) {
-			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-			        + "' for info on how to register your chat room");
+			return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
+			        + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);
 			return new TextMessage("Unexpected error: " + e);
@@ -80,13 +80,15 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + "]\n");
-		sb.append("Prints a detailed summary of deaths for the current war");
+		sb.append(CMD_PREFIX + "\n");
+		if (verbose) {
+			sb.append("Prints a detailed summary of deaths for the current war");
+		}
 
 		return sb.toString();
 	}

@@ -20,7 +20,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarRegisterCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday register war";
+	public static final String CMD_PREFIX = "register war";
 	private static Logger LOG = LoggerFactory.getLogger(WarRegisterCommand.class);
 
 	/**
@@ -40,7 +40,7 @@ public class WarRegisterCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -89,15 +89,17 @@ public class WarRegisterCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <ALLYTAG-BG>]\n");
-		sb.append("Register this chat group for FRIDAY war tools. ");
-		sb.append("Use this command later on to modify the name if needed\n");
-		sb.append("Example " + CMD_PREFIX + " 4Loki-BG1");
+		sb.append(CMD_PREFIX + " <ALLYTAG-BG>\n");
+		if (verbose) {
+			sb.append("Register this chat group for FRIDAY war tools. ");
+			sb.append("Use this command later on to modify the name if needed\n");
+			sb.append("Example " + CMD_PREFIX + " 4Loki-BG1");
+		}
 
 		return sb.toString();
 	}

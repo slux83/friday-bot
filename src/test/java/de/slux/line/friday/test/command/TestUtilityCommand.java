@@ -110,28 +110,32 @@ public class TestUtilityCommand {
 		friday.postConstruct();
 
 		// User help
-		MessageEvent<TextMessageContent> eventUserHelp = MessageEventUtil
-		        .createMessageEventUserSource(UUID.randomUUID().toString(), HelpCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> eventUserHelp = MessageEventUtil.createMessageEventUserSource(
+		        UUID.randomUUID().toString(), AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX);
 
 		// Today's events
-		MessageEvent<TextMessageContent> eventTodayEvents = MessageEventUtil
-		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> eventTodayEvents = MessageEventUtil.createMessageEventUserSource(
+		        UUID.randomUUID().toString(), AbstractCommand.ALL_CMD_PREFIX + " " + EventInfoCommand.CMD_PREFIX);
 
 		// Tomorrow's events
-		MessageEvent<TextMessageContent> eventTomorrowEvents = MessageEventUtil
-		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " tomoRRow");
+		MessageEvent<TextMessageContent> eventTomorrowEvents = MessageEventUtil.createMessageEventUserSource(
+		        UUID.randomUUID().toString(),
+		        AbstractCommand.ALL_CMD_PREFIX + " " + EventInfoCommand.CMD_PREFIX + " tomoRRow");
 
 		// Week events
-		MessageEvent<TextMessageContent> eventWeekEvents = MessageEventUtil
-		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " weeK");
+		MessageEvent<TextMessageContent> eventWeekEvents = MessageEventUtil.createMessageEventUserSource(
+		        UUID.randomUUID().toString(),
+		        AbstractCommand.ALL_CMD_PREFIX + " " + EventInfoCommand.CMD_PREFIX + " weeK");
 		// Wrong events
-		MessageEvent<TextMessageContent> eventWrongEvents = MessageEventUtil
-		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX + " Monthly");
+		MessageEvent<TextMessageContent> eventWrongEvents = MessageEventUtil.createMessageEventUserSource(
+		        UUID.randomUUID().toString(),
+		        AbstractCommand.ALL_CMD_PREFIX + " " + EventInfoCommand.CMD_PREFIX + " Monthly");
 
 		TextMessage response = friday.handleTextMessageEvent(eventUserHelp);
 		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
-		assertFalse(response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
+		assertFalse(
+		        response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(eventTodayEvents);
@@ -178,7 +182,8 @@ public class TestUtilityCommand {
 		friday.postConstruct();
 
 		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEventGroupSource(
-		        UUID.randomUUID().toString(), UUID.randomUUID().toString(), InfoCommand.CMD_PREFIX);
+		        UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+		        AbstractCommand.ALL_CMD_PREFIX + " " + InfoCommand.CMD_PREFIX);
 
 		TextMessage response = friday.handleTextMessageEvent(event);
 
@@ -199,7 +204,7 @@ public class TestUtilityCommand {
 		String answer = callback.takeAllMessages();
 		assertTrue(answer.contains("Hello summoners!"));
 		assertTrue(answer.contains("PAYPAL"));
-		assertTrue(answer.contains(HelpCommand.CMD_PREFIX));
+		assertTrue(answer.contains(AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX));
 	}
 
 	@Test
@@ -234,7 +239,7 @@ public class TestUtilityCommand {
 
 		// Register command
 		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
-		        WarRegisterCommand.CMD_PREFIX + " group1");
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group1");
 
 		// Leave event
 		LeaveEvent leaveEventRegistered = MessageEventUtil.createLeaveEvent(groupId, userId);
@@ -242,19 +247,21 @@ public class TestUtilityCommand {
 
 		// History command to test the real exit of the bot from the group
 		MessageEvent<TextMessageContent> historyWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
-		        WarHistoryCommand.CMD_PREFIX);
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarHistoryCommand.CMD_PREFIX);
 
 		// Report death command
 		MessageEvent<TextMessageContent> deathCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
-		        WarReportDeathCommand.CMD_PREFIX + " 2 55 5* dupe Dormammu");
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 2 55 5* dupe Dormammu");
 
 		// Summoner placement command
 		MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-		        userId, WarAddSummonersCommand.CMD_PREFIX + " slux83, John Doe, Nemesis The Best, Tony 88");
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarAddSummonersCommand.CMD_PREFIX
+		                + " slux83, John Doe, Nemesis The Best, Tony 88");
 
 		// Summoner node
 		MessageEvent<TextMessageContent> summonerNodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-		        userId, WarSummonerNodeCommand.CMD_PREFIX + " 3A 55 5* dupe IMIW");
+		        userId,
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + " 3A 55 5* dupe IMIW");
 
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("successfully registered using the name group1"));
@@ -313,44 +320,46 @@ public class TestUtilityCommand {
 
 		// Register command
 		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
-		        WarRegisterCommand.CMD_PREFIX + " group1");
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group1");
 
 		// Death summary command
 		MessageEvent<TextMessageContent> deathSummaryCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-		        userId, WarSummaryDeathCommand.CMD_PREFIX);
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarSummaryDeathCommand.CMD_PREFIX);
 
 		MessageEvent<TextMessageContent> deathSummaryNoAdminCmd = MessageEventUtil.createMessageEventGroupSource(
-		        groupId, UUID.randomUUID().toString(), WarSummaryDeathCommand.CMD_PREFIX);
+		        groupId, UUID.randomUUID().toString(),
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSummaryDeathCommand.CMD_PREFIX);
 
-		MessageEvent<TextMessageContent> userHelpCmd = MessageEventUtil
-		        .createMessageEventUserSource(UUID.randomUUID().toString(), HelpCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> userHelpCmd = MessageEventUtil.createMessageEventUserSource(
+		        UUID.randomUUID().toString(), AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX);
 
 		// Admin help command
 		MessageEvent<TextMessageContent> adminHelpCmd = MessageEventUtil.createMessageEventUserSource(userId,
-		        HelpCommand.CMD_PREFIX);
+		        AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX);
 
 		// Today's events
-		MessageEvent<TextMessageContent> eventTodayEvents = MessageEventUtil
-		        .createMessageEventUserSource(UUID.randomUUID().toString(), EventInfoCommand.CMD_PREFIX);
+		MessageEvent<TextMessageContent> eventTodayEvents = MessageEventUtil.createMessageEventUserSource(
+		        UUID.randomUUID().toString(), AbstractCommand.ALL_CMD_PREFIX + " " + EventInfoCommand.CMD_PREFIX);
 
 		// Admin status command
 		MessageEvent<TextMessageContent> adminStatusCmd = MessageEventUtil.createMessageEventUserSource(userId,
-		        AdminStatusCommand.CMD_PREFIX);
+		        AbstractCommand.ALL_CMD_PREFIX + " " + AdminStatusCommand.CMD_PREFIX);
 		MessageEvent<TextMessageContent> adminStatusOperCmd = MessageEventUtil.createMessageEventUserSource(userId,
-		        AdminStatusCommand.CMD_PREFIX + " operational");
+		        AbstractCommand.ALL_CMD_PREFIX + " " + AdminStatusCommand.CMD_PREFIX + " operational");
 		MessageEvent<TextMessageContent> adminStatusMaintCmd = MessageEventUtil.createMessageEventUserSource(userId,
-		        AdminStatusCommand.CMD_PREFIX + " maintenance");
+		        AbstractCommand.ALL_CMD_PREFIX + " " + AdminStatusCommand.CMD_PREFIX + " maintenance");
 		MessageEvent<TextMessageContent> adminStatusInvalidCmd = MessageEventUtil.createMessageEventUserSource(userId,
-		        AdminStatusCommand.CMD_PREFIX + " invalid");
+		        AbstractCommand.ALL_CMD_PREFIX + " " + AdminStatusCommand.CMD_PREFIX + " invalid");
 
 		// Leave event
 		LeaveEvent leaveEvent = MessageEventUtil.createLeaveEvent(groupId, userId);
 
 		// Admin broadcast command
 		MessageEvent<TextMessageContent> adminBroadcastCmd = MessageEventUtil.createMessageEventUserSource(
-		        FridayBotApplication.SLUX_ID, AdminBroadcastCommand.CMD_PREFIX + " hello everyone!");
-		MessageEvent<TextMessageContent> adminBroadcastNoArgCmd = MessageEventUtil
-		        .createMessageEventUserSource(FridayBotApplication.SLUX_ID, AdminBroadcastCommand.CMD_PREFIX);
+		        FridayBotApplication.SLUX_ID,
+		        AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX + " hello everyone!");
+		MessageEvent<TextMessageContent> adminBroadcastNoArgCmd = MessageEventUtil.createMessageEventUserSource(
+		        FridayBotApplication.SLUX_ID, AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX);
 
 		// Admin and User invalid (but close) commands
 		MessageEvent<TextMessageContent> adminCloseCmd = MessageEventUtil
@@ -370,8 +379,10 @@ public class TestUtilityCommand {
 
 		response = friday.handleTextMessageEvent(adminHelpCmd);
 		assertNotNull(response);
+		System.out.println(response.getText());
 		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
-		assertTrue(response.getText().contains(AdminBroadcastCommand.CMD_PREFIX));
+		assertTrue(
+		        response.getText().contains(AdminBroadcastCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(AdminStatusCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
@@ -415,14 +426,14 @@ public class TestUtilityCommand {
 		response = friday.handleTextMessageEvent(userCloseCmd);
 		System.out.println(response.getText());
 		assertTrue(response.getText().contains("Sorry, perhaps"));
-		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(userNotCloseCmd);
 		System.out.println(response.getText());
 		assertFalse(response.getText().contains("Sorry, perhaps"));
 		assertTrue(response.getText().contains("I didn't understand"));
-		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(userInvalidCmd);
@@ -432,7 +443,8 @@ public class TestUtilityCommand {
 		response = friday.handleTextMessageEvent(adminCloseCmd);
 		System.out.println(response.getText());
 		assertTrue(response.getText().contains("Sorry, perhaps"));
-		assertTrue(response.getText().contains(AdminBroadcastCommand.CMD_PREFIX));
+		assertTrue(
+		        response.getText().contains(AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(userHelpCmd);

@@ -20,7 +20,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class WarResetCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday reset";
+	public static final String CMD_PREFIX = "reset";
 	private static Logger LOG = LoggerFactory.getLogger(WarResetCommand.class);
 
 	/**
@@ -40,7 +40,7 @@ public class WarResetCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.equalsIgnoreCase(CMD_PREFIX);
+		return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -55,8 +55,8 @@ public class WarResetCommand extends AbstractCommand {
 		try {
 			new WarDeathLogic().resetFor(senderId);
 		} catch (WarDaoUnregisteredException e) {
-			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
-			        + "' for info on how to register your chat room");
+			return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
+			        + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
 		} catch (Exception e) {
 			LOG.error("Unexpected error: " + e, e);
 			return new TextMessage("Unexpected error: " + e);
@@ -78,14 +78,17 @@ public class WarResetCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + "]\n");
-		sb.append("Resets the report of the current war. ");
-		sb.append("Make sure you save it using '" + WarSaveCommand.CMD_PREFIX + "' before using this command.");
+		sb.append(CMD_PREFIX + "\n");
+		if (verbose) {
+			sb.append("Resets the report of the current war. ");
+			sb.append("Make sure you save it using '" + AbstractCommand.ALL_CMD_PREFIX + " " + WarSaveCommand.CMD_PREFIX
+			        + "' before using this command.");
+		}
 
 		return sb.toString();
 	}

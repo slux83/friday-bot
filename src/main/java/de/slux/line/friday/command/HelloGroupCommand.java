@@ -75,8 +75,8 @@ public class HelloGroupCommand extends AbstractCommand {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Hello summoners!\n\n");
 		sb.append("I'm F.R.I.D.A.Y. the BOT and I'm here to assist you during the MCOC wars!\n");
-		sb.append("I can also do many other things, just type '" + HelpCommand.CMD_PREFIX
-		        + "' for the list of commands!\n\n");
+		sb.append("I can also do many other things, just type '" + AbstractCommand.ALL_CMD_PREFIX + " "
+		        + HelpCommand.CMD_PREFIX + "' for the list of commands!\n\n");
 		sb.append("Here you can find some info and useful things about me:\n");
 		sb.append(InfoCommand.getInfo(senderId));
 		return sb.toString();

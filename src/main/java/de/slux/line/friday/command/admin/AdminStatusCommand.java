@@ -26,7 +26,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  * @author slux
  */
 public class AdminStatusCommand extends AbstractCommand {
-	public static final String CMD_PREFIX = "friday status";
+	public static final String CMD_PREFIX = "status";
 	private static Logger LOG = LoggerFactory.getLogger(AdminStatusCommand.class);
 	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
@@ -47,7 +47,7 @@ public class AdminStatusCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -175,13 +175,15 @@ public class AdminStatusCommand extends AbstractCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.slux.line.friday.command.AbstractCommand#getHelp()
+	 * @see de.slux.line.friday.command.AbstractCommand#getHelp(boolean)
 	 */
 	@Override
-	public String getHelp() {
+	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <(maintenance|operational)?>]\n");
-		sb.append("Prints the current status of FRIDAY. Set FRIDAY new status (maintenance|operational)");
+		sb.append(CMD_PREFIX + " <maintenance|operational>?\n");
+		if (verbose) {
+			sb.append("Prints the current status of FRIDAY. Set FRIDAY new status (maintenance|operational)");
+		}
 
 		return sb.toString();
 	}
