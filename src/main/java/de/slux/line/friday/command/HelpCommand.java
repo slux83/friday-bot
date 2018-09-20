@@ -83,13 +83,13 @@ public class HelpCommand extends AbstractCommand {
 				sb.append("\n\n");
 				sb.append(c.getHelp());
 			}
-			
+
 			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
 				helpMessages.add(sb.toString());
 				sb.setLength(0);
 			}
 		}
-		
+
 		if (sb.length() > 0)
 			helpMessages.add(sb.toString());
 
@@ -98,7 +98,7 @@ public class HelpCommand extends AbstractCommand {
 		} catch (Exception e) {
 			LOG.error("Cannot send out the help output: " + e, e);
 		}
-		
+
 		return null;
 	}
 

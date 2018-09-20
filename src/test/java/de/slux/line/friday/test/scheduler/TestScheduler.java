@@ -144,7 +144,7 @@ public class TestScheduler {
 
 		assertTrue(masterJobFound);
 	}
-	
+
 	@Test
 	public void testSchedulerJobsInvalidDate() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
@@ -176,13 +176,13 @@ public class TestScheduler {
 				}
 			}
 		}
-		
+
 		assertTrue(masterJobFound);
 	}
 
 	@Test
 	public void testSchedulerJobsRollingDays() throws Exception {
-		
+
 		// Should be enough to touch all the events
 		for (int i = 0; i < 15; i++) {
 			MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
@@ -217,7 +217,7 @@ public class TestScheduler {
 			}
 
 			assertTrue(masterJobFound);
-			
+
 			friday.getEventScheduler().terminate();
 		}
 	}

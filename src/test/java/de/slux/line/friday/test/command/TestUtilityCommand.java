@@ -457,7 +457,6 @@ public class TestUtilityCommand {
 		// Get all groups
 		Map<String, WarGroup> groups = Collections.emptyMap();
 		groups = new WarDeathLogic().getAllGroups();
-		int totalGroups = groups.size();
 		groups.entrySet().removeIf(g -> g.getValue().getGroupStatus().equals(GroupStatus.GroupStatusInactive));
 		int totalActiveGroups = groups.size();
 		response = friday.handleTextMessageEvent(adminBroadcastCmd);
