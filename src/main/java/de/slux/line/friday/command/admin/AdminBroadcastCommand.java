@@ -3,22 +3,17 @@
  */
 package de.slux.line.friday.command.admin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.linecorp.bot.client.LineMessagingClient;
-import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.message.TextMessage;
-import com.linecorp.bot.model.response.BotApiResponse;
 
+import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
@@ -31,7 +26,6 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  */
 public class AdminBroadcastCommand extends AbstractCommand {
 	public static final String CMD_PREFIX = "friday broadcast";
-	private static final int MAX_MESSAGE_BURST = 30;
 	private static Logger LOG = LoggerFactory.getLogger(AdminBroadcastCommand.class);
 
 	/**
@@ -73,6 +67,7 @@ public class AdminBroadcastCommand extends AbstractCommand {
 		String prefixPos1 = args.get(1);
 		String bcastMessage = message.replaceFirst(prefixPos0, "");
 		bcastMessage = bcastMessage.replaceFirst(prefixPos1, "");
+		bcastMessage = bcastMessage.trim();
 
 		// Get all groups
 		Map<String, WarGroup> groups = Collections.emptyMap();
@@ -87,59 +82,12 @@ public class AdminBroadcastCommand extends AbstractCommand {
 			return new TextMessage("Unexpected error retrieving groups: " + e);
 		}
 
-		int totalSent = 0;
-		int activeCounter = 0;
-		List<CompletableFuture<BotApiResponse>> asyncMessages = new ArrayList<>();
-		for (Entry<String, WarGroup> group : groups.entrySet()) {
-			if (group.getValue().getGroupStatus().equals(GroupStatus.GroupStatusActive)) {
-				activeCounter++;
-				PushMessage pushMessage = new PushMessage(group.getKey(), new TextMessage(bcastMessage));
+		// Remove all inactive groups
+		groups.entrySet().removeIf(e -> e.getValue().getGroupStatus().equals(GroupStatus.GroupStatusInactive));
 
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Broadcasting message to " + group.getValue());
-				}
+		String stats = FridayBotApplication.getInstance().pushMultiMessages(groups.values(), bcastMessage);
 
-				if (asyncMessages.size() > MAX_MESSAGE_BURST) {
-					// We need to consume the ones sent so far
-					for (CompletableFuture<BotApiResponse> resp : asyncMessages) {
-						try {
-							resp.get();
-							totalSent++;
-						} catch (Exception e) {
-							LOG.warn("Cannot push message to group. Reason: " + e, e);
-						}
-					}
-					asyncMessages.clear();
-
-					try {
-						super.pushMultipleMessages(userId, "",
-						        Arrays.asList("Message broadcasted so far [sent/active (total)]\n" + totalSent + "/"
-						                + activeCounter + " (" + groups.size() + ")"),
-						        true);
-					} catch (Exception e) {
-						LOG.error("Cannot push progress notification to the user", e, e);
-					}
-				}
-
-				// Push the message
-				asyncMessages.add(super.messagingClient.pushMessage(pushMessage));
-			}
-		}
-
-		// We wait the confirmation of the remaining ones
-		if (!asyncMessages.isEmpty()) {
-			for (CompletableFuture<BotApiResponse> resp : asyncMessages) {
-				try {
-					resp.get();
-					totalSent++;
-				} catch (Exception e) {
-					LOG.warn("Cannot push message to group. Reason: " + e, e);
-				}
-			}
-		}
-
-		return new TextMessage("Message broadcasted [sent/active (total)]\n" + totalSent + "/" + activeCounter + " ("
-		        + groups.size() + ")");
+		return new TextMessage("Message broadcasted\n" + stats);
 	}
 
 	/*

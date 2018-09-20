@@ -464,7 +464,9 @@ public class TestUtilityCommand {
 		assertNotNull(response);
 		String bcastResponse = response.getText();
 		System.out.println(bcastResponse);
-		assertTrue(bcastResponse.contains(totalActiveGroups + "/" + totalActiveGroups + " (" + totalGroups + ")"));
+		assertTrue(bcastResponse.contains("pushed(" + totalActiveGroups + ")"));
+		assertTrue(bcastResponse.contains("sent(" + totalActiveGroups + ")"));
+		assertTrue(bcastResponse.contains("active_groups(" + totalActiveGroups + ")"));
 		assertTrue(bcastResponse.contains("Message broadcasted"));
 		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
 
@@ -481,8 +483,9 @@ public class TestUtilityCommand {
 		assertNotNull(response);
 		System.out.println(response.getText());
 		assertTrue(response.getText().contains("Message broadcasted"));
-		assertTrue(response.getText()
-		        .contains((totalActiveGroups - 1) + "/" + (totalActiveGroups - 1) + " (" + totalGroups + ")"));
+		assertTrue(bcastResponse.contains("pushed(" + totalActiveGroups + ")"));
+		assertTrue(bcastResponse.contains("sent(" + totalActiveGroups + ")"));
+		assertTrue(bcastResponse.contains("active_groups(" + totalActiveGroups + ")"));
 		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
 		// One less active group
 		assertNotEquals(bcastResponse, response.getText());

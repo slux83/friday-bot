@@ -458,8 +458,9 @@ public class FridayBotApplication {
 	 * 
 	 * @param groups
 	 * @param message
+	 * @return the statistic string
 	 */
-	public void pushMultiMessages(Collection<WarGroup> groups, String message) {
+	public String pushMultiMessages(Collection<WarGroup> groups, String message) {
 		List<CompletableFuture<BotApiResponse>> asyncMessages = new ArrayList<>();
 		int pushedCounter = 0;
 		int totalSent = 0;
@@ -502,7 +503,7 @@ public class FridayBotApplication {
 			}
 		}
 
-		storePushStatistics(now, totalSent, pushedCounter, groups.size());
+		return storePushStatistics(now, totalSent, pushedCounter, groups.size());
 	}
 
 	/**
@@ -512,8 +513,9 @@ public class FridayBotApplication {
 	 * @param totalSent
 	 * @param pushedCounter
 	 * @param numGroups
+	 * @return the statistics string
 	 */
-	private void storePushStatistics(Date time, int totalSent, int pushedCounter, int numGroups) {
+	private String storePushStatistics(Date time, int totalSent, int pushedCounter, int numGroups) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(SDF.format(time));
@@ -527,6 +529,8 @@ public class FridayBotApplication {
 		while (this.lastPushedMessages.size() > 5) {
 			this.lastPushedMessages.removeLast();
 		}
+
+		return sb.toString();
 	}
 
 	/**
