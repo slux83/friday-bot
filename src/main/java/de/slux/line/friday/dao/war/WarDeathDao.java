@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import de.slux.line.friday.data.war.WarGroup;
 
 /**
- * @author adfazio
+ * @author slux
  */
 public class WarDeathDao {
 	private static Logger LOG = LoggerFactory.getLogger(WarDeathDao.class);

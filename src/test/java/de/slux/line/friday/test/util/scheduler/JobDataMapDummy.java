@@ -6,7 +6,7 @@ package de.slux.line.friday.test.util.scheduler;
 import org.quartz.JobDataMap;
 
 /**
- * @author Alessandro di Fazio
+ * @author slux
  *
  */
 public class JobDataMapDummy extends JobDataMap {

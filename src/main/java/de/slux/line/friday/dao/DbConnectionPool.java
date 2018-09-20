@@ -11,7 +11,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 /**
  * DB Utility class
  * 
- * @author adfazio
+ * @author slux
  */
 public class DbConnectionPool {
 	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";

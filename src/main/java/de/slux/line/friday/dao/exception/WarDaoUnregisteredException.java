@@ -4,7 +4,7 @@
 package de.slux.line.friday.dao.exception;
 
 /**
- * @author adfazio
+ * @author slux
  *
  */
 public class WarDaoUnregisteredException extends Exception {

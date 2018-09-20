@@ -25,7 +25,7 @@ public abstract class AbstractCommand {
 	/**
 	 * The type of the command
 	 * 
-	 * @author Alessandro di Fazio
+	 * @author slux
 	 */
 	public enum CommandType {
 		CommandTypeEvent, CommandTypeWar, CommandTypeUnknown, CommandTypeUtility, CommandTypeAdmin, CommandTypeShared, CommandTypeUser

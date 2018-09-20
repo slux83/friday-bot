@@ -177,7 +177,7 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + CMD_PREFIX + " <position> <node> <champ>]\n");
+		sb.append("[" + CMD_PREFIX + " <position> <node> <champ>, ...]\n");
 		sb.append("Edit the champion information giving a node and the position in the placement table.\n");
 		sb.append("Example " + CMD_PREFIX + " 3B 55 5* dupe Medusa");
 
