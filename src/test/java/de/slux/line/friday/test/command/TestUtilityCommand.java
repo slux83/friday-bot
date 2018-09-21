@@ -34,6 +34,7 @@ import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
+import de.slux.line.friday.command.RegisterEventsCommand;
 import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
 import de.slux.line.friday.command.admin.AdminPushNotificationCommand;
@@ -325,6 +326,11 @@ public class TestUtilityCommand {
 		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group1");
 
+		// Register events command
+		MessageEvent<TextMessageContent> registerEventsCmd = MessageEventUtil.createMessageEventGroupSource(
+		        UUID.randomUUID().toString(), userId,
+		        AbstractCommand.ALL_CMD_PREFIX + " " + RegisterEventsCommand.CMD_PREFIX);
+
 		// Death summary command
 		MessageEvent<TextMessageContent> deathSummaryCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarSummaryDeathCommand.CMD_PREFIX);
@@ -366,7 +372,7 @@ public class TestUtilityCommand {
 		MessageEvent<TextMessageContent> adminPushCmd = MessageEventUtil.createMessageEventUserSource(
 		        FridayBotApplication.SLUX_ID,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + AdminPushNotificationCommand.CMD_PREFIX + " hello everyone!");
-		
+
 		MessageEvent<TextMessageContent> adminBroadcastNoArgCmd = MessageEventUtil.createMessageEventUserSource(
 		        FridayBotApplication.SLUX_ID, AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX);
 
@@ -508,7 +514,14 @@ public class TestUtilityCommand {
 		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
 		// One less active group
 		assertNotEquals(bcastResponse, response.getText());
-		
+
+		// We register at least one to receive events
+		response = friday.handleTextMessageEvent(registerEventsCmd);
+		assertTrue(response.getText().contains("MCoC event notifications"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		groups = new WarDeathLogic().getAllGroups();
+		groups.entrySet().removeIf(g -> g.getValue().getGroupStatus().equals(GroupStatus.GroupStatusInactive));
 		groups.entrySet().removeIf(g -> g.getValue().getGroupFeature().equals(GroupFeature.GroupFeatureWar));
 		totalActiveGroups = groups.size();
 		response = friday.handleTextMessageEvent(adminPushCmd);
