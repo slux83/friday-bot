@@ -36,6 +36,7 @@ import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
+import de.slux.line.friday.command.admin.AdminPushNotificationCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarHistoryCommand;
@@ -46,6 +47,7 @@ import de.slux.line.friday.command.war.WarSummonerNodeCommand;
 import de.slux.line.friday.dao.DbConnectionPool;
 import de.slux.line.friday.dao.war.WarSummonerDao;
 import de.slux.line.friday.data.war.WarGroup;
+import de.slux.line.friday.data.war.WarGroup.GroupFeature;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.logic.war.WarDeathLogic;
@@ -359,6 +361,12 @@ public class TestUtilityCommand {
 		MessageEvent<TextMessageContent> adminBroadcastCmd = MessageEventUtil.createMessageEventUserSource(
 		        FridayBotApplication.SLUX_ID,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX + " hello everyone!");
+
+		// Admin push notification command
+		MessageEvent<TextMessageContent> adminPushCmd = MessageEventUtil.createMessageEventUserSource(
+		        FridayBotApplication.SLUX_ID,
+		        AbstractCommand.ALL_CMD_PREFIX + " " + AdminPushNotificationCommand.CMD_PREFIX + " hello everyone!");
+		
 		MessageEvent<TextMessageContent> adminBroadcastNoArgCmd = MessageEventUtil.createMessageEventUserSource(
 		        FridayBotApplication.SLUX_ID, AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX);
 
@@ -500,6 +508,17 @@ public class TestUtilityCommand {
 		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
 		// One less active group
 		assertNotEquals(bcastResponse, response.getText());
+		
+		groups.entrySet().removeIf(g -> g.getValue().getGroupFeature().equals(GroupFeature.GroupFeatureWar));
+		totalActiveGroups = groups.size();
+		response = friday.handleTextMessageEvent(adminPushCmd);
+		assertNotNull(response);
+		System.out.println(response.getText());
+		assertTrue(response.getText().contains("Notification pushed"));
+		assertTrue(response.getText().contains("pushed(" + totalActiveGroups + ")"));
+		assertTrue(response.getText().contains("sent(" + totalActiveGroups + ")"));
+		assertTrue(response.getText().contains("active_groups(" + totalActiveGroups + ")"));
+		assertTrue(callback.takeAllMessages().contains("hello everyone!"));
 
 		response = friday.handleTextMessageEvent(adminStatusCmd);
 		assertNotNull(response);

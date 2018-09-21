@@ -64,6 +64,7 @@ import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.RegisterEventsCommand;
 import de.slux.line.friday.command.UnregisterEventsCommand;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
+import de.slux.line.friday.command.admin.AdminPushNotificationCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarDeleteCommand;
@@ -190,6 +191,7 @@ public class FridayBotApplication {
 
 		// Admin commands
 		this.commands.add(new AdminBroadcastCommand(this.lineMessagingClient));
+		this.commands.add(new AdminPushNotificationCommand(this.lineMessagingClient));
 		this.commands.add(new AdminStatusCommand(this.lineMessagingClient));
 
 		LOG.info("Commands initialized. Total command(s): " + this.commands.size());
