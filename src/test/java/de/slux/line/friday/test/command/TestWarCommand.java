@@ -3,6 +3,7 @@
  */
 package de.slux.line.friday.test.command;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -24,6 +25,8 @@ import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.HelpCommand;
+import de.slux.line.friday.command.AbstractCommand.CommandType;
+import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarDeleteCommand;
 import de.slux.line.friday.command.war.WarHistoryCommand;
@@ -60,7 +63,7 @@ public class TestWarCommand {
 		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group1");
 
-		// Register command
+		// Help command
 		MessageEvent<TextMessageContent> helpCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX);
 
@@ -71,6 +74,27 @@ public class TestWarCommand {
 		assertFalse(help.isEmpty());
 		assertTrue(help.contains(WarAddSummonersCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
+
+		for (AbstractCommand c : friday.getCommands()) {
+			// Help command with option
+			MessageEvent<TextMessageContent> helpDetailedCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+			        userId, AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX + " " + c.getCommandPrefix());
+
+			if (c.getType().equals(CommandType.CommandTypeShared) || c.getType().equals(CommandType.CommandTypeUtility)
+			        || c.getType().equals(CommandType.CommandTypeWar)) {
+
+				response = friday.handleTextMessageEvent(helpDetailedCmd);
+				assertNotNull(response);
+				help = response.getText();
+				System.out.println(help);
+				System.out.println();
+				assertFalse(help.isEmpty());
+				assertFalse(help.contains(AdminStatusCommand.CMD_PREFIX));
+				assertTrue(help.contains(c.getCommandPrefix()));
+				assertEquals(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true), help);
+				assertTrue(callback.takeAllMessages().isEmpty());
+			}
+		}
 
 		response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("successfully registered using the name group1"));

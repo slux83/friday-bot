@@ -248,7 +248,8 @@ public class EventInfoCommand extends AbstractCommand {
 		sb.append(CMD_PREFIX + " <tomorrow|week>\n");
 		if (verbose) {
 			sb.append("Shows the MCOC events for today (default with no arguments), tomorrow or the week.\n");
-			sb.append("Example '" + CMD_PREFIX + "' or '" + CMD_PREFIX + " week'");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + "' or '"
+			        + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " week'");
 		}
 
 		return sb.toString();

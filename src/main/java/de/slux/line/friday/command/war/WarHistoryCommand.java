@@ -146,7 +146,7 @@ public class WarHistoryCommand extends AbstractCommand {
 	@Override
 	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CMD_PREFIX + " <date>?\n");
+		sb.append(CMD_PREFIX + " <date?>\n");
 		if (verbose) {
 			sb.append("Prints all the saved wars or a specific one, if <date> is provided.\n");
 			sb.append("Date format is yyyy-MM-dd e.g. 2018-05-24");

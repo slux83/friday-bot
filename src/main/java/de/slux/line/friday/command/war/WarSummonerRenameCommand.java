@@ -116,7 +116,7 @@ public class WarSummonerRenameCommand extends AbstractCommand {
 		sb.append(CMD_PREFIX + " <pos> <name>\n");
 		if (verbose) {
 			sb.append("Rename the summoner with <name> at position <pos>\n");
-			sb.append("Example " + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 6 John Doe");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 6 John Doe'");
 		}
 
 		return sb.toString();

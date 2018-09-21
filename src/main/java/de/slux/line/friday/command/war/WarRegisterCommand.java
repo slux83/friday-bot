@@ -94,11 +94,11 @@ public class WarRegisterCommand extends AbstractCommand {
 	@Override
 	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CMD_PREFIX + " <ALLYTAG-BG>\n");
+		sb.append(CMD_PREFIX + " <allytag-bg>\n");
 		if (verbose) {
 			sb.append("Register this chat group for FRIDAY war tools. ");
 			sb.append("Use this command later on to modify the name if needed\n");
-			sb.append("Example " + CMD_PREFIX + " 4Loki-BG1");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 4Loki-BG1'");
 		}
 
 		return sb.toString();

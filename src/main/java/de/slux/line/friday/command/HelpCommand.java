@@ -12,6 +12,7 @@ import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
+import de.slux.line.friday.command.war.WarSummonerRenameCommand;
 
 /**
  * This command is triggered on the register command
@@ -39,7 +40,7 @@ public class HelpCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -51,21 +52,62 @@ public class HelpCommand extends AbstractCommand {
 	 */
 	@Override
 	public TextMessage execute(String userId, String senderId, String message) {
+
+		List<AbstractCommand> commands = FridayBotApplication.getInstance().getCommands();
+		LOG.info("Constructing help using " + commands.size() + " command(s)");
+
+		if (message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " ")) {
+			// We have a detailed help to show
+			List<String> args = super.extractArgs(message);
+			// Clean up the command
+			args.remove(0);
+			args.remove(0);
+
+			String option = String.join(" ", args.toArray(new String[0]));
+			String optionWithPrefix = AbstractCommand.ALL_CMD_PREFIX + " " + option;
+
+			for (AbstractCommand c : commands) {
+
+				// Help for groups
+				if (c.canTrigger(optionWithPrefix) && senderId != null
+				        && (c.getType().equals(CommandType.CommandTypeWar)
+				                || c.getType().equals(CommandType.CommandTypeUtility)
+				                || c.getType().equals(CommandType.CommandTypeShared))) {
+					return new TextMessage(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true));
+				}
+
+				// Help for normal users only
+				if (c.canTrigger(optionWithPrefix) && senderId == null && !FridayBotApplication.SLUX_ID.equals(userId)
+				        && (c.getType().equals(CommandType.CommandTypeUser)
+				                || c.getType().equals(CommandType.CommandTypeShared))) {
+					return new TextMessage(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true));
+				}
+
+				// Help for admin only
+				if (c.canTrigger(optionWithPrefix) && senderId == null && FridayBotApplication.SLUX_ID.equals(userId)
+				        && (c.getType().equals(CommandType.CommandTypeUser)
+				                || c.getType().equals(CommandType.CommandTypeShared)
+				                || c.getType().equals(CommandType.CommandTypeAdmin))) {
+					return new TextMessage(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true));
+				}
+			}
+			return new TextMessage(
+			        "Sorry, cannot find any help for '" + option + "'. Try with one of the options provided by '"
+			                + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + "'");
+		}
+
 		StringBuilder sb = new StringBuilder("*** F.R.I.D.A.Y. HELP ***\n");
 		sb.append("Use: ");
 		sb.append(AbstractCommand.ALL_CMD_PREFIX);
 		sb.append(" <option>\n\n");
 		sb.append("OPTIONS:\n");
 
-		List<AbstractCommand> commands = FridayBotApplication.getInstance().getCommands();
-		LOG.info("Constructing help using " + commands.size() + " command(s)");
 		for (AbstractCommand c : commands) {
 
 			// Help for groups
 			if (senderId != null && (c.getType().equals(CommandType.CommandTypeWar)
 			        || c.getType().equals(CommandType.CommandTypeUtility)
 			        || c.getType().equals(CommandType.CommandTypeShared))) {
-				// TODO: deal with verbose commands
 				sb.append("  " + c.getHelp(false));
 			}
 
@@ -83,10 +125,10 @@ public class HelpCommand extends AbstractCommand {
 			                || c.getType().equals(CommandType.CommandTypeAdmin))) {
 				sb.append("  " + c.getHelp(false));
 			}
-
 		}
 
 		return new TextMessage(sb.toString());
+
 	}
 
 	/*
@@ -107,9 +149,13 @@ public class HelpCommand extends AbstractCommand {
 	@Override
 	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CMD_PREFIX + "\n");
+		sb.append(CMD_PREFIX + " <option?>\n");
 		if (verbose) {
-			sb.append("Prints this help message");
+			sb.append("Prints the help. ");
+			sb.append(
+			        "If the argument <option> is given, the the detailed description of a specific command will be shown.\n");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " "
+			        + WarSummonerRenameCommand.CMD_PREFIX + "'");
 		}
 		return sb.toString();
 	}

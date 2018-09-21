@@ -180,7 +180,7 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 		sb.append(CMD_PREFIX + " <position> <node> <champ>, ...\n");
 		if (verbose) {
 			sb.append("Edit the champion information giving a node and the position in the placement table.\n");
-			sb.append("Example " + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 3B 55 5* dupe Medusa");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 3B 55 5* dupe Medusa'");
 		}
 
 		return sb.toString();

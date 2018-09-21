@@ -119,7 +119,7 @@ public class WarDeleteCommand extends AbstractCommand {
 		if (verbose) {
 			sb.append("Delete from the history a given alliance war for a given date.\n");
 			sb.append("Date format is yyyy-MM-dd e.g. 2018-05-24\n");
-			sb.append("Example " + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 2018-05-24 4Loki");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 2018-05-24 4Loki'");
 		}
 
 		return sb.toString();

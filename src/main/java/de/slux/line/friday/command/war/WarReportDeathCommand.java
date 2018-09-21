@@ -42,7 +42,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " ");
+		return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
 	}
 
 	/*
@@ -121,7 +121,7 @@ public class WarReportDeathCommand extends AbstractCommand {
 		sb.append(CMD_PREFIX + " <deaths> <node> <champ>\n");
 		if (verbose) {
 			sb.append("Report a new death in AW\n");
-			sb.append("Example " + CMD_PREFIX + " 2 45 Medusa");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 2 45 Medusa'");
 		}
 
 		return sb.toString();

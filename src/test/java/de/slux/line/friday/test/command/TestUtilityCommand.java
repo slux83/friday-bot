@@ -3,6 +3,7 @@
  */
 package de.slux.line.friday.test.command;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -33,6 +34,7 @@ import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
+import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
@@ -134,8 +136,7 @@ public class TestUtilityCommand {
 		TextMessage response = friday.handleTextMessageEvent(eventUserHelp);
 		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
-		assertFalse(
-		        response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
+		assertFalse(response.getText().contains(WarAddSummonersCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(eventTodayEvents);
@@ -381,8 +382,7 @@ public class TestUtilityCommand {
 		assertNotNull(response);
 		System.out.println(response.getText());
 		assertTrue(response.getText().contains(HelpCommand.CMD_PREFIX));
-		assertTrue(
-		        response.getText().contains(AdminBroadcastCommand.CMD_PREFIX));
+		assertTrue(response.getText().contains(AdminBroadcastCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(AdminStatusCommand.CMD_PREFIX));
 		assertTrue(response.getText().contains(EventInfoCommand.CMD_PREFIX));
 		assertTrue(callback.takeAllMessages().isEmpty());
@@ -507,5 +507,46 @@ public class TestUtilityCommand {
 		System.out.println(response);
 		assertNotEquals(statusResponse, response.getText().substring(response.getText().indexOf("Active/Total")));
 		assertTrue(callback.takeAllMessages().isEmpty());
+
+		for (AbstractCommand c : friday.getCommands()) {
+			// Help command with option (users)
+			MessageEvent<TextMessageContent> helpDetailedCmd = MessageEventUtil.createMessageEventUserSource(
+			        UUID.randomUUID().toString(),
+			        AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX + " " + c.getCommandPrefix());
+
+			if (c.getType().equals(CommandType.CommandTypeShared) || c.getType().equals(CommandType.CommandTypeUser)) {
+
+				response = friday.handleTextMessageEvent(helpDetailedCmd);
+				assertNotNull(response);
+				String help = response.getText();
+				System.out.println(help);
+				System.out.println();
+				assertFalse(help.isEmpty());
+				assertFalse(help.contains(AdminStatusCommand.CMD_PREFIX));
+				assertTrue(help.contains(c.getCommandPrefix()));
+				assertEquals(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true), help);
+				assertTrue(callback.takeAllMessages().isEmpty());
+			}
+		}
+
+		for (AbstractCommand c : friday.getCommands()) {
+			// Help command with option (admin)
+			MessageEvent<TextMessageContent> helpDetailedCmd = MessageEventUtil.createMessageEventUserSource(
+			        FridayBotApplication.SLUX_ID,
+			        AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX + " " + c.getCommandPrefix());
+
+			if (c.getType().equals(CommandType.CommandTypeShared) || c.getType().equals(CommandType.CommandTypeAdmin)) {
+
+				response = friday.handleTextMessageEvent(helpDetailedCmd);
+				assertNotNull(response);
+				String help = response.getText();
+				System.out.println(help);
+				System.out.println();
+				assertFalse(help.isEmpty());
+				assertTrue(help.contains(c.getCommandPrefix()));
+				assertEquals(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true), help);
+				assertTrue(callback.takeAllMessages().isEmpty());
+			}
+		}
 	}
 }
