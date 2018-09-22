@@ -176,11 +176,11 @@ public class McocSchedulerJob implements Job {
 		try {
 			if (todayInfo.getCatArenaStatus() == CatalystArena.T4B
 			        && yesterdayInfo.getCatArenaStatus() != CatalystArena.T4B)
-				createGenericJob(context, "t4b-arena", "T4 Basic Arena just started!", 23, 0);
+				createGenericJob(context, "t4b-arena", "T4 Basic Arena just started!", 22, 59);
 
 			if (todayInfo.getCatArenaStatus() == CatalystArena.T1A
 			        && yesterdayInfo.getCatArenaStatus() != CatalystArena.T1A)
-				createGenericJob(context, "t1a-arena", "T1 Alpha Arena just started!", 23, 0);
+				createGenericJob(context, "t1a-arena", "T1 Alpha Arena just started!", 22, 59);
 
 		} catch (Exception e) {
 			LOG.error("Cannot create catalyst arena event job: " + e, e);
