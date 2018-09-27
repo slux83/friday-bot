@@ -153,7 +153,7 @@ public class HelpCommand extends AbstractCommand {
 		if (verbose) {
 			sb.append("Prints the help. ");
 			sb.append(
-			        "If the argument <option> is given, the the detailed description of a specific command will be shown.\n");
+			        "If the argument <option> is given, the detailed description of a specific command will be shown.\n");
 			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " "
 			        + WarSummonerRenameCommand.CMD_PREFIX + "'");
 		}
