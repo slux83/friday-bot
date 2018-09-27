@@ -73,6 +73,9 @@ public class WarReportDeathCommand extends AbstractCommand {
 			        + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " <deaths> <node> <champ>");
 		}
 
+		if (deaths < 0)
+			deaths = 0;
+
 		int node = -1;
 		try {
 			node = Integer.parseInt(args.get(1).trim());
