@@ -39,7 +39,7 @@ public class WarStatsJob implements Job {
 
 		try {
 			long start = System.currentTimeMillis();
-			StatsLogic logic = new StatsLogic();
+			StatsLogic logic = new StatsLogic(true);
 
 			Map<Integer, List<HistoryStats>> warNodeStatistics = logic.updateNodeStats();
 

@@ -42,13 +42,15 @@ public class StatsLogic {
 	 * Fetch the champions list and create the internal data
 	 * </p>
 	 * 
+	 * @param fetch
+	 *            fetchs the champs if true
 	 * @throws IOException
-	 * 
 	 * @throws Exception
 	 */
-	public StatsLogic() throws IOException {
+	public StatsLogic(boolean fetch) throws IOException {
 		this.champions = new HashMap<>();
-		fetchChamps();
+		if (fetch)
+			fetchChamps();
 	}
 
 	private void fetchChamps() throws IOException {

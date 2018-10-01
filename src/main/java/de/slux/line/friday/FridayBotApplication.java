@@ -64,6 +64,7 @@ import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.RegisterEventsCommand;
 import de.slux.line.friday.command.UnregisterEventsCommand;
+import de.slux.line.friday.command.WarStatsCommand;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
 import de.slux.line.friday.command.admin.AdminPushNotificationCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
@@ -178,6 +179,7 @@ public class FridayBotApplication {
 		this.commands.add(new EventInfoCommand(this.lineMessagingClient, this.scheduler));
 		this.commands.add(new RegisterEventsCommand(this.lineMessagingClient));
 		this.commands.add(new UnregisterEventsCommand(this.lineMessagingClient));
+		this.commands.add(new WarStatsCommand(this.lineMessagingClient));
 
 		// War commands
 		this.commands.add(new WarRegisterCommand(this.lineMessagingClient));
