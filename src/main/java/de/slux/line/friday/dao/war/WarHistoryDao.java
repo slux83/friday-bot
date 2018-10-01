@@ -8,9 +8,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -18,6 +20,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.slux.line.friday.data.stats.HistoryStat;
 import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarGroup.HistoryType;
 import de.slux.line.friday.data.war.WarSummoner;
@@ -40,6 +43,8 @@ public class WarHistoryDao {
 	private static final String GET_DAILY_DATA = "SELECT FROM_BASE64(opponent_tag) AS ally_tag, node, num_deaths, "
 	        + "FROM_BASE64(champion) AS champ, FROM_BASE64(player) AS player_name "
 	        + "FROM war_history WHERE group_id = ? AND war_date = ? AND history_type = ? ORDER BY id";
+
+	private static final String GET_STATS_DATA = "SELECT node, num_deaths, CAST(FROM_BASE64(champion) AS CHAR) AS champ FROM war_history WHERE node > 0";
 
 	private static final String DELETE_DATA = "DELETE FROM war_history WHERE group_id = ? AND war_date = ? AND opponent_tag = TO_BASE64(?)";
 
@@ -269,6 +274,52 @@ public class WarHistoryDao {
 				} else {
 					outcome.put(warDate, allianceName);
 				}
+			}
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+		}
+
+		return outcome;
+	}
+
+	/**
+	 * Retrieve all the history data. This can be a onerous operation
+	 * 
+	 * @return the stats
+	 * @throws SQLException
+	 */
+	public List<HistoryStat> getStatsData() throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<HistoryStat> outcome = new ArrayList<>();
+		try {
+
+			stmt = conn.prepareStatement(GET_STATS_DATA);
+			rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				Integer node = rs.getInt("node");
+				Integer numDeaths = rs.getInt("num_deaths");
+				String champ = rs.getString("champ");
+
+				outcome.add(new HistoryStat(champ, node, numDeaths));
 			}
 		} finally {
 			try {
