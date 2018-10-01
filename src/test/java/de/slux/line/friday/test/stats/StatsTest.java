@@ -1,58 +1,72 @@
 package de.slux.line.friday.test.stats;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.data.stats.HistoryStats;
-import de.slux.line.friday.data.stats.NodeStats;
 import de.slux.line.friday.logic.StatsLogic;
+import de.slux.line.friday.scheduler.WarStatsJob;
+import de.slux.line.friday.test.util.LineMessagingClientMock;
+import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
+import de.slux.line.friday.test.util.scheduler.ContextDummy;
 
 /**
  * @author Slux
  */
 public class StatsTest {
+	/**
+	 * Reduce logging level
+	 * 
+	 * @throws Exception
+	 */
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) root;
+		logbackLogger.setLevel(ch.qos.logback.classic.Level.INFO);
+	}
 
-	@Test
-	public void someTest() throws Exception {
+	@Ignore
+	public void testStatistics() throws Exception {
 		StatsLogic logic = new StatsLogic();
 		Map<Integer, List<HistoryStats>> nodeStats = logic.updateNodeStats();
+		String stats = logic.getNodeStats(nodeStats, 1);
+		Assert.assertTrue(stats.contains("Node 1"));
+		Assert.assertTrue(stats.contains("Mortality"));
+	}
 
-		System.out.println(nodeStats.keySet());
+	@Test
+	public void testSchedulerJobUpdateStatistics() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
 
-		List<HistoryStats> node = nodeStats.get(29);
+		WarStatsJob job = new WarStatsJob();
+		job.execute(new ContextDummy(false));
+		String pushedMessage = callback.takeAllMessages();
+		System.out.println(pushedMessage);
+		assertTrue(pushedMessage.contains("War node stats updated"));
 
-		Map<String, NodeStats> nodeAggr = new HashMap<>();
-
-		for (HistoryStats s : node) {
-			int totDeaths = s.getDeaths() < 0 ? 0 : s.getDeaths();
-			int deathItems = s.getDeaths() < 0 ? 0 : 1;
-			if (!nodeAggr.containsKey(s.getChamp())) {
-				nodeAggr.put(s.getChamp(), new NodeStats(s.getChamp(), 1, totDeaths, deathItems));
-			} else {
-				NodeStats ns = nodeAggr.get(s.getChamp());
-				ns.setOccurrences(ns.getOccurrences() + 1);
-				ns.setTotalDeaths(ns.getTotalDeaths() + totDeaths);
-				ns.setDeathItems(ns.getDeathItems() + deathItems);
-			}
-		}
-
-		List<Entry<String, NodeStats>> newMap = nodeAggr.entrySet().stream()
-		        .sorted(Map.Entry.comparingByValue(Comparator.comparing(NodeStats::getOccurrences).reversed())).limit(5)
-		        .collect(Collectors.toList());
-
-		for (Entry<String, NodeStats> agg : newMap) {
-			NodeStats ns = agg.getValue();
-			double deathPercentage = (ns.getTotalDeaths() * 100.0) / ns.getDeathItems();
-			System.out.println(ns + " mortality: " + String.format("%.1f", deathPercentage) + "%");
-		}
+		StatsLogic logic = new StatsLogic();
+		String stats = logic.getNodeStats(FridayBotApplication.getInstance().getWarNodeStatistics(), 44);
+		System.out.println(stats);
+		Assert.assertTrue(stats.contains("Node 44"));
+		Assert.assertTrue(stats.contains("Mortality"));
+		
+		stats = logic.getNodeStats(FridayBotApplication.getInstance().getWarNodeStatistics(), 144);
+		System.out.println(stats);
+		Assert.assertTrue(stats.contains("Cannot find any War Statistics for node 144"));
 	}
 
 }

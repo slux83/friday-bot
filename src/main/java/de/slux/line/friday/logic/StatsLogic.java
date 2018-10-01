@@ -1,16 +1,19 @@
 package de.slux.line.friday.logic;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.slf4j.Logger;
@@ -19,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.slux.line.friday.dao.DbConnectionPool;
 import de.slux.line.friday.dao.war.WarHistoryDao;
 import de.slux.line.friday.data.stats.HistoryStats;
+import de.slux.line.friday.data.stats.NodeStats;
 
 /**
  * @author slux
@@ -38,14 +42,16 @@ public class StatsLogic {
 	 * Fetch the champions list and create the internal data
 	 * </p>
 	 * 
+	 * @throws IOException
+	 * 
 	 * @throws Exception
 	 */
-	public StatsLogic() throws Exception {
+	public StatsLogic() throws IOException {
 		this.champions = new HashMap<>();
 		fetchChamps();
 	}
 
-	private void fetchChamps() throws Exception {
+	private void fetchChamps() throws IOException {
 		LOG.info("Fetching champions from PasteBin");
 
 		URL url = new URL(CHAMPS_LIST_URL);
@@ -136,7 +142,7 @@ public class StatsLogic {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Statistic selected for " + champ + " => " + recognizedAs + " " + distanceValue);
 				}
-				
+
 				if (!nodeStats.containsKey(stat.getNode())) {
 					nodeStats.put(stat.getNode(), new ArrayList<>());
 				}
@@ -149,6 +155,66 @@ public class StatsLogic {
 
 		return nodeStats;
 
+	}
+
+	/**
+	 * Get the top-5 entries for a node
+	 * 
+	 * @param nodeStats
+	 * @param node
+	 * @return the stats
+	 */
+	public String getNodeStats(Map<Integer, List<HistoryStats>> nodeStats, int node) {
+		System.out.println(nodeStats.keySet());
+
+		List<HistoryStats> nodeData = nodeStats.get(node);
+		if (nodeData == null) {
+			return "Cannot find any War Statistics for node " + node;
+		}
+
+		Map<String, NodeStats> nodeAggr = new HashMap<>();
+
+		for (HistoryStats s : nodeData) {
+			int totDeaths = s.getDeaths() < 0 ? 0 : s.getDeaths();
+			int deathItems = s.getDeaths() < 0 ? 0 : 1;
+			if (!nodeAggr.containsKey(s.getChamp())) {
+				nodeAggr.put(s.getChamp(), new NodeStats(s.getChamp(), 1, totDeaths, deathItems));
+			} else {
+				NodeStats ns = nodeAggr.get(s.getChamp());
+				ns.setOccurrences(ns.getOccurrences() + 1);
+				ns.setTotalDeaths(ns.getTotalDeaths() + totDeaths);
+				ns.setDeathItems(ns.getDeathItems() + deathItems);
+			}
+		}
+
+		List<Entry<String, NodeStats>> topNodes = nodeAggr.entrySet().stream()
+		        .sorted(Map.Entry.comparingByValue(Comparator.comparing(NodeStats::getOccurrences).reversed())).limit(5)
+		        .collect(Collectors.toList());
+
+		StringBuilder sb = new StringBuilder("WAR Node ");
+		sb.append(node);
+		sb.append(" Stats:");
+		for (Entry<String, NodeStats> agg : topNodes) {
+			NodeStats ns = agg.getValue();
+			double deathPercentage = (ns.getTotalDeaths() * 100.0) / ns.getDeathItems();
+			sb.append("\n\n * ");
+			sb.append(ns.getChamp());
+			sb.append(" *\n");
+			sb.append("Placed ");
+			sb.append(ns.getOccurrences());
+			sb.append(" time(s)\n");
+			sb.append(ns.getTotalDeaths());
+			sb.append(" total deaths\n");
+			sb.append("Mortality ");
+			if (!Double.isNaN(deathPercentage)) {
+				sb.append(String.format("%.1f", deathPercentage));
+				sb.append("%");
+			} else {
+				sb.append("---");
+			}
+		}
+
+		return sb.toString();
 	}
 
 }

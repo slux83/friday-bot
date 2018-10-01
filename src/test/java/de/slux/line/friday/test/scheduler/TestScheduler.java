@@ -44,7 +44,7 @@ import de.slux.line.friday.test.util.scheduler.ContextDummy;
 /**
  * @author slux
  */
-//@Ignore
+// @Ignore
 public class TestScheduler {
 	private static Set<String> groupsToDelete = new HashSet<>();
 
@@ -62,8 +62,7 @@ public class TestScheduler {
 			// Register command new group
 			String groupId = UUID.randomUUID().toString();
 			MessageEvent<TextMessageContent> registerNewCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-			        userId, AbstractCommand.ALL_CMD_PREFIX + " "
-			                + RegisterEventsCommand.CMD_PREFIX);
+			        userId, AbstractCommand.ALL_CMD_PREFIX + " " + RegisterEventsCommand.CMD_PREFIX);
 
 			TextMessage response = friday.handleTextMessageEvent(registerNewCmd);
 			assertTrue(response.getText().contains("MCoC event notifications"));
@@ -203,6 +202,7 @@ public class TestScheduler {
 
 			Scheduler scheduler = friday.getEventScheduler().getScheduler();
 			boolean masterJobFound = false;
+			boolean warStatsJobFound = false;
 			for (String groupName : scheduler.getJobGroupNames()) {
 
 				for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
@@ -219,10 +219,15 @@ public class TestScheduler {
 					if (jobName.contains("mcoc schedule master")) {
 						masterJobFound = true;
 					}
+
+					if (jobName.contains("war stats schedule")) {
+						warStatsJobFound = true;
+					}
 				}
 			}
 
 			assertTrue(masterJobFound);
+			assertTrue(warStatsJobFound);
 
 			friday.getEventScheduler().terminate();
 		}

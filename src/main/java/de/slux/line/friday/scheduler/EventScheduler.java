@@ -54,7 +54,38 @@ public class EventScheduler {
 	 */
 	private void initScheduler() throws SchedulerException {
 		addDailyMcocMasterJob();
-		// addDonationsJob();
+		addWarStatsJob();
+	}
+
+	private void addWarStatsJob() throws SchedulerException {
+		String eventId = "war stats schedule job";
+		LOG.info("Adding event: " + eventId);
+
+		// Every day we calculate the stats
+		JobDetail job1 = newJob(WarStatsJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
+		        .usingJobData(ID_KEY, eventId).build();
+		Trigger trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId).startNow()
+		        .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(10, 0)).build();
+
+		this.scheduler.scheduleJob(job1, trigger1);
+
+		// If it's already past 10AM past, we need to trigger the event now (one shot)
+		// to make sure we have statistics already ready
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(System.currentTimeMillis());
+		int hourOfDay = c.get(Calendar.HOUR_OF_DAY);
+
+		if (hourOfDay >= 10) {
+			LOG.info("Refreshing War statistics (NOW): " + eventId);
+			
+			JobDetail jobNow = newJob(McocSchedulerJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
+			        .usingJobData(ID_KEY, eventId).build();
+			Trigger triggerNow = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
+			        .startAt(DateBuilder.futureDate(10, IntervalUnit.SECOND)).build();
+
+			this.scheduler.scheduleJob(jobNow, triggerNow);
+		}
+
 	}
 
 	/**

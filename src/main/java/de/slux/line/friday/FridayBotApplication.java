@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -77,6 +78,7 @@ import de.slux.line.friday.command.war.WarSummaryDeathCommand;
 import de.slux.line.friday.command.war.WarSummonerNodeCommand;
 import de.slux.line.friday.command.war.WarSummonerRenameCommand;
 import de.slux.line.friday.command.war.WarUndoDeathCommand;
+import de.slux.line.friday.data.stats.HistoryStats;
 import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.scheduler.EventScheduler;
 import de.slux.line.friday.scheduler.McocSchedulerImporter;
@@ -116,6 +118,7 @@ public class FridayBotApplication {
 	private EventScheduler eventScheduler;
 	private LinkedList<String> lastPushedMessages;
 	private Clock clockReference;
+	private Map<Integer, List<HistoryStats>> warNodeStatistics;
 
 	public static void main(String[] args) {
 		SpringApplication.run(FridayBotApplication.class, args);
@@ -458,6 +461,19 @@ public class FridayBotApplication {
 	}
 
 	/**
+	 * Push a message to the administrator {@link FridayBotApplication#SLUX_ID}
+	 * 
+	 * @param message
+	 */
+	public void pushMessageToAdmin(String message) {
+		WarGroup wg = new WarGroup();
+		wg.setGroupId(SLUX_ID);
+		wg.setGroupName("SLUX");
+
+		pushMultiMessages(Arrays.asList(wg), message);
+	}
+
+	/**
 	 * Push the message to all the groups
 	 * 
 	 * @param groups
@@ -565,4 +581,20 @@ public class FridayBotApplication {
 	public Clock getClockReference() {
 		return this.clockReference;
 	}
+
+	/**
+	 * @return the warNodeStatistics
+	 */
+	public synchronized Map<Integer, List<HistoryStats>> getWarNodeStatistics() {
+		return warNodeStatistics;
+	}
+
+	/**
+	 * @param warNodeStatistics
+	 *            the warNodeStatistics to set
+	 */
+	public synchronized void setWarNodeStatistics(Map<Integer, List<HistoryStats>> warNodeStatistics) {
+		this.warNodeStatistics = warNodeStatistics;
+	}
+
 }
