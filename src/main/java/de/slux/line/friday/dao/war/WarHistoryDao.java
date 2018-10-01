@@ -20,7 +20,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.slux.line.friday.data.stats.HistoryStat;
+import de.slux.line.friday.data.stats.HistoryStats;
 import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarGroup.HistoryType;
 import de.slux.line.friday.data.war.WarSummoner;
@@ -44,7 +44,7 @@ public class WarHistoryDao {
 	        + "FROM_BASE64(champion) AS champ, FROM_BASE64(player) AS player_name "
 	        + "FROM war_history WHERE group_id = ? AND war_date = ? AND history_type = ? ORDER BY id";
 
-	private static final String GET_STATS_DATA = "SELECT node, num_deaths, CAST(FROM_BASE64(champion) AS CHAR) AS champ FROM war_history WHERE node > 0";
+	private static final String GET_STATS_DATA = "SELECT node, num_deaths, CAST(FROM_BASE64(champion) AS CHAR) AS champ FROM war_history WHERE node > 0 AND node <= 55";
 
 	private static final String DELETE_DATA = "DELETE FROM war_history WHERE group_id = ? AND war_date = ? AND opponent_tag = TO_BASE64(?)";
 
@@ -305,10 +305,10 @@ public class WarHistoryDao {
 	 * @return the stats
 	 * @throws SQLException
 	 */
-	public List<HistoryStat> getStatsData() throws SQLException {
+	public List<HistoryStats> getStatsData() throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		List<HistoryStat> outcome = new ArrayList<>();
+		List<HistoryStats> outcome = new ArrayList<>();
 		try {
 
 			stmt = conn.prepareStatement(GET_STATS_DATA);
@@ -319,7 +319,7 @@ public class WarHistoryDao {
 				Integer numDeaths = rs.getInt("num_deaths");
 				String champ = rs.getString("champ");
 
-				outcome.add(new HistoryStat(champ, node, numDeaths));
+				outcome.add(new HistoryStats(champ, node, numDeaths));
 			}
 		} finally {
 			try {

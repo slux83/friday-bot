@@ -4,7 +4,7 @@ package de.slux.line.friday.data.stats;
  * @author slux
  *
  */
-public class HistoryStat {
+public class HistoryStats {
 
 	private String champ;
 	private int node;
@@ -13,7 +13,7 @@ public class HistoryStat {
 	/**
 	 * Ctor
 	 */
-	public HistoryStat(String champ, int node, int deaths) {
+	public HistoryStats(String champ, int node, int deaths) {
 		this.champ = champ;
 		this.node = node;
 		this.deaths = deaths;
