@@ -47,6 +47,9 @@ public class WarStatsJob implements Job {
 			long end = System.currentTimeMillis();
 			Integer totalElements = warNodeStatistics.values().stream().mapToInt(List::size).sum();
 
+			LOG.info("War node stats updated in " + String.format("%.2f", (Math.abs(end - start) / 1000.0))
+			        + " sec(s). Total nodes: " + warNodeStatistics.size() + ". Total elements: " + totalElements);
+
 			notifyAdmin("War node stats updated in " + String.format("%.2f", (Math.abs(end - start) / 1000.0))
 			        + " sec(s). Total nodes: " + warNodeStatistics.size() + ". Total elements: " + totalElements,
 			        false);

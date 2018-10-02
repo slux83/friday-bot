@@ -55,6 +55,7 @@ public class TestScheduler {
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
+		callback.takeAllMessages();
 
 		String userId = UUID.randomUUID().toString();
 

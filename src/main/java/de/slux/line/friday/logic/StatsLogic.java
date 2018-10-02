@@ -167,8 +167,6 @@ public class StatsLogic {
 	 * @return the stats
 	 */
 	public String getNodeStats(Map<Integer, List<HistoryStats>> nodeStats, int node) {
-		System.out.println(nodeStats.keySet());
-
 		List<HistoryStats> nodeData = nodeStats.get(node);
 		if (nodeData == null) {
 			return "Cannot find any War Statistics for node " + node;

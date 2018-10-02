@@ -78,10 +78,10 @@ public class EventScheduler {
 		if (hourOfDay >= 10) {
 			LOG.info("Refreshing War statistics (NOW): " + eventId);
 			
-			JobDetail jobNow = newJob(McocSchedulerJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
+			JobDetail jobNow = newJob(WarStatsJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 			        .usingJobData(ID_KEY, eventId).build();
 			Trigger triggerNow = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
-			        .startAt(DateBuilder.futureDate(10, IntervalUnit.SECOND)).build();
+			        .startAt(DateBuilder.futureDate(5, IntervalUnit.SECOND)).build();
 
 			this.scheduler.scheduleJob(jobNow, triggerNow);
 		}

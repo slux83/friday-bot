@@ -74,7 +74,7 @@ public class WarStatsCommand extends AbstractCommand {
 			Map<Integer, List<HistoryStats>> warNodeStats = FridayBotApplication.getInstance().getWarNodeStatistics();
 
 			if (warNodeStats == null) {
-				return new TextMessage("Sorry, statistics are not available yet. Please try tomorrow");
+				return new TextMessage("Sorry, statistics are not available yet. Please try later");
 			}
 
 			return new TextMessage(logic.getNodeStats(warNodeStats, nodeNumber));
