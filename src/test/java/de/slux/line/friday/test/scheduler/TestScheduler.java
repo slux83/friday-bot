@@ -14,7 +14,6 @@ import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;

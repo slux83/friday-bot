@@ -160,6 +160,135 @@ public class StatsLogic {
 	}
 
 	/**
+	 * Updates the champion statistics
+	 * 
+	 * @return
+	 * 
+	 * @throws SQLException
+	 */
+	public Map<String, List<HistoryStats>> updateChampStats() throws SQLException {
+		Connection conn = DbConnectionPool.getConnection();
+
+		LOG.debug("Connection to the DB valid");
+
+		WarHistoryDao dao = new WarHistoryDao(conn);
+		List<HistoryStats> stats = dao.getStatsData();
+		Map<String, List<HistoryStats>> nodeStats = new HashMap<>();
+
+		JaroWinklerDistance distance = new JaroWinklerDistance();
+		for (HistoryStats stat : stats) {
+			String champ = stat.getChamp();
+			champ = champ.toLowerCase();
+			champ = champ.replaceAll("[1-6]star", "");
+			champ = champ.replaceAll("[1-6]\\*", "");
+			champ = champ.replaceAll("duped", "");
+			champ = champ.replaceAll("unduped", "");
+			champ = champ.replaceAll("undupe", "");
+			champ = champ.replaceAll("dupe", "");
+			champ = champ.replaceAll("r[0-9]/[0-9][0-9]", "");
+			champ = champ.replaceAll("r[0-9]", "");
+			champ = champ.replaceAll("mini", "");
+			champ = champ.replaceAll("miniboss", "");
+			champ = champ.replaceAll("boss", "");
+			champ = champ.replaceAll("rank\\s?[0-9]", "");
+			champ = champ.replaceAll("mutant", "");
+			champ = champ.replaceAll("skill", "");
+			champ = champ.replaceAll("tech", "");
+			champ = champ.replaceAll("mystic", "");
+			champ = champ.replaceAll("cosmic", "");
+			champ = champ.replaceAll("empty", "");
+			champ = champ.replaceAll("open", "");
+			champ = champ.replaceAll("hidden", "");
+			champ = champ.replaceAll("none", "");
+			champ = champ.trim();
+
+			double distanceValue = -1.0;
+			Entry<String, String> recognizedAs = null;
+			for (Map.Entry<String, String> ogChamp : this.champions.entrySet()) {
+				double d = distance.apply(champ, ogChamp.getKey().toLowerCase());
+
+				if (d > distanceValue) {
+					distanceValue = d;
+					recognizedAs = ogChamp;
+				}
+			}
+
+			if (distanceValue >= CHAMP_MATCHING_THRESHOLD) {
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Statistic selected for " + champ + " => " + recognizedAs + " " + distanceValue);
+				}
+
+				if (!nodeStats.containsKey(recognizedAs.getValue())) {
+					nodeStats.put(recognizedAs.getValue(), new ArrayList<>());
+				}
+
+				List<HistoryStats> nodeStat = nodeStats.get(recognizedAs.getValue());
+				nodeStat.add(new HistoryStats(recognizedAs.getValue(), stat.getNode(), stat.getDeaths()));
+			}
+
+		}
+
+		return nodeStats;
+	}
+
+	/**
+	 * Get the top-5 entries for a node
+	 * 
+	 * @param champStats
+	 * @param champ
+	 * @return the stats
+	 */
+	public String getChampionStats(Map<String, List<HistoryStats>> champStats, String champ) {
+		// TODO: champ must be normalized and guessed
+		List<HistoryStats> champData = champStats.get(champ);
+		if (champData == null) {
+			return "Cannot find any War Statistics for champion " + champ;
+		}
+		Map<Integer, NodeStats> nodeAggr = new HashMap<>();
+
+		for (HistoryStats s : champData) {
+			int totDeaths = s.getDeaths() < 0 ? 0 : s.getDeaths();
+			int deathItems = s.getDeaths() < 0 ? 0 : 1;
+			if (!nodeAggr.containsKey(s.getNode())) {
+				nodeAggr.put(s.getNode(), new NodeStats(s.getNode(), 1, totDeaths, deathItems));
+			} else {
+				NodeStats ns = nodeAggr.get(s.getNode());
+				ns.setOccurrences(ns.getOccurrences() + 1);
+				ns.setTotalDeaths(ns.getTotalDeaths() + totDeaths);
+				ns.setDeathItems(ns.getDeathItems() + deathItems);
+			}
+		}
+
+		List<Entry<Integer, NodeStats>> topNodes = nodeAggr.entrySet().stream()
+		        .sorted(Map.Entry.comparingByValue(Comparator.comparing(NodeStats::getOccurrences).reversed())).limit(5)
+		        .collect(Collectors.toList());
+
+		StringBuilder sb = new StringBuilder("WAR Stats for ");
+		sb.append(champ);
+		for (Entry<Integer, NodeStats> agg : topNodes) {
+			NodeStats ns = agg.getValue();
+			double deathPercentage = (ns.getTotalDeaths() * 100.0) / ns.getDeathItems();
+			sb.append("\n\n * NODE ");
+			sb.append(agg.getKey());
+			sb.append(" *\n");
+			sb.append("Placed ");
+			sb.append(ns.getOccurrences());
+			sb.append(" time(s)\n");
+			sb.append(ns.getTotalDeaths());
+			sb.append(" total deaths\n");
+			sb.append("Mortality ");
+			if (!Double.isNaN(deathPercentage)) {
+				sb.append(String.format("%.1f", deathPercentage));
+				sb.append("%");
+			} else {
+				sb.append("---");
+			}
+		}
+
+		return sb.toString();
+	}
+
+	/**
 	 * Get the top-5 entries for a node
 	 * 
 	 * @param nodeStats

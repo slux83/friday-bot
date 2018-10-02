@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.AfterClass;
@@ -22,6 +24,7 @@ import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.WarStatsCommand;
 import de.slux.line.friday.dao.DbConnectionPool;
+import de.slux.line.friday.data.stats.HistoryStats;
 import de.slux.line.friday.logic.StatsLogic;
 import de.slux.line.friday.scheduler.WarStatsJob;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
@@ -62,6 +65,15 @@ public class StatsTest {
 		DbConnectionPool.DB_NAME = "friday";
 	}
 
+	@Test
+	public void doTest() throws Exception {
+		StatsLogic l = new StatsLogic(true);
+		Map<String, List<HistoryStats>> champStats = l.updateChampStats();
+		
+		//System.out.println(champStats);
+		System.out.println(l.getChampionStats(champStats, "Mephisto"));
+	}
+	
 	@Test
 	public void testStatisticsCommands() throws Exception {
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
