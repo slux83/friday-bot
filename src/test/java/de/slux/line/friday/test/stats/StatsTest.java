@@ -71,7 +71,7 @@ public class StatsTest {
 		Map<String, List<HistoryStats>> champStats = l.updateChampStats();
 		
 		//System.out.println(champStats);
-		System.out.println(l.getChampionStats(champStats, "Mephisto"));
+		System.out.println(l.getChampionStats(champStats, "Killmonger"));
 	}
 	
 	@Test
