@@ -59,7 +59,7 @@ public class WarStatsCommand extends AbstractCommand {
 		List<String> args = super.extractArgs(message);
 
 		if (args.size() < 4)
-			return new TextMessage("Argument missing, please provide a war node");
+			return new TextMessage("Argument missing, please provide a war node or champion name");
 
 		// Remove the command prefix
 		args.remove(0);
