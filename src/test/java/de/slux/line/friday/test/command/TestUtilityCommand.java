@@ -31,11 +31,11 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
+import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.InfoCommand;
 import de.slux.line.friday.command.RegisterEventsCommand;
-import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
 import de.slux.line.friday.command.admin.AdminPushNotificationCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;

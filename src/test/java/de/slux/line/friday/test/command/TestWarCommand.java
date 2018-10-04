@@ -23,9 +23,9 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
+import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.EventInfoCommand;
 import de.slux.line.friday.command.HelpCommand;
-import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarDeleteCommand;

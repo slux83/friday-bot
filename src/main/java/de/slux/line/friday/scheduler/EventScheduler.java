@@ -69,7 +69,8 @@ public class EventScheduler {
 
 		this.scheduler.scheduleJob(job1, trigger1);
 
-		// If it's already past 10AM past, we need to trigger the event now (one shot)
+		// If it's already past 10AM past, we need to trigger the event now (one
+		// shot)
 		// to make sure we have statistics already ready
 		Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(System.currentTimeMillis());
@@ -77,7 +78,7 @@ public class EventScheduler {
 
 		if (hourOfDay >= 10) {
 			LOG.info("Refreshing War statistics (NOW): " + eventId);
-			
+
 			JobDetail jobNow = newJob(WarStatsJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 			        .usingJobData(ID_KEY, eventId).build();
 			Trigger triggerNow = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)

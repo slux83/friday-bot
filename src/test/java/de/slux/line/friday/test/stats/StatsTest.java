@@ -45,7 +45,7 @@ public class StatsTest {
 		ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) root;
 		logbackLogger.setLevel(ch.qos.logback.classic.Level.INFO);
 
-		//DbConnectionPool.DB_NAME = "friday_test";
+		// DbConnectionPool.DB_NAME = "friday_test";
 	}
 
 	/**
