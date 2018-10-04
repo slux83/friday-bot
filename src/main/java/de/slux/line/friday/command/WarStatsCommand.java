@@ -69,17 +69,30 @@ public class WarStatsCommand extends AbstractCommand {
 		String arg = String.join(" ", args).trim();
 		Integer nodeNumber;
 		try {
-			nodeNumber = Integer.parseInt(arg);
 			StatsLogic logic = new StatsLogic(false);
-			Map<Integer, List<HistoryStats>> warNodeStats = FridayBotApplication.getInstance().getWarNodeStatistics();
 
-			if (warNodeStats == null) {
-				return new TextMessage("Sorry, statistics are not available yet. Please try later");
+			try {
+				nodeNumber = Integer.parseInt(arg);
+				Map<Integer, List<HistoryStats>> warNodeStats = FridayBotApplication.getInstance()
+				        .getWarNodeStatistics();
+
+				if (warNodeStats == null) {
+					return new TextMessage("Sorry, statistics are not available yet. Please try later");
+				}
+
+				return new TextMessage(logic.getNodeStats(warNodeStats, nodeNumber));
+			} catch (NumberFormatException ne) {
+				// We try with champion matching
+				Map<String, List<HistoryStats>> warChampStats = FridayBotApplication.getInstance()
+				        .getWarChampStatistics();
+
+				if (warChampStats == null) {
+					return new TextMessage("Sorry, statistics are not available yet. Please try later");
+				}
+
+				return new TextMessage(logic.getChampionStats(warChampStats, arg.trim()));
 			}
 
-			return new TextMessage(logic.getNodeStats(warNodeStats, nodeNumber));
-		} catch (NumberFormatException e) {
-			return new TextMessage("Invalid argument. Expected integer but got '" + arg + "'");
 		} catch (IOException e) {
 			// This can't happen
 			LOG.error("Unexpected I/O error", e);
@@ -106,9 +119,18 @@ public class WarStatsCommand extends AbstractCommand {
 	@Override
 	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CMD_PREFIX + " <node>\n");
+		sb.append(CMD_PREFIX + " <node|champ>\n");
 		if (verbose) {
-			sb.append("Prints the statistics of the top-5 champions for the given node");
+			sb.append("Prints the statistics of the top-5 champions for the given node or champion.\n");
+			sb.append("Examples:\n");
+			sb.append(AbstractCommand.ALL_CMD_PREFIX);
+			sb.append(" ");
+			sb.append(CMD_PREFIX);
+			sb.append(" 44\n");
+			sb.append(AbstractCommand.ALL_CMD_PREFIX);
+			sb.append(" ");
+			sb.append(CMD_PREFIX);
+			sb.append(" Medusa\n");
 		}
 
 		return sb.toString();

@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.dao.DbConnectionPool;
 import de.slux.line.friday.dao.war.WarHistoryDao;
 import de.slux.line.friday.data.stats.HistoryStats;
@@ -73,11 +75,12 @@ public class StatsLogic {
 				for (String alias : aliases) {
 					this.champions.put(alias.trim(), champName);
 				}
-
 			}
 		}
 
 		LOG.info("Fetched " + this.champions.size() + " champion(s)");
+
+		FridayBotApplication.getInstance().setChampionsData(this.champions);
 	}
 
 	/**
@@ -88,61 +91,63 @@ public class StatsLogic {
 	}
 
 	/**
-	 * Updates the node statistics
+	 * Update all the statistics
 	 * 
-	 * @return
-	 * 
+	 * @return the updated description of the stats (some info)
 	 * @throws SQLException
 	 */
-	public Map<Integer, List<HistoryStats>> updateNodeStats() throws SQLException {
+	public String updateStatistics() throws SQLException {
 		Connection conn = DbConnectionPool.getConnection();
 
 		LOG.debug("Connection to the DB valid");
 
 		WarHistoryDao dao = new WarHistoryDao(conn);
-		List<HistoryStats> stats = dao.getStatsData();
+		List<HistoryStats> rawStats = dao.getStatsData();
+
+		Map<Integer, List<HistoryStats>> nodeStats = updateNodeStats(rawStats);
+		Map<String, List<HistoryStats>> champStats = updateChampStats(rawStats);
+
+		Integer totalNodeElements = nodeStats.values().stream().mapToInt(List::size).sum();
+		Integer totalChampElements = champStats.values().stream().mapToInt(List::size).sum();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("NODES: ");
+		sb.append("Total nodes: ");
+		sb.append(nodeStats.size());
+		sb.append(". Total elements: ");
+		sb.append(totalNodeElements);
+		sb.append("\n");
+		sb.append("CHAMPS: ");
+		sb.append("Total nodes: ");
+		sb.append(champStats.size());
+		sb.append(". Total elements: ");
+		sb.append(totalChampElements);
+		sb.append("\n");
+
+		FridayBotApplication.getInstance().setWarNodeStatistics(nodeStats);
+		FridayBotApplication.getInstance().setWarChampStatistics(champStats);
+
+		return sb.toString();
+	}
+
+	/**
+	 * Updates the node statistics
+	 * 
+	 * @param rawStats
+	 *            from DB
+	 * @return the stats organized by node
+	 */
+	private Map<Integer, List<HistoryStats>> updateNodeStats(List<HistoryStats> rawStats) {
 		Map<Integer, List<HistoryStats>> nodeStats = new HashMap<>();
 
-		JaroWinklerDistance distance = new JaroWinklerDistance();
-		for (HistoryStats stat : stats) {
+		for (HistoryStats stat : rawStats) {
 			String champ = stat.getChamp();
-			champ = champ.toLowerCase();
-			champ = champ.replaceAll("[1-6]star", "");
-			champ = champ.replaceAll("[1-6]\\*", "");
-			champ = champ.replaceAll("duped", "");
-			champ = champ.replaceAll("unduped", "");
-			champ = champ.replaceAll("undupe", "");
-			champ = champ.replaceAll("dupe", "");
-			champ = champ.replaceAll("r[0-9]/[0-9][0-9]", "");
-			champ = champ.replaceAll("r[0-9]", "");
-			champ = champ.replaceAll("mini", "");
-			champ = champ.replaceAll("miniboss", "");
-			champ = champ.replaceAll("boss", "");
-			champ = champ.replaceAll("rank\\s?[0-9]", "");
-			champ = champ.replaceAll("mutant", "");
-			champ = champ.replaceAll("skill", "");
-			champ = champ.replaceAll("tech", "");
-			champ = champ.replaceAll("mystic", "");
-			champ = champ.replaceAll("cosmic", "");
-			champ = champ.replaceAll("empty", "");
-			champ = champ.replaceAll("open", "");
-			champ = champ.replaceAll("hidden", "");
-			champ = champ.replaceAll("none", "");
-			champ = champ.trim();
 
-			double distanceValue = -1.0;
-			Entry<String, String> recognizedAs = null;
-			for (Map.Entry<String, String> ogChamp : this.champions.entrySet()) {
-				double d = distance.apply(champ, ogChamp.getKey().toLowerCase());
+			Entry<Double, String> guess = guessChampion(champ, this.champions);
 
-				if (d > distanceValue) {
-					distanceValue = d;
-					recognizedAs = ogChamp;
-				}
-			}
-			if (distanceValue >= CHAMP_MATCHING_THRESHOLD) {
+			if (guess.getKey() >= CHAMP_MATCHING_THRESHOLD) {
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("Statistic selected for " + champ + " => " + recognizedAs + " " + distanceValue);
+					LOG.debug("Statistic selected for " + champ + " => " + guess.getValue() + " " + guess.getKey());
 				}
 
 				if (!nodeStats.containsKey(stat.getNode())) {
@@ -150,7 +155,7 @@ public class StatsLogic {
 				}
 
 				List<HistoryStats> nodeStat = nodeStats.get(stat.getNode());
-				nodeStat.add(new HistoryStats(recognizedAs.getValue(), stat.getNode(), stat.getDeaths()));
+				nodeStat.add(new HistoryStats(guess.getValue(), stat.getNode(), stat.getDeaths()));
 			}
 
 		}
@@ -162,68 +167,28 @@ public class StatsLogic {
 	/**
 	 * Updates the champion statistics
 	 * 
-	 * @return
-	 * 
-	 * @throws SQLException
+	 * @param rawStats
+	 *            from DB
+	 * @return the stats organized by champions
 	 */
-	public Map<String, List<HistoryStats>> updateChampStats() throws SQLException {
-		Connection conn = DbConnectionPool.getConnection();
-
-		LOG.debug("Connection to the DB valid");
-
-		WarHistoryDao dao = new WarHistoryDao(conn);
-		List<HistoryStats> stats = dao.getStatsData();
+	private Map<String, List<HistoryStats>> updateChampStats(List<HistoryStats> rawStats) {
 		Map<String, List<HistoryStats>> nodeStats = new HashMap<>();
 
-		JaroWinklerDistance distance = new JaroWinklerDistance();
-		for (HistoryStats stat : stats) {
+		for (HistoryStats stat : rawStats) {
 			String champ = stat.getChamp();
-			champ = champ.toLowerCase();
-			champ = champ.replaceAll("[1-6]star", "");
-			champ = champ.replaceAll("[1-6]\\*", "");
-			champ = champ.replaceAll("duped", "");
-			champ = champ.replaceAll("unduped", "");
-			champ = champ.replaceAll("undupe", "");
-			champ = champ.replaceAll("dupe", "");
-			champ = champ.replaceAll("r[0-9]/[0-9][0-9]", "");
-			champ = champ.replaceAll("r[0-9]", "");
-			champ = champ.replaceAll("mini", "");
-			champ = champ.replaceAll("miniboss", "");
-			champ = champ.replaceAll("boss", "");
-			champ = champ.replaceAll("rank\\s?[0-9]", "");
-			champ = champ.replaceAll("mutant", "");
-			champ = champ.replaceAll("skill", "");
-			champ = champ.replaceAll("tech", "");
-			champ = champ.replaceAll("mystic", "");
-			champ = champ.replaceAll("cosmic", "");
-			champ = champ.replaceAll("empty", "");
-			champ = champ.replaceAll("open", "");
-			champ = champ.replaceAll("hidden", "");
-			champ = champ.replaceAll("none", "");
-			champ = champ.trim();
+			Entry<Double, String> guess = guessChampion(champ, this.champions);
 
-			double distanceValue = -1.0;
-			Entry<String, String> recognizedAs = null;
-			for (Map.Entry<String, String> ogChamp : this.champions.entrySet()) {
-				double d = distance.apply(champ, ogChamp.getKey().toLowerCase());
-
-				if (d > distanceValue) {
-					distanceValue = d;
-					recognizedAs = ogChamp;
-				}
-			}
-
-			if (distanceValue >= CHAMP_MATCHING_THRESHOLD) {
+			if (guess.getKey() >= CHAMP_MATCHING_THRESHOLD) {
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("Statistic selected for " + champ + " => " + recognizedAs + " " + distanceValue);
+					LOG.debug("Statistic selected for " + champ + " => " + guess.getValue() + " " + guess.getKey());
 				}
 
-				if (!nodeStats.containsKey(recognizedAs.getValue())) {
-					nodeStats.put(recognizedAs.getValue(), new ArrayList<>());
+				if (!nodeStats.containsKey(guess.getValue())) {
+					nodeStats.put(guess.getValue(), new ArrayList<>());
 				}
 
-				List<HistoryStats> nodeStat = nodeStats.get(recognizedAs.getValue());
-				nodeStat.add(new HistoryStats(recognizedAs.getValue(), stat.getNode(), stat.getDeaths()));
+				List<HistoryStats> nodeStat = nodeStats.get(guess.getValue());
+				nodeStat.add(new HistoryStats(guess.getValue(), stat.getNode(), stat.getDeaths()));
 			}
 
 		}
@@ -239,8 +204,22 @@ public class StatsLogic {
 	 * @return the stats
 	 */
 	public String getChampionStats(Map<String, List<HistoryStats>> champStats, String champ) {
-		// TODO: champ must be normalized and guessed
-		List<HistoryStats> champData = champStats.get(champ);
+		Map<String, String> championsList = FridayBotApplication.getInstance().getChampionsData();
+		if (championsList == null) {
+			return "Champions data is not yet available. Please try later";
+		}
+
+		Entry<Double, String> guess = guessChampion(champ, championsList);
+
+		// We pump a little the matching threshold
+		if (guess.getKey() < CHAMP_MATCHING_THRESHOLD + 0.1) {
+			return "The provided champion '" + champ
+			        + "' cannot be properly matched, please try to be more specific. The closest guess was: "
+			        + guess.getValue() + ".\nYou can always take a look at the full champions list at "
+			        + CHAMPS_LIST_URL;
+		}
+
+		List<HistoryStats> champData = champStats.get(guess.getValue());
 		if (champData == null) {
 			return "Cannot find any War Statistics for champion " + champ;
 		}
@@ -264,7 +243,7 @@ public class StatsLogic {
 		        .collect(Collectors.toList());
 
 		StringBuilder sb = new StringBuilder("WAR Stats for ");
-		sb.append(champ);
+		sb.append(guess.getValue());
 		for (Entry<Integer, NodeStats> agg : topNodes) {
 			NodeStats ns = agg.getValue();
 			double deathPercentage = (ns.getTotalDeaths() * 100.0) / ns.getDeathItems();
@@ -344,6 +323,54 @@ public class StatsLogic {
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * Guess champ based on the champions list
+	 * 
+	 * @param champ
+	 * @param champions
+	 * @return a single entry map with the best match
+	 */
+	public static Entry<Double, String> guessChampion(String champ, Map<String, String> champions) {
+		JaroWinklerDistance distance = new JaroWinklerDistance();
+
+		champ = champ.toLowerCase();
+		champ = champ.replaceAll("[1-6]star", "");
+		champ = champ.replaceAll("[1-6]\\*", "");
+		champ = champ.replaceAll("duped", "");
+		champ = champ.replaceAll("unduped", "");
+		champ = champ.replaceAll("undupe", "");
+		champ = champ.replaceAll("dupe", "");
+		champ = champ.replaceAll("r[0-9]/[0-9][0-9]", "");
+		champ = champ.replaceAll("r[0-9]", "");
+		champ = champ.replaceAll("mini", "");
+		champ = champ.replaceAll("miniboss", "");
+		champ = champ.replaceAll("boss", "");
+		champ = champ.replaceAll("rank\\s?[0-9]", "");
+		champ = champ.replaceAll("mutant", "");
+		champ = champ.replaceAll("skill", "");
+		champ = champ.replaceAll("tech", "");
+		champ = champ.replaceAll("mystic", "");
+		champ = champ.replaceAll("cosmic", "");
+		champ = champ.replaceAll("empty", "");
+		champ = champ.replaceAll("open", "");
+		champ = champ.replaceAll("hidden", "");
+		champ = champ.replaceAll("none", "");
+		champ = champ.trim();
+
+		double distanceValue = -1.0;
+		Entry<String, String> recognizedAs = null;
+		for (Map.Entry<String, String> ogChamp : champions.entrySet()) {
+			double d = distance.apply(champ, ogChamp.getKey().toLowerCase());
+
+			if (d > distanceValue) {
+				distanceValue = d;
+				recognizedAs = ogChamp;
+			}
+		}
+
+		return new AbstractMap.SimpleEntry<Double, String>(distanceValue, recognizedAs.getValue());
 	}
 
 }

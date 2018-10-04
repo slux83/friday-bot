@@ -5,8 +5,6 @@ package de.slux.line.friday.scheduler;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -15,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.slux.line.friday.FridayBotApplication;
-import de.slux.line.friday.data.stats.HistoryStats;
 import de.slux.line.friday.logic.StatsLogic;
 
 /**
@@ -41,24 +38,21 @@ public class WarStatsJob implements Job {
 			long start = System.currentTimeMillis();
 			StatsLogic logic = new StatsLogic(true);
 
-			Map<Integer, List<HistoryStats>> warNodeStatistics = logic.updateNodeStats();
+			String outcome = logic.updateStatistics();
 
-			FridayBotApplication.getInstance().setWarNodeStatistics(warNodeStatistics);
 			long end = System.currentTimeMillis();
-			Integer totalElements = warNodeStatistics.values().stream().mapToInt(List::size).sum();
 
 			LOG.info("War node stats updated in " + String.format("%.2f", (Math.abs(end - start) / 1000.0))
-			        + " sec(s). Total nodes: " + warNodeStatistics.size() + ". Total elements: " + totalElements);
+			        + " sec(s).\n" + outcome);
 
 			notifyAdmin("War node stats updated in " + String.format("%.2f", (Math.abs(end - start) / 1000.0))
-			        + " sec(s). Total nodes: " + warNodeStatistics.size() + ". Total elements: " + totalElements,
-			        false);
+			        + " sec(s).\n" + outcome, false);
 		} catch (IOException e) {
 			LOG.error("Can't retrieve the list of champions from Paste Bin: " + e, e);
 			notifyAdmin("Can't retrieve the list of champions from Paste Bin: " + e, true);
 		} catch (SQLException e) {
-			LOG.error("Can't update war node stats: " + e, e);
-			notifyAdmin("Can't update war node stats: " + e, true);
+			LOG.error("Can't update war stats: " + e, e);
+			notifyAdmin("Can't update war stats: " + e, true);
 		}
 
 	}

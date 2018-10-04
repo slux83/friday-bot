@@ -120,6 +120,8 @@ public class FridayBotApplication {
 	private LinkedList<String> lastPushedMessages;
 	private Clock clockReference;
 	private Map<Integer, List<HistoryStats>> warNodeStatistics;
+	private Map<String, List<HistoryStats>> warChampStatistics;
+	private Map<String, String> championsData;
 
 	public static void main(String[] args) {
 		SpringApplication.run(FridayBotApplication.class, args);
@@ -599,4 +601,33 @@ public class FridayBotApplication {
 		this.warNodeStatistics = warNodeStatistics;
 	}
 
+	/**
+	 * @return the championsData
+	 */
+	public synchronized Map<String, String> getChampionsData() {
+		return championsData;
+	}
+
+	/**
+	 * @param championsData
+	 *            the championsData to set
+	 */
+	public synchronized void setChampionsData(Map<String, String> championsData) {
+		this.championsData = championsData;
+	}
+
+	/**
+	 * @return the warChampStatistics
+	 */
+	public synchronized Map<String, List<HistoryStats>> getWarChampStatistics() {
+		return warChampStatistics;
+	}
+
+	/**
+	 * @param warChampStatistics
+	 *            the warChampStatistics to set
+	 */
+	public synchronized void setWarChampStatistics(Map<String, List<HistoryStats>> warChampStatistics) {
+		this.warChampStatistics = warChampStatistics;
+	}
 }
