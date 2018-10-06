@@ -61,7 +61,6 @@ public class TestScheduler {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
 
 		String userId = UUID.randomUUID().toString();
 
@@ -144,7 +143,7 @@ public class TestScheduler {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		Thread.sleep(15000);
 
 		Scheduler scheduler = friday.getEventScheduler().getScheduler();
@@ -186,7 +185,7 @@ public class TestScheduler {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		Thread.sleep(15000);
 
 		Scheduler scheduler = friday.getEventScheduler().getScheduler();
@@ -232,7 +231,7 @@ public class TestScheduler {
 				Thread.sleep(1000);
 			}
 			callback.takeAllMessages();
-			
+
 			Thread.sleep(15000);
 
 			Scheduler scheduler = friday.getEventScheduler().getScheduler();
@@ -281,7 +280,7 @@ public class TestScheduler {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String group1Id = UUID.randomUUID().toString();
 		String group2Id = UUID.randomUUID().toString();
 		String group3Id = UUID.randomUUID().toString();

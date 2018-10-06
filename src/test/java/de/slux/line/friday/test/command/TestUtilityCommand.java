@@ -84,7 +84,7 @@ public class TestUtilityCommand {
 		friday.getCommandIncomingMsgCounter().set(10);
 		friday.getTotalIncomingMsgCounter().set(100);
 		Thread.sleep(1000);
-		
+
 		callback.takeAllMessages();
 		while (callback.takeAllMessages().isEmpty()) {
 			System.out.println("Waiting for stats to become available...");
@@ -127,7 +127,7 @@ public class TestUtilityCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		// User help
 		MessageEvent<TextMessageContent> eventUserHelp = MessageEventUtil.createMessageEventUserSource(
 		        UUID.randomUUID().toString(), AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX);
@@ -205,7 +205,7 @@ public class TestUtilityCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEventGroupSource(
 		        UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 		        AbstractCommand.ALL_CMD_PREFIX + " " + InfoCommand.CMD_PREFIX);
@@ -228,7 +228,7 @@ public class TestUtilityCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		JoinEvent event = MessageEventUtil.createJoinEvent(UUID.randomUUID().toString(), UUID.randomUUID().toString());
 
 		friday.handleDefaultMessageEvent(event);
@@ -252,7 +252,7 @@ public class TestUtilityCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String userId = UUID.randomUUID().toString();
 
 		// Register command
@@ -279,7 +279,7 @@ public class TestUtilityCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -367,7 +367,7 @@ public class TestUtilityCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String userId = FridayBotApplication.SLUX_ID;
 		String groupId = UUID.randomUUID().toString();
 

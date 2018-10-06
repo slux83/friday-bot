@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.logic.war.WarDeathLogic;
@@ -59,6 +61,8 @@ public class WarGroup {
 		}
 	}
 
+	public static final Integer TOTAL_AW_NODES = 55;
+
 	private List<WarDeath> deathReports;
 	private String groupId;
 	private String groupName;
@@ -108,9 +112,15 @@ public class WarGroup {
 		StringBuilder report = new StringBuilder("*** WAR DEATH REPORT ***");
 
 		TotalDeathReport totDeathReport = calculateDeathReport();
+		// Calculate how many missing nodes in the report
+		Set<Integer> reportedNodes = new HashSet<>();
+		for (WarDeath wd : this.deathReports) {
+			reportedNodes.add(wd.getNodeNumber());
+		}
 
 		report.append("\nTotal lost points: " + totDeathReport.getTotalLostPoints());
 		report.append("\nTotal deaths: " + totDeathReport.getTotalDeaths());
+		report.append("\nReported nodes: " + reportedNodes.size() + "/" + TOTAL_AW_NODES);
 
 		return report.toString();
 	}

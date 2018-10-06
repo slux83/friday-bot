@@ -277,7 +277,7 @@ public class WarSummonerDao {
 	 * @throws SQLException
 	 * @throws SummonerNotFoundException
 	 * @throws GenericDaoException
-	 * @throws DuplicatedNodeException 
+	 * @throws DuplicatedNodeException
 	 */
 	public void editPlacement(Integer groupId, Integer summonerPos, Character placementPos, Integer node, String champ)
 	        throws SQLException, SummonerNotFoundException, GenericDaoException, DuplicatedNodeException {
@@ -295,7 +295,7 @@ public class WarSummonerDao {
 			        + summoner.getName() + " (position=" + summonerPos + ")");
 		}
 
-		// Check if we have a duplicated node and it's not the same assingment 
+		// Check if we have a duplicated node and it's not the same assingment
 		for (Entry<Integer, WarSummoner> summonerEntry : summoners.entrySet()) {
 			if (summonerEntry.getValue().nodeExists(node, summonerPos, placementPos)) {
 				throw new DuplicatedNodeException("The node " + node + " has been already reported.");

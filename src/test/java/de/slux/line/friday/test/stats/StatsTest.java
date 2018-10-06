@@ -75,7 +75,7 @@ public class StatsTest {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -205,7 +205,7 @@ public class StatsTest {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		WarStatsJob job = new WarStatsJob();
 		job.execute(new ContextDummy(false));
 		String pushedMessage = callback.takeAllMessages();

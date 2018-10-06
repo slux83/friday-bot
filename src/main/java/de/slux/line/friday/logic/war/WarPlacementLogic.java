@@ -5,9 +5,11 @@ package de.slux.line.friday.logic.war;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.dao.DbConnectionPool;
 import de.slux.line.friday.dao.war.WarSummonerDao;
+import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarSummoner;
 import de.slux.line.friday.data.war.WarSummonerPlacement;
 
@@ -158,6 +161,18 @@ public class WarPlacementLogic {
 
 		if (summoners.isEmpty()) {
 			sb.append("Nothing to report");
+		} else {
+			// Add the amount of reported nodes
+			Set<Integer> reportedNodes = new HashSet<>();
+
+			for (WarSummoner ws : summoners.values()) {
+				for (WarSummonerPlacement placement : ws.getPlacements().values()) {
+					if (placement.getNode() > 0 && placement.getNode() <= WarGroup.TOTAL_AW_NODES)
+						reportedNodes.add(placement.getNode());
+				}
+			}
+
+			sb.append("Reported Nodes: " + reportedNodes.size() + "/" + WarGroup.TOTAL_AW_NODES);
 		}
 
 		outcome.add(sb.toString());

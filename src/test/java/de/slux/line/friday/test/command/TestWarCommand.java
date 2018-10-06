@@ -62,7 +62,7 @@ public class TestWarCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -128,7 +128,7 @@ public class TestWarCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -341,7 +341,7 @@ public class TestWarCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -388,7 +388,7 @@ public class TestWarCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -427,14 +427,14 @@ public class TestWarCommand {
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
-		
+
 		while (callback.takeAllMessages().isEmpty()) {
 			System.out.println("Waiting for stats to become available...");
 			Thread.sleep(1000);
 		}
-		
+
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -543,17 +543,21 @@ public class TestWarCommand {
 		response = friday.handleTextMessageEvent(death3Cmd);
 		assertTrue(response.getText().contains("480"));
 		assertTrue(response.getText().contains("7"));
+		assertTrue(response.getText().contains("3/55"));
 
 		response = friday.handleTextMessageEvent(deathSummaryCmd);
 		assertTrue(response.getText().contains("5* dupe KP"));
 		assertTrue(callback.takeAllMessages().isEmpty());
+		assertTrue(response.getText().contains("3/55"));
 
 		response = friday.handleTextMessageEvent(undoDeathCmd);
 		assertTrue(response.getText().contains("WAR DEATH REPORT"));
+		assertTrue(response.getText().contains("2/55"));
 
 		response = friday.handleTextMessageEvent(deathSummaryCmd);
 		assertFalse(response.getText().contains("5* dupe KP"));
 		assertTrue(callback.takeAllMessages().isEmpty());
+		assertTrue(response.getText().contains("2/55"));
 
 		response = friday.handleTextMessageEvent(summonersPrintCmd);
 		assertTrue(response.getText().contains("Nothing to report"));
@@ -603,6 +607,10 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("A. 5* Elektra (11)"));
 		assertTrue(response.getText().contains("B. 4* domino (31)"));
 		assertTrue(response.getText().contains("C. NC (53)"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(summonersPrintCmd);
+		assertTrue(response.getText().contains("Reported Nodes: 4/55"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(summonerRenameCmd);
@@ -673,7 +681,7 @@ public class TestWarCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -724,7 +732,7 @@ public class TestWarCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -753,7 +761,7 @@ public class TestWarCommand {
 			Thread.sleep(1000);
 		}
 		callback.takeAllMessages();
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
