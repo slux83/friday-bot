@@ -68,13 +68,14 @@ public class StatsTest {
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
-		callback.takeAllMessages();
 
+		callback.takeAllMessages();
 		while (callback.takeAllMessages().isEmpty()) {
 			System.out.println("Waiting for stats to become available...");
 			Thread.sleep(1000);
 		}
-
+		callback.takeAllMessages();
+		
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -169,6 +170,12 @@ public class StatsTest {
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
+
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
 		callback.takeAllMessages();
 
 		String groupId = UUID.randomUUID().toString();
@@ -192,6 +199,13 @@ public class StatsTest {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+		
 		WarStatsJob job = new WarStatsJob();
 		job.execute(new ContextDummy(false));
 		String pushedMessage = callback.takeAllMessages();

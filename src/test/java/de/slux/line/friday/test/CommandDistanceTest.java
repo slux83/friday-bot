@@ -25,6 +25,13 @@ public class CommandDistanceTest {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 

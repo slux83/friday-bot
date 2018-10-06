@@ -64,6 +64,13 @@ public class DbStressTest {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+		
 		int totalGroups = 500 * 3; // X alliances with 3 BGs each
 		int totalWars = 20; // X wars total for each group
 		String userId = UUID.randomUUID().toString();

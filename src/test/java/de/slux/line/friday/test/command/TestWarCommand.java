@@ -56,6 +56,13 @@ public class TestWarCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+		
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -115,6 +122,13 @@ public class TestWarCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+		
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -321,6 +335,13 @@ public class TestWarCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+		
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -361,6 +382,13 @@ public class TestWarCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+		
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -399,7 +427,14 @@ public class TestWarCommand {
 		FridayBotApplication friday = new FridayBotApplication(null);
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
-
+		
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		
+		callback.takeAllMessages();
+		
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -441,6 +476,10 @@ public class TestWarCommand {
 		MessageEvent<TextMessageContent> summoner3BisNodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + " 3b 12 5* duped Ronan"); // replace
+		MessageEvent<TextMessageContent> summoner4DuplicatedNodeCmd = MessageEventUtil.createMessageEventGroupSource(
+		        groupId, userId,
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + " 3c 12 5* duped Ronan"); // duplicated
+		                                                                                                             // node
 		MessageEvent<TextMessageContent> summonerClear1NodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + " 3B 0 5* duped Ronan"); // clear
@@ -542,6 +581,12 @@ public class TestWarCommand {
 		assertFalse(response.getText().contains("B. 5* undupe Sentinel (12)"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		response = friday.handleTextMessageEvent(summoner4DuplicatedNodeCmd);
+		assertFalse(response.getText().contains("C. 5* duped Ronan"));
+		String callbackMessages = callback.takeAllMessages();
+		assertFalse(callbackMessages.isEmpty());
+		assertTrue(callbackMessages.contains("12 has been already reported"));
+
 		response = friday.handleTextMessageEvent(summonerClear1NodeCmd);
 		assertFalse(response.getText().contains("B. 5* duped Ronan"));
 		assertTrue(callback.takeAllMessages().isEmpty());
@@ -622,6 +667,13 @@ public class TestWarCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+		
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -666,6 +718,13 @@ public class TestWarCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+		
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -688,6 +747,13 @@ public class TestWarCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
+		callback.takeAllMessages();
+		while (callback.takeAllMessages().isEmpty()) {
+			System.out.println("Waiting for stats to become available...");
+			Thread.sleep(1000);
+		}
+		callback.takeAllMessages();
+		
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
@@ -733,7 +799,6 @@ public class TestWarCommand {
 		assertFalse(response.getText().contains("MCOC Tomorrow's events"));
 		assertTrue(response.getText().contains("Sorry"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		System.err.println(response.getText());
 
 		response = friday.handleTextMessageEvent(eventWeekEvents);
 		System.out.println(response.getText());

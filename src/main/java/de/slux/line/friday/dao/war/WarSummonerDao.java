@@ -11,12 +11,14 @@ import java.sql.Statement;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.slux.line.friday.dao.DbConnectionPool;
+import de.slux.line.friday.dao.exception.DuplicatedNodeException;
 import de.slux.line.friday.dao.exception.GenericDaoException;
 import de.slux.line.friday.dao.exception.SummonerNotFoundException;
 import de.slux.line.friday.dao.exception.SummonerNumberExceededException;
@@ -275,9 +277,10 @@ public class WarSummonerDao {
 	 * @throws SQLException
 	 * @throws SummonerNotFoundException
 	 * @throws GenericDaoException
+	 * @throws DuplicatedNodeException 
 	 */
 	public void editPlacement(Integer groupId, Integer summonerPos, Character placementPos, Integer node, String champ)
-	        throws SQLException, SummonerNotFoundException, GenericDaoException {
+	        throws SQLException, SummonerNotFoundException, GenericDaoException, DuplicatedNodeException {
 		Map<Integer, WarSummoner> summoners = getAll(groupId);
 		WarSummoner summoner = summoners.get(summonerPos);
 		if (summoner == null) {
@@ -290,6 +293,13 @@ public class WarSummonerDao {
 			// If this happens, it's clearly a bug
 			throw new GenericDaoException("Cannot find position '" + placementPos + "' for summoner "
 			        + summoner.getName() + " (position=" + summonerPos + ")");
+		}
+
+		// Check if we have a duplicated node and it's not the same assingment 
+		for (Entry<Integer, WarSummoner> summonerEntry : summoners.entrySet()) {
+			if (summonerEntry.getValue().nodeExists(node, summonerPos, placementPos)) {
+				throw new DuplicatedNodeException("The node " + node + " has been already reported.");
+			}
 		}
 
 		int placementDbKey = placement.getId();

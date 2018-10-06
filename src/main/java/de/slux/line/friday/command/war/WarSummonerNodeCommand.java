@@ -19,6 +19,7 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.HelpCommand;
+import de.slux.line.friday.dao.exception.DuplicatedNodeException;
 import de.slux.line.friday.dao.exception.SummonerNotFoundException;
 import de.slux.line.friday.dao.exception.WarDaoUnregisteredException;
 import de.slux.line.friday.data.war.WarSummoner;
@@ -129,6 +130,8 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 					return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX
 					        + " " + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
 				} catch (SummonerNotFoundException e) {
+					warnings.append("- " + e.getMessage() + "\n");
+				} catch (DuplicatedNodeException e) {
 					warnings.append("- " + e.getMessage() + "\n");
 				}
 			}
