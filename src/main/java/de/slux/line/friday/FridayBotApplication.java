@@ -25,7 +25,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -122,6 +124,7 @@ public class FridayBotApplication {
 	private Map<Integer, List<HistoryStats>> warNodeStatistics;
 	private Map<String, List<HistoryStats>> warChampStatistics;
 	private Map<String, String> championsData;
+	private Set<String> groupActivities;
 
 	public static void main(String[] args) {
 		SpringApplication.run(FridayBotApplication.class, args);
@@ -144,6 +147,7 @@ public class FridayBotApplication {
 		if (clockReference == null)
 			this.clockReference = Clock.systemDefaultZone();
 
+		this.groupActivities = ConcurrentHashMap.newKeySet();
 		this.startup = new Date(this.clockReference.millis());
 		this.commandIncomingMsgCounter = new AtomicLong();
 		this.totalIncomingMsgCounter = new AtomicLong();
@@ -281,6 +285,8 @@ public class FridayBotApplication {
 	 */
 	private TextMessage handleGroupSource(String message, String userId, MessageEvent<TextMessageContent> event,
 	        final String groupId) {
+
+		this.groupActivities.add(groupId);
 
 		AbstractCommand command = getGroupCommand(message);
 
@@ -629,5 +635,12 @@ public class FridayBotApplication {
 	 */
 	public synchronized void setWarChampStatistics(Map<String, List<HistoryStats>> warChampStatistics) {
 		this.warChampStatistics = warChampStatistics;
+	}
+
+	/**
+	 * @return the groupActivities
+	 */
+	public Set<String> getGroupActivities() {
+		return groupActivities;
 	}
 }

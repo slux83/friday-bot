@@ -3,6 +3,7 @@ package de.slux.line.friday.data.war;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,6 +69,7 @@ public class WarGroup {
 	private String groupName;
 	private GroupStatus groupStatus;
 	private GroupFeature groupFeature;
+	private Date lastActivity;
 
 	/**
 	 * Ctor
@@ -358,7 +360,23 @@ public class WarGroup {
 	@Override
 	public String toString() {
 		return "WarGroup [deathReports=" + deathReports + ", groupId=" + groupId + ", groupName=" + groupName
-		        + ", groupStatus=" + groupStatus + ", groupFeature=" + groupFeature + "]";
+		        + ", groupStatus=" + groupStatus + ", groupFeature=" + groupFeature + ", lastActivity=" + lastActivity
+		        + "]";
+	}
+
+	/**
+	 * @return the lastActivity
+	 */
+	public Date getLastActivity() {
+		return lastActivity;
+	}
+
+	/**
+	 * @param lastActivity
+	 *            the lastActivity to set
+	 */
+	public void setLastActivity(Date lastActivity) {
+		this.lastActivity = lastActivity;
 	}
 
 }

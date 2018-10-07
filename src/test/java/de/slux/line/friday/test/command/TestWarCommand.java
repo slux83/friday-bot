@@ -645,8 +645,9 @@ public class TestWarCommand {
 		assertTrue(history.contains("6* NC"));
 		assertTrue(history.contains("4. Tony 88"));
 		assertTrue(history.contains("A. 5* dupe IMIW (55)"));
-		assertTrue(history.contains("Reported nodes: 2/55"));  // deaths report
-		assertTrue(history.contains("Reported Nodes: 4/55")); // summoners report
+		assertTrue(history.contains("Reported nodes: 2/55")); // deaths report
+		assertTrue(history.contains("Reported Nodes: 4/55")); // summoners
+		                                                      // report
 
 		response = friday.handleTextMessageEvent(deleteHistoryWarCmd);
 		assertTrue(response.getText().contains("DH DM"));

@@ -8,7 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Timestamp;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,9 +38,11 @@ public class WarGroupDao {
 
 	private static final String UPDATE_STATUS_DATA_STATEMENT = "UPDATE war_group SET group_status = ? WHERE group_id = ?";
 
+	private static final String UPDATE_LAST_ACTIVITY_DATA_STATEMENT = "UPDATE war_group SET last_activity = ? WHERE group_id = ?";
+
 	private static final String UPDATE_FEATURES_DATA_STATEMENT = "UPDATE war_group SET group_features = ? WHERE group_id = ?";
 
-	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name, group_status, group_features FROM war_group";
+	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name, group_status, group_features, last_activity FROM war_group";
 
 	public WarGroupDao(Connection conn) {
 		this.conn = conn;
@@ -150,6 +155,51 @@ public class WarGroupDao {
 	}
 
 	/**
+	 * Update the name of the group
+	 * 
+	 * @param groupIds
+	 * @return affected uptades
+	 * @throws SQLException
+	 */
+	public int updateGroupsActivity(Collection<String> groupIds) throws SQLException {
+		PreparedStatement stmt = null;
+		int totalUpdates = 0;
+		long now = System.currentTimeMillis();
+		try {
+			for (String groupId : groupIds) {
+				stmt = conn.prepareStatement(UPDATE_LAST_ACTIVITY_DATA_STATEMENT);
+				stmt.setTimestamp(1, new Timestamp(now));
+				stmt.setString(2, groupId);
+				stmt.executeUpdate();
+				totalUpdates++;
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					LOG.error("Unexpected error " + e, e);
+				}
+			}
+
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+		}
+
+		LOG.info("Updated activity successfully for " + totalUpdates + " group(s)");
+
+		return totalUpdates;
+	}
+
+	/**
 	 * get the key of the table by groupId
 	 * 
 	 * @param groupId
@@ -219,6 +269,7 @@ public class WarGroupDao {
 				groupName = new String(Base64.getDecoder().decode(groupName));
 				int status = rs.getInt("group_status");
 				int features = rs.getInt("group_features");
+				Timestamp lastActivity = rs.getTimestamp("last_activity");
 				GroupStatus gs = WarGroup.statusOf(status);
 				GroupFeature gf = WarGroup.featureOf(features);
 
@@ -226,6 +277,7 @@ public class WarGroupDao {
 				wg.setGroupName(groupName);
 				wg.setGroupStatus(gs);
 				wg.setGroupFeature(gf);
+				wg.setLastActivity(new Date(lastActivity.getTime()));
 
 				groups.put(guid, wg);
 			}

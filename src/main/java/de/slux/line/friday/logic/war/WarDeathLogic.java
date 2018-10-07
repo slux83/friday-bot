@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,29 @@ public class WarDeathLogic {
 		WarDeathDao dao = new WarDeathDao(conn);
 
 		dao.storeData(groupKey, deaths, node, champName, userName);
+	}
+
+	/**
+	 * Update the group activities
+	 * 
+	 * @param groupIds
+	 * @return affected updates
+	 * @throws Exception
+	 */
+	public int updateGroupsActivity(Collection<String> groupIds) throws Exception {
+		Connection conn = DbConnectionPool.getConnection();
+
+		LOG.debug("Connection to the DB valid");
+
+		WarGroupDao dao = new WarGroupDao(conn);
+
+		int updates = dao.updateGroupsActivity(groupIds);
+
+		if (updates != groupIds.size()) {
+			LOG.warn("updateGroupsActivity(groupIds=" + groupIds.size() + ") but updated only " + updates);
+		}
+
+		return updates;
 	}
 
 	/**
