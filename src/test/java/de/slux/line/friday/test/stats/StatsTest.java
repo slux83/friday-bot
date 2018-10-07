@@ -27,6 +27,7 @@ import de.slux.line.friday.scheduler.WarStatsJob;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
+import de.slux.line.friday.test.util.PostConstructHolder;
 import de.slux.line.friday.test.util.scheduler.ContextDummy;
 
 /**
@@ -69,12 +70,7 @@ public class StatsTest {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
@@ -171,12 +167,7 @@ public class StatsTest {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
@@ -199,12 +190,7 @@ public class StatsTest {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		WarStatsJob job = new WarStatsJob();
 		job.execute(new ContextDummy(false));

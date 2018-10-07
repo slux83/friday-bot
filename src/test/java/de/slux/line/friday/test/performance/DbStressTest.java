@@ -28,6 +28,7 @@ import de.slux.line.friday.command.war.WarSummonerNodeCommand;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
+import de.slux.line.friday.test.util.PostConstructHolder;
 
 /**
  * Testing the performances with a huge DB
@@ -64,12 +65,7 @@ public class DbStressTest {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		int totalGroups = 500 * 3; // X alliances with 3 BGs each
 		int totalWars = 20; // X wars total for each group

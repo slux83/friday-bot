@@ -38,6 +38,7 @@ import de.slux.line.friday.scheduler.LinePushJob;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
+import de.slux.line.friday.test.util.PostConstructHolder;
 import de.slux.line.friday.test.util.scheduler.ContextDummy;
 
 /**
@@ -55,13 +56,8 @@ public class TestScheduler {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
-
+		PostConstructHolder.waitForPostConstruct(callback);
+		
 		String userId = UUID.randomUUID().toString();
 
 		for (int i = 0; i < FridayBotApplication.MAX_MESSAGE_BURST + 10; i++) {
@@ -96,12 +92,7 @@ public class TestScheduler {
 		friday.setClockReference(Clock.fixed(Instant.EPOCH, ZoneId.systemDefault()));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		String userId = UUID.randomUUID().toString();
 
@@ -137,12 +128,7 @@ public class TestScheduler {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		Thread.sleep(15000);
 
@@ -179,12 +165,7 @@ public class TestScheduler {
 		friday.setClockReference(Clock.fixed(Instant.EPOCH, ZoneId.systemDefault()));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		Thread.sleep(15000);
 
@@ -225,13 +206,8 @@ public class TestScheduler {
 			friday.setClockReference(Clock.fixed(instant, ZoneId.systemDefault()));
 			friday.postConstruct();
 
-			callback.takeAllMessages();
-			while (callback.takeAllMessages().isEmpty()) {
-				System.out.println("Waiting for stats to become available...");
-				Thread.sleep(1000);
-			}
-			callback.takeAllMessages();
-
+			PostConstructHolder.waitForPostConstruct(callback);
+			
 			Thread.sleep(15000);
 
 			Scheduler scheduler = friday.getEventScheduler().getScheduler();
@@ -274,12 +250,7 @@ public class TestScheduler {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		String group1Id = UUID.randomUUID().toString();
 		String group2Id = UUID.randomUUID().toString();

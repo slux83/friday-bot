@@ -98,7 +98,7 @@ public class GroupActivityJob implements Job {
 			}
 
 			String execTime = String.format("%.2f", (Math.abs(System.currentTimeMillis() - now.getTime()) / 1000.0));
-			StringBuilder sb = new StringBuilder("Groups Inactivity Report :");
+			StringBuilder sb = new StringBuilder("Groups Inactivity Report: ");
 			sb.append("\nExecution time (sec): " + execTime);
 			sb.append("\nTotal Groups: " + allGroups);
 			sb.append("\nWarned: " + warning.size());

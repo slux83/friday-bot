@@ -12,6 +12,7 @@ import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
+import de.slux.line.friday.test.util.PostConstructHolder;
 
 /**
  * @author slux
@@ -25,12 +26,7 @@ public class CommandDistanceTest {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();

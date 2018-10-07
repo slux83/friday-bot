@@ -56,6 +56,7 @@ import de.slux.line.friday.scheduler.McocSchedulerImporter;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
+import de.slux.line.friday.test.util.PostConstructHolder;
 
 /**
  * @author slux
@@ -83,14 +84,8 @@ public class TestUtilityCommand {
 
 		friday.getCommandIncomingMsgCounter().set(10);
 		friday.getTotalIncomingMsgCounter().set(100);
-		Thread.sleep(1000);
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		// 16 secs day
 		System.out.println(AdminStatusCommand.calculateUptime(1000 * 16));
@@ -121,12 +116,7 @@ public class TestUtilityCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		// User help
 		MessageEvent<TextMessageContent> eventUserHelp = MessageEventUtil.createMessageEventUserSource(
@@ -199,13 +189,8 @@ public class TestUtilityCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
-
+		PostConstructHolder.waitForPostConstruct(callback);
+		
 		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEventGroupSource(
 		        UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 		        AbstractCommand.ALL_CMD_PREFIX + " " + InfoCommand.CMD_PREFIX);
@@ -222,12 +207,7 @@ public class TestUtilityCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		JoinEvent event = MessageEventUtil.createJoinEvent(UUID.randomUUID().toString(), UUID.randomUUID().toString());
 
@@ -246,12 +226,7 @@ public class TestUtilityCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		String userId = UUID.randomUUID().toString();
 
@@ -273,12 +248,7 @@ public class TestUtilityCommand {
 		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
 		friday.postConstruct();
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
@@ -361,12 +331,7 @@ public class TestUtilityCommand {
 		friday.getCommandIncomingMsgCounter().set(1000);
 		friday.getTotalIncomingMsgCounter().set(10000);
 
-		callback.takeAllMessages();
-		while (callback.takeAllMessages().isEmpty()) {
-			System.out.println("Waiting for stats to become available...");
-			Thread.sleep(1000);
-		}
-		callback.takeAllMessages();
+		PostConstructHolder.waitForPostConstruct(callback);
 
 		String userId = FridayBotApplication.SLUX_ID;
 		String groupId = UUID.randomUUID().toString();
