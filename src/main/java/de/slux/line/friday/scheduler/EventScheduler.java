@@ -55,6 +55,7 @@ public class EventScheduler {
 	private void initScheduler() throws SchedulerException {
 		addDailyMcocMasterJob();
 		addWarStatsJob();
+		// XXX addGroupsActivityJob();
 	}
 
 	private void addWarStatsJob() throws SchedulerException {
@@ -80,6 +81,38 @@ public class EventScheduler {
 			LOG.info("Refreshing War statistics (NOW): " + eventId);
 
 			JobDetail jobNow = newJob(WarStatsJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
+			        .usingJobData(ID_KEY, eventId).build();
+			Trigger triggerNow = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
+			        .startAt(DateBuilder.futureDate(5, IntervalUnit.SECOND)).build();
+
+			this.scheduler.scheduleJob(jobNow, triggerNow);
+		}
+
+	}
+
+	private void addGroupsActivityJob() throws SchedulerException {
+		String eventId = "groups activity job";
+		LOG.info("Adding event: " + eventId);
+
+		// Every day we check the groups activity
+		JobDetail job1 = newJob(GroupActivityJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
+		        .usingJobData(ID_KEY, eventId).build();
+		Trigger trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId).startNow()
+		        .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(11, 0)).build();
+
+		this.scheduler.scheduleJob(job1, trigger1);
+
+		// If it's already past 11AM past, we need to trigger the event now (one
+		// shot)
+		// to make sure we have statistics already ready
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(System.currentTimeMillis());
+		int hourOfDay = c.get(Calendar.HOUR_OF_DAY);
+
+		if (hourOfDay >= 11) {
+			LOG.info("Checking groups activity (NOW): " + eventId);
+
+			JobDetail jobNow = newJob(GroupActivityJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 			        .usingJobData(ID_KEY, eventId).build();
 			Trigger triggerNow = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
 			        .startAt(DateBuilder.futureDate(5, IntervalUnit.SECOND)).build();
