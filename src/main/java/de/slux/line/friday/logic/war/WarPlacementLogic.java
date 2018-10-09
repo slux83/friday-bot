@@ -173,6 +173,17 @@ public class WarPlacementLogic {
 			}
 
 			sb.append("Reported Nodes: " + reportedNodes.size() + "/" + WarGroup.TOTAL_AW_NODES);
+			
+			if (reportedNodes.size() >= WarGroup.TOTAL_AW_NODES - 5) {
+				// We show the missing nodes if the alliance goes hardcore
+				List<Integer> missingNodes = new ArrayList<>();
+				for (int i = 1; i <= WarGroup.TOTAL_AW_NODES; i++) {
+					if (!reportedNodes.contains(i))
+						missingNodes.add(i);
+				}
+
+				sb.append("\nNodes to report: " + missingNodes);
+			}
 		}
 
 		outcome.add(sb.toString());

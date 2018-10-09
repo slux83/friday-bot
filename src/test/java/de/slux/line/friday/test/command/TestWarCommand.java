@@ -640,6 +640,51 @@ public class TestWarCommand {
 		assertNull(response);
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		// Add almost all the death reports
+		for (int i = 1; i < 52; i++) {
+			MessageEvent<TextMessageContent> addDeathCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+			        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 0 " + i
+			                + " Some Champ");
+
+			friday.handleTextMessageEvent(addDeathCmd);
+		}
+
+		response = friday.handleTextMessageEvent(deathSummaryCmd);
+		assertNull(response);
+		callbackMessages = callback.takeAllMessages();
+		assertTrue(callbackMessages.contains("Nodes to report: [52, 53, 54, 55]"));
+
+		// Add summoners
+		MessageEvent<TextMessageContent> summonersAddAllCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarAddSummonersCommand.CMD_PREFIX
+		                + " summoner1, summoner2, summoner3, summoner4, summoner5, summoner6, summoner7, summoner8, summoner9, summoner10");
+		MessageEvent<TextMessageContent> summonersReadAllCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarAddSummonersCommand.CMD_PREFIX);
+		response = friday.handleTextMessageEvent(summonersAddAllCmd);
+		assertEquals("Added 10 new summoner(s)", response.getText());
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		// Report all the placement for each summoner
+		int node = 1;
+		for (int k = 1; k <= 10; k++) {
+			char ending = 'E';
+			if (k >= 8)
+				ending = 'D';
+			for (char pos = 'A'; pos <= ending; pos++) {
+				MessageEvent<TextMessageContent> summonerNodeCmd = MessageEventUtil.createMessageEventGroupSource(
+				        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + " "
+				                + k + Character.toString(pos) + " " + node + " 5* dupe Medusa");
+				response = friday.handleTextMessageEvent(summonerNodeCmd);
+				assertTrue(response.getText().contains(Character.toString(pos) + ". 5* dupe Medusa (" + node + ")"));
+				assertTrue(callback.takeAllMessages().isEmpty());
+
+				node++;
+			}
+		}
+
+		response = friday.handleTextMessageEvent(summonersReadAllCmd);
+		assertTrue(response.getText().contains("Reported Nodes: 47/55"));
+		assertTrue(callback.takeAllMessages().isEmpty());
 	}
 
 	/**
@@ -655,7 +700,7 @@ public class TestWarCommand {
 		friday.postConstruct();
 
 		PostConstructHolder.waitForPostConstruct(callback);
-		
+
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
