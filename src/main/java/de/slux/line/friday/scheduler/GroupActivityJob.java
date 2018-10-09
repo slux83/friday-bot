@@ -33,10 +33,10 @@ public class GroupActivityJob implements Job {
 	private static Logger LOG = LoggerFactory.getLogger(GroupActivityJob.class);
 
 	/** 5 days => warning */
-	private static final long WARNING_INACTIVITY_MS = 5 * 24 * 60 * 60 * 1000l;
+	public static final long WARNING_INACTIVITY_MS = 5 * 24 * 60 * 60 * 1000l;
 
 	/** 6+ days => leave group */
-	private static final long LEAVE_INACTIVITY_MS = 6 * 24 * 60 * 60 * 1000l;
+	public static final long LEAVE_INACTIVITY_MS = 6 * 24 * 60 * 60 * 1000l;
 
 	/*
 	 * (non-Javadoc)
@@ -100,7 +100,7 @@ public class GroupActivityJob implements Job {
 			String execTime = String.format("%.2f", (Math.abs(System.currentTimeMillis() - now.getTime()) / 1000.0));
 			StringBuilder sb = new StringBuilder("Groups Inactivity Report: ");
 			sb.append("\nExecution time (sec): " + execTime);
-			sb.append("\nTotal Groups: " + allGroups);
+			sb.append("\nTotal Groups: " + allGroups.size());
 			sb.append("\nWarned: " + warning.size());
 			sb.append("\nTo leave: " + leave.size());
 			sb.append("\nActual left: " + leftGroups);

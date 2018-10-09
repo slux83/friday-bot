@@ -155,20 +155,31 @@ public class WarGroupDao {
 	}
 
 	/**
-	 * Update the name of the group
+	 * Update the last activity of the groups with now time
 	 * 
 	 * @param groupIds
 	 * @return affected uptades
 	 * @throws SQLException
 	 */
 	public int updateGroupsActivity(Collection<String> groupIds) throws SQLException {
+		return updateGroupsActivity(groupIds, new Date());
+	}
+
+	/**
+	 * Update the last activity of the group with a given time
+	 * 
+	 * @param groupIds
+	 * @param lastActivity
+	 * @return affected uptades
+	 * @throws SQLException
+	 */
+	public int updateGroupsActivity(Collection<String> groupIds, Date lastActivity) throws SQLException {
 		PreparedStatement stmt = null;
 		int totalUpdates = 0;
-		long now = System.currentTimeMillis();
 		try {
 			for (String groupId : groupIds) {
 				stmt = conn.prepareStatement(UPDATE_LAST_ACTIVITY_DATA_STATEMENT);
-				stmt.setTimestamp(1, new Timestamp(now));
+				stmt.setTimestamp(1, new Timestamp(lastActivity.getTime()));
 				stmt.setString(2, groupId);
 				stmt.executeUpdate();
 				totalUpdates++;

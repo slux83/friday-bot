@@ -158,7 +158,9 @@ public class LineMessagingClientMock implements LineMessagingClient {
 	@Override
 	public CompletableFuture<BotApiResponse> leaveGroup(String groupId) {
 
-		return null;
+		CompletableFuture<BotApiResponse> future = new CompletableFuture<>();
+		future.complete(new BotApiResponse("rosponse", null));
+		return future;		
 	}
 
 	/*

@@ -20,23 +20,27 @@ public final class PostConstructHolder {
 	 * @param callback
 	 * @throws Exception
 	 */
-	public static void waitForPostConstruct(MessagingClientCallbackImpl callback) throws Exception {
+	public static String waitForPostConstruct(MessagingClientCallbackImpl callback) throws Exception {
+
+		StringBuilder allMsg = new StringBuilder();
 
 		int messagesFound = 0;
 		while (messagesFound != 2) {
 			System.out.println("Waiting for stats to become available...");
 			String messages = callback.takeAllMessages();
-			
+
 			if (messages.contains("Groups Inactivity Report"))
 				messagesFound++;
-			
+
 			if (messages.contains("War node stats"))
 				messagesFound++;
-			
-			System.err.println(messages);
+
+			allMsg.append(messages);
 			Thread.sleep(1000);
 		}
-		
+
 		System.out.println("Callbacks received");
+
+		return allMsg.toString();
 	}
 }

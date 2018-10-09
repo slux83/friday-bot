@@ -1,11 +1,15 @@
 package de.slux.line.friday.test.scheduler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Connection;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +23,8 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
@@ -32,8 +38,11 @@ import de.slux.line.friday.command.UnregisterEventsCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
+import de.slux.line.friday.dao.DbConnectionPool;
+import de.slux.line.friday.dao.war.WarGroupDao;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.logic.war.WarDeathLogic;
+import de.slux.line.friday.scheduler.GroupActivityJob;
 import de.slux.line.friday.scheduler.LinePushJob;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
@@ -50,6 +59,10 @@ public class TestScheduler {
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
+		Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) root;
+		logbackLogger.setLevel(ch.qos.logback.classic.Level.INFO);
+
 		// Make sure we have more than 50 groups registered
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 		FridayBotApplication friday = new FridayBotApplication(null);
@@ -57,7 +70,7 @@ public class TestScheduler {
 		friday.postConstruct();
 
 		PostConstructHolder.waitForPostConstruct(callback);
-		
+
 		String userId = UUID.randomUUID().toString();
 
 		for (int i = 0; i < FridayBotApplication.MAX_MESSAGE_BURST + 10; i++) {
@@ -207,7 +220,7 @@ public class TestScheduler {
 			friday.postConstruct();
 
 			PostConstructHolder.waitForPostConstruct(callback);
-			
+
 			Thread.sleep(15000);
 
 			Scheduler scheduler = friday.getEventScheduler().getScheduler();
@@ -357,5 +370,50 @@ public class TestScheduler {
 		response = friday.handleTextMessageEvent(unregisterGroup3Cmd);
 		assertTrue(response.getText().contains("was never registered"));
 		assertTrue(callback.takeAllMessages().isEmpty());
+	}
+
+	@Test
+	public void testScheduledGroupsActivityChecker() throws Exception {
+		// We make sure we have 3 obsolete groups and 2 warnings
+		String[] newGroups = groupsToDelete.toArray(new String[0]);
+		assertEquals(FridayBotApplication.MAX_MESSAGE_BURST + 10, newGroups.length);
+		Connection conn = DbConnectionPool.getConnection();
+		assertNotNull(conn);
+		Collection<String> groupIdsObsolete = new HashSet<>();
+		groupIdsObsolete.add(newGroups[0]);
+		groupIdsObsolete.add(newGroups[1]);
+		groupIdsObsolete.add(newGroups[2]);
+
+		Collection<String> groupIdsToWarn = new HashSet<>();
+		groupIdsToWarn.add(newGroups[3]);
+		groupIdsToWarn.add(newGroups[4]);
+
+		long now = System.currentTimeMillis();
+		long leaveInactivityTime = now - GroupActivityJob.LEAVE_INACTIVITY_MS;
+		long warningInactivityTime = now - GroupActivityJob.WARNING_INACTIVITY_MS;
+
+		WarGroupDao dao = new WarGroupDao(conn);
+		int updates = dao.updateGroupsActivity(groupIdsObsolete, new Date(leaveInactivityTime));
+		assertEquals(3, updates);
+		conn = DbConnectionPool.getConnection();
+		assertNotNull(conn);
+		dao = new WarGroupDao(conn);
+
+		updates = dao.updateGroupsActivity(groupIdsToWarn, new Date(warningInactivityTime));
+		assertEquals(2, updates);
+		System.out.println("Group dates modified");
+
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
+		friday.getGroupActivities().add(newGroups[10]);
+		friday.getGroupActivities().add(newGroups[11]);
+
+		String callbackMessages = PostConstructHolder.waitForPostConstruct(callback);
+
+		assertTrue(callbackMessages.contains("Warned: 2"));
+		assertTrue(callbackMessages.contains("To leave: 3"));
+		assertTrue(callbackMessages.contains("Actual left: 3"));
 	}
 }
