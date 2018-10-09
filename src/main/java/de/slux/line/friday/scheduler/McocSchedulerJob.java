@@ -116,13 +116,13 @@ public class McocSchedulerJob implements Job {
 			if (yesterdayInfo != null && yesterdayInfo.getAwStatus() == AWStatus.MAINTENANCE
 			        && todayInfo.getAwStatus() == AWStatus.PLACEMENT) {
 				createGenericJob(context, "aw officer reminder " + AWStatus.PLACEMENT,
-				        "Reminder for officers:\nPlease make sure you start AW Matching as soon as possible!", 19, 50);
+				        "Reminder for officers:\nAW Matching phase has opened!", 18 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0);
 			}
 
 			switch (todayInfo.getAwStatus()) {
 				case PLACEMENT:
 					createAwJob(context,
-					        "Placement phase should be up by now.\nPlease wait for your BG officer(s) to give you the go ahead to place your defenders!",
+					        "Remind to place your defenders in AW! This is probably your last chance!",
 					        todayInfo.getAwStatus());
 					break;
 
@@ -249,8 +249,16 @@ public class McocSchedulerJob implements Job {
 		JobDetail job1 = newJob(LinePushJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 		        .usingJobData(EventScheduler.MESSAGE_KEY, awMessage).usingJobData(EventScheduler.ID_KEY, eventId)
 		        .build();
-		Trigger trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
-		        .startAt(DateBuilder.todayAt(21 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0, 0)).build();
+
+		Trigger trigger1 = null;
+
+		if (awStatus.equals(AWStatus.PLACEMENT)) {
+			trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
+			        .startAt(DateBuilder.tomorrowAt(17 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0, 0)).build();
+		} else { // Attack
+			trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
+			        .startAt(DateBuilder.tomorrowAt(2 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0, 0)).build();
+		}
 
 		s.scheduleJob(job1, trigger1);
 
