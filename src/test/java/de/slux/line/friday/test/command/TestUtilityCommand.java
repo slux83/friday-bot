@@ -190,7 +190,7 @@ public class TestUtilityCommand {
 		friday.postConstruct();
 
 		PostConstructHolder.waitForPostConstruct(callback);
-		
+
 		MessageEvent<TextMessageContent> event = MessageEventUtil.createMessageEventGroupSource(
 		        UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 		        AbstractCommand.ALL_CMD_PREFIX + " " + InfoCommand.CMD_PREFIX);

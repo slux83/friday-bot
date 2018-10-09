@@ -160,7 +160,7 @@ public class LineMessagingClientMock implements LineMessagingClient {
 
 		CompletableFuture<BotApiResponse> future = new CompletableFuture<>();
 		future.complete(new BotApiResponse("rosponse", null));
-		return future;		
+		return future;
 	}
 
 	/*
