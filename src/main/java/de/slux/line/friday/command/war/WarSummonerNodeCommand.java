@@ -91,6 +91,10 @@ public class WarSummonerNodeCommand extends AbstractCommand {
 				try {
 					totalUpdates++;
 					List<String> args = super.extractArgs(command.trim());
+					if (args.size() < 3) {
+						warnings.append("- Missing args for '" + command.trim() + "'\n");
+						continue;
+					}
 					String arg1 = args.remove(0).trim().toUpperCase();
 					String arg2 = args.remove(0).trim();
 

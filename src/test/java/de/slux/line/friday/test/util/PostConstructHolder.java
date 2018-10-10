@@ -1,5 +1,7 @@
 package de.slux.line.friday.test.util;
 
+import java.util.Calendar;
+
 /**
  * Utility class to wait startup and scheduled activities to be done
  * 
@@ -24,16 +26,23 @@ public final class PostConstructHolder {
 
 		StringBuilder allMsg = new StringBuilder();
 
-		int messagesFound = 0;
-		while (messagesFound != 2) {
+		Calendar c = Calendar.getInstance();
+		int messagesToBeFound = 2;
+		if (c.get(Calendar.HOUR_OF_DAY) < 10)
+			messagesToBeFound = 0;
+
+		if (c.get(Calendar.HOUR_OF_DAY) >= 10 && c.get(Calendar.HOUR_OF_DAY) < 11)
+			messagesToBeFound = 1;
+
+		while (messagesToBeFound > 0) {
 			System.out.println("Waiting for stats to become available...");
 			String messages = callback.takeAllMessages();
 
 			if (messages.contains("Groups Inactivity Report"))
-				messagesFound++;
+				messagesToBeFound--;
 
 			if (messages.contains("War node stats"))
-				messagesFound++;
+				messagesToBeFound--;
 
 			allMsg.append(messages);
 			Thread.sleep(1000);

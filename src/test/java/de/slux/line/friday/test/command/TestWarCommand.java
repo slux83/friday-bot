@@ -129,6 +129,11 @@ public class TestWarCommand {
 		MessageEvent<TextMessageContent> registerMissingArgCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX);
 
+		// Reset command
+		MessageEvent<TextMessageContent> resetCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarResetCommand.CMD_PREFIX);
+
+
 		// Report death command
 		MessageEvent<TextMessageContent> death1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " err 55 5* dupe Dormammu");
@@ -167,6 +172,21 @@ public class TestWarCommand {
 		MessageEvent<TextMessageContent> summonerNodeMulti1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX
 		                + " 2A 11 5* Elektra, 2Z 31 4* domino,6C 53 NC,4C 58 Thor, 1E Elektro");
+
+		// Error case shown in 0.0.4
+		MessageEvent<TextMessageContent> summonersAddAllCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId,
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarAddSummonersCommand.CMD_PREFIX + " sum1,sum2,sum3,sum4,sum5");
+		MessageEvent<TextMessageContent> summonerNodeMultiWithInvalidMixedCmd = MessageEventUtil
+		        .createMessageEventGroupSource(groupId, userId,
+		                AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + " 1blablabla, \n"
+		                        + "1A 47 5* duped Quake,\n" + "1B 50 5* duped King Groot,\n"
+		                        + "1C 24 6* duped Kingpin,\n" + "1D 16 5* duped Cable,\n" + "1E 29 5* duped Medusa, \n"
+		                        + "2blablabla, \n" + "2A 55 6* sabretooth, \n" + "2B 31 5* Domino, \n"
+		                        + "2C 39 5* duped Magik, \n" + "2D 5 5* duped Mordo, \n" + "2E 11 6* Kingpin,\n"
+		                        + "3blablaRydah, \n" + "3A 20 5* duped Ghostrider,\n" + "3B 8 5* Rogue,\n"
+		                        + "3C 6 6* IMIW,\n" + "3D 17 5* duped Gwenpool,\n" + "3E 35 6* Kingpin,\n"
+		                        + "4blabalbal, \n" + "4A 3 5* Sentry,\n" + "4B 21 6* Kingpin,");
 
 		// Summoner rename
 		MessageEvent<TextMessageContent> summonerRename1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId,
@@ -257,7 +277,7 @@ public class TestWarCommand {
 		assertTrue(pushedMessages.contains("2/5"));
 		assertTrue(pushedMessages.contains("2Z"));
 		assertTrue(pushedMessages.contains("position 6"));
-		assertTrue(pushedMessages.contains("Invalid node number"));
+		assertTrue(pushedMessages.contains("Missing args for"));
 		assertFalse(response.getText().contains("A. 5* dupe IMIW (55)"));
 		assertTrue(response.getText().contains("John Doe"));
 		assertTrue(response.getText().contains("Tony 88"));
@@ -316,6 +336,18 @@ public class TestWarCommand {
 		response = friday.handleTextMessageEvent(deleteHistor3WarCmd);
 		assertTrue(response.getText().contains("Could not find any war against '4Loki'"));
 		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(resetCmd);
+		assertTrue(response.getText().contains("War reports cleared"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(summonersAddAllCmd);
+		assertTrue(response.getText().contains("Added 5 new summoner(s)"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(summonerNodeMultiWithInvalidMixedCmd);
+		assertTrue(response.getText().contains("duped King Groot"));
+		assertTrue(callback.takeAllMessages().contains("Missing args for"));
 
 	}
 
