@@ -121,7 +121,7 @@ public class McocSchedulerJob implements Job {
 
 			switch (todayInfo.getAwStatus()) {
 				case PLACEMENT:
-					createAwJob(context, "Remind to place your defenders in AW! This is probably your last chance!",
+					createAwJob(context, "Remember to place your defenders in AW! This is probably your last chance!",
 					        todayInfo.getAwStatus());
 					break;
 
