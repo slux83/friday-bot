@@ -124,7 +124,7 @@ public class WarGroup {
 		report.append("\nTotal deaths: " + totDeathReport.getTotalDeaths());
 		report.append("\nReported nodes: " + reportedNodes.size() + "/" + TOTAL_AW_NODES);
 
-		if (reportedNodes.size() >= TOTAL_AW_NODES - 5 && reportedNodes.size() < TOTAL_AW_NODES) {
+		if (reportedNodes.size() >= TOTAL_AW_NODES - 10 && reportedNodes.size() < TOTAL_AW_NODES) {
 			// We show the missing nodes if the alliance goes hardcore
 			List<Integer> missingNodes = new ArrayList<>();
 			for (int i = 1; i <= TOTAL_AW_NODES; i++) {
