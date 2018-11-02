@@ -174,7 +174,7 @@ public class WarPlacementLogic {
 
 			sb.append("Reported Nodes: " + reportedNodes.size() + "/" + WarGroup.TOTAL_AW_NODES);
 
-			if (reportedNodes.size() >= WarGroup.TOTAL_AW_NODES - 5) {
+			if (reportedNodes.size() >= WarGroup.TOTAL_AW_NODES - 5 && reportedNodes.size() < WarGroup.TOTAL_AW_NODES) {
 				// We show the missing nodes if the alliance goes hardcore
 				List<Integer> missingNodes = new ArrayList<>();
 				for (int i = 1; i <= WarGroup.TOTAL_AW_NODES; i++) {
