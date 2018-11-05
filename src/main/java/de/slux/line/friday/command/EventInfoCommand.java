@@ -212,7 +212,10 @@ public class EventInfoCommand extends AbstractCommand {
 				sb.append("3-Days: Item Use\n");
 				break;
 			case TEAMUSE:
-				sb.append("3-Days: Team Use\n");
+				if (events.getTeamUse() == null)
+					sb.append("3-Days: Team Use\n");
+				else
+					sb.append("3-Days: Team Use " + events.getTeamUse() + "\n");
 				break;
 			case ARENA_WINS:
 				sb.append("3-Days: Arena Wins\n");

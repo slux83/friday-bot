@@ -7,6 +7,8 @@ import java.text.ParseException;
  *
  */
 public class McocDayInfo {
+	private static final int TEAM_USE_PREFIX_BEGINNING = 9;
+
 	public enum AqStatus {
 		OFF, DAY1, DAY2, DAY3, DAY4, DAY5
 	}
@@ -32,6 +34,7 @@ public class McocDayInfo {
 	private CatalystArena catArenaStatus;
 	private OneDayEvent oneDayEventStatus;
 	private ThreeDaysEvent threeDaysEventStatus;
+	private String teamUse;
 
 	/**
 	 * Factory to create the object
@@ -90,9 +93,10 @@ public class McocDayInfo {
 			mdi.threeDaysEventStatus = ThreeDaysEvent.COMPLETION;
 		else if (threeDaysEvent.equals("Item Use"))
 			mdi.threeDaysEventStatus = ThreeDaysEvent.ITEMUSE;
-		else if (threeDaysEvent.equals("Team Use"))
+		else if (threeDaysEvent.startsWith("Team Use")) {
 			mdi.threeDaysEventStatus = ThreeDaysEvent.TEAMUSE;
-		else if (threeDaysEvent.equals("Arena Wins"))
+			mdi.teamUse = threeDaysEvent.substring(TEAM_USE_PREFIX_BEGINNING);
+		} else if (threeDaysEvent.equals("Arena Wins"))
 			mdi.threeDaysEventStatus = ThreeDaysEvent.ARENA_WINS;
 		else
 			mdi.threeDaysEventStatus = ThreeDaysEvent.OFF;
@@ -109,7 +113,7 @@ public class McocDayInfo {
 	public String toString() {
 		return "MCOC Day Events:\n aqStatus=" + aqStatus + "\n awStatus=" + awStatus + "\n catArenaStatus="
 		        + catArenaStatus + "\n oneDayEventStatus=" + oneDayEventStatus + "\n threeDaysEventStatus="
-		        + threeDaysEventStatus;
+		        + threeDaysEventStatus + "\nteamUse=" + teamUse;
 	}
 
 	/**
@@ -185,6 +189,21 @@ public class McocDayInfo {
 	 */
 	public void setThreeDaysEventStatus(ThreeDaysEvent threeDaysEventStatus) {
 		this.threeDaysEventStatus = threeDaysEventStatus;
+	}
+
+	/**
+	 * @return the teamUse
+	 */
+	public String getTeamUse() {
+		return teamUse;
+	}
+
+	/**
+	 * @param teamUse
+	 *            the teamUse to set
+	 */
+	public void setTeamUse(String teamUse) {
+		this.teamUse = teamUse;
 	}
 
 }

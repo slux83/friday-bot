@@ -44,6 +44,7 @@ import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 import de.slux.line.friday.scheduler.GroupActivityJob;
 import de.slux.line.friday.scheduler.LinePushJob;
+import de.slux.line.friday.scheduler.McocSchedulerImporter;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
@@ -167,6 +168,12 @@ public class TestScheduler {
 		}
 
 		assertTrue(masterJobFound);
+	}
+	
+	@Test
+	public void testMcocImporter() throws Exception {
+		McocSchedulerImporter importer = new McocSchedulerImporter();
+		System.out.println(importer.getMcocScheduler());
 	}
 
 	@Test

@@ -165,8 +165,10 @@ public class McocSchedulerJob implements Job {
 				createGenericJob(context, "itemuse", "Item Use event just started!", 17, 30);
 
 			if (todayInfo.getThreeDaysEventStatus() == ThreeDaysEvent.TEAMUSE
-			        && yesterdayInfo.getThreeDaysEventStatus() != ThreeDaysEvent.TEAMUSE)
-				createGenericJob(context, "teamuse", "Team Use event just started!", 17, 30);
+			        && yesterdayInfo.getThreeDaysEventStatus() != ThreeDaysEvent.TEAMUSE) {
+				createGenericJob(context, "teamuse", "Team Use " + todayInfo.getTeamUse() + " event just started!", 17,
+				        30);
+			}
 		} catch (Exception e) {
 			LOG.error("Cannot create three day event job: " + e, e);
 		}
