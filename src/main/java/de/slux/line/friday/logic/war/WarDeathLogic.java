@@ -209,6 +209,27 @@ public class WarDeathLogic {
 	}
 
 	/**
+	 * Delete all the entries for the given node and groupId
+	 * 
+	 * @param groupId
+	 * @param node
+	 * @return the number of deleted entries
+	 * @throws WarDaoUnregisteredException
+	 *             if the group is not registered
+	 */
+	public int deleteNode(String groupId, int node) throws Exception {
+		int groupKey = checkGroupRegistration(groupId);
+
+		Connection conn = DbConnectionPool.getConnection();
+
+		LOG.debug("Connection to the DB valid");
+
+		WarDeathDao dao = new WarDeathDao(conn);
+
+		return dao.deleteNode(groupKey, node);
+	}
+
+	/**
 	 * Return the summary report
 	 * 
 	 * @param groupId

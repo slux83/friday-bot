@@ -33,6 +33,8 @@ public class WarDeathDao {
 
 	private static final String DELETE_DATA_BY_ID_STATEMENT = "DELETE FROM war_death WHERE id = ?";
 
+	private static final String DELETE_DATA_BY_GROUP_ID_AND_NODE_STATEMENT = "DELETE FROM war_death WHERE group_id = ? AND node = ?";
+
 	public WarDeathDao(Connection conn) {
 		this.conn = conn;
 	}
@@ -209,5 +211,42 @@ public class WarDeathDao {
 				LOG.error("Unexpected error " + e, e);
 			}
 		}
+	}
+
+	/**
+	 * Delete all the entries with a given node number, for the given key
+	 * 
+	 * @param groupKey
+	 * @param node
+	 * @return number of deleted entries (or -1 if an error occurred)
+	 * @throws SQLException
+	 */
+	public int deleteNode(int groupKey, int node) throws SQLException {
+		PreparedStatement stmt = null;
+		int deletedRows = -1;
+
+		try {
+			// We delete all the entries matching the node
+			stmt = conn.prepareStatement(DELETE_DATA_BY_GROUP_ID_AND_NODE_STATEMENT);
+			stmt.setInt(1, groupKey);
+			stmt.setInt(2, node);
+			deletedRows = stmt.executeUpdate();
+			LOG.info("Delete rows for groupKey=" + groupKey + ", node: " + node + ". Effected rows: " + deletedRows);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				LOG.error("Unexpected error " + e, e);
+			}
+		}
+
+		return deletedRows;
 	}
 }

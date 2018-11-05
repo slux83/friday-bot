@@ -29,6 +29,7 @@ import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarDeleteCommand;
+import de.slux.line.friday.command.war.WarDeleteNodeCommand;
 import de.slux.line.friday.command.war.WarHistoryCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
 import de.slux.line.friday.command.war.WarReportDeathCommand;
@@ -130,9 +131,8 @@ public class TestWarCommand {
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX);
 
 		// Reset command
-		MessageEvent<TextMessageContent> resetCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarResetCommand.CMD_PREFIX);
-
+		MessageEvent<TextMessageContent> resetCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarResetCommand.CMD_PREFIX);
 
 		// Report death command
 		MessageEvent<TextMessageContent> death1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
@@ -340,11 +340,11 @@ public class TestWarCommand {
 		response = friday.handleTextMessageEvent(resetCmd);
 		assertTrue(response.getText().contains("War reports cleared"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		response = friday.handleTextMessageEvent(summonersAddAllCmd);
 		assertTrue(response.getText().contains("Added 5 new summoner(s)"));
 		assertTrue(callback.takeAllMessages().isEmpty());
-		
+
 		response = friday.handleTextMessageEvent(summonerNodeMultiWithInvalidMixedCmd);
 		assertTrue(response.getText().contains("duped King Groot"));
 		assertTrue(callback.takeAllMessages().contains("Missing args for"));
@@ -510,6 +510,19 @@ public class TestWarCommand {
 		MessageEvent<TextMessageContent> undoDeathCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarUndoDeathCommand.CMD_PREFIX);
 
+		// Delete node command
+		MessageEvent<TextMessageContent> deleteNodeCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarDeleteNodeCommand.CMD_PREFIX + " 55");
+
+		MessageEvent<TextMessageContent> deleteNodeInvalid1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarDeleteNodeCommand.CMD_PREFIX);
+
+		MessageEvent<TextMessageContent> deleteNodeInvalid2Cmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarDeleteNodeCommand.CMD_PREFIX + " wrong");
+
+		MessageEvent<TextMessageContent> deleteNodeInvalid3Cmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarDeleteNodeCommand.CMD_PREFIX + " 155");
+
 		// Save war command
 		MessageEvent<TextMessageContent> saveWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSaveCommand.CMD_PREFIX + " DH DM");
@@ -625,6 +638,26 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("Summoner renamed"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 
+		response = friday.handleTextMessageEvent(deleteNodeCmd);
+		assertTrue(response.getText().contains("Deleted 1"));
+		assertTrue(response.getText().contains("node 55"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(deleteNodeInvalid1Cmd);
+		assertFalse(response.getText().contains("Deleted 1"));
+		assertTrue(response.getText().contains("Missing argument"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(deleteNodeInvalid2Cmd);
+		assertFalse(response.getText().contains("Deleted 1"));
+		assertTrue(response.getText().contains("Expected integer value for <node> but got 'wrong'"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
+		response = friday.handleTextMessageEvent(deleteNodeInvalid3Cmd);
+		assertFalse(response.getText().contains("Deleted 1"));
+		assertTrue(response.getText().contains("Deleted 0 entry"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+
 		response = friday.handleTextMessageEvent(saveWarCmd);
 		assertTrue(response.getText().contains("DH DM"));
 		assertFalse(response.getText(), response.getText().contains("war DH DM"));
@@ -653,7 +686,7 @@ public class TestWarCommand {
 		assertTrue(history.contains("6* NC"));
 		assertTrue(history.contains("4. Tony 88"));
 		assertTrue(history.contains("A. 5* dupe IMIW (55)"));
-		assertTrue(history.contains("Reported nodes: 2/55")); // deaths report
+		assertTrue(history.contains("Reported nodes: 1/55")); // deaths report
 		assertTrue(history.contains("Reported Nodes: 4/55")); // summoners
 		                                                      // report
 
