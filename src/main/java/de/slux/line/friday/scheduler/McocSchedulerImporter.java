@@ -23,9 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class McocSchedulerImporter {
 	private static Logger LOG = LoggerFactory.getLogger(McocSchedulerImporter.class);
-	// private static final String MCOC_SCHEDULER_URL =
-	// "https://pastebin.com/raw/tpUuZnBQ";//latest
-	private static final String MCOC_SCHEDULER_URL = "https://pastebin.com/raw/9MhEghze";// dev
+	private static final String MCOC_SCHEDULER_URL = "https://pastebin.com/raw/9MhEghze";
 	private static final int DATE_INDEX = 1;
 	private static final int AQ_INDEX = 7;
 	private static final int AW_INDEX = 10;
