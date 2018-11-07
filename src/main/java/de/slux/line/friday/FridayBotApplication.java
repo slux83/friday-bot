@@ -90,7 +90,7 @@ import de.slux.line.friday.scheduler.McocSchedulerImporter;
 @SpringBootApplication
 @LineMessageHandler
 public class FridayBotApplication {
-	public static String FRIDAY_VERSION = "0.0.5";
+	public static String FRIDAY_VERSION = "0.0.6";
 	public static final int MAX_LINE_MESSAGE_SIZE = 1500;
 
 	private static Logger LOG = LoggerFactory.getLogger(FridayBotApplication.class);
