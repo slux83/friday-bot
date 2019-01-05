@@ -73,7 +73,7 @@ public class EventInfoCommand extends AbstractCommand {
 				}
 
 				String response = getMessageForEvents(todayEvents);
-				return new TextMessage("MCOC Today's events:\n" + response);
+				return new TextMessage("MCOC Today's upcoming events:\n" + response);
 			} else {
 				List<String> args = super.extractArgs(message);
 				// Clear up prefix
