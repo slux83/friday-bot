@@ -50,6 +50,13 @@ public class GroupActivityJob implements Job {
 		LOG.info("Updating group activities: " + eventId);
 		Date now = new Date();
 
+		// Only if under maintenance
+		if (!FridayBotApplication.getInstance().getIsOperational().get()) {
+			LOG.info("Event discarded due to maintenance status");
+			notifyAdmin("The group activity job has not be executed due to maintenance", false);
+			return;
+		}
+		
 		WarDeathLogic logic = new WarDeathLogic();
 		try {
 			logic.updateGroupsActivity(FridayBotApplication.getInstance().getGroupActivities());
