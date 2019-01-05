@@ -245,6 +245,19 @@ public class WarDeathLogic {
 	}
 
 	/**
+	 * Return the summary report model
+	 * 
+	 * @param groupId
+	 * @return the summary report model
+	 * @throws WarDaoUnregisteredException
+	 *             if the group is not registered
+	 */
+	public WarGroup getSummaryModel(String groupId) throws Exception {
+		int groupKey = checkGroupRegistration(groupId);
+		return getReportModel(groupKey);
+	}
+
+	/**
 	 * Retrieve the group DB key
 	 * 
 	 * @param groupId
