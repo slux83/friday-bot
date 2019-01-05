@@ -147,7 +147,7 @@ public class TestUtilityCommand {
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(eventTodayEvents);
-		assertTrue(response.getText().contains("MCOC Today's events"));
+		assertTrue(response.getText().contains("MCOC Today's upcoming events"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 		System.out.println(response.getText());
 
@@ -490,7 +490,7 @@ public class TestUtilityCommand {
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		response = friday.handleTextMessageEvent(eventTodayEvents);
-		assertTrue(response.getText().contains("MCOC Today's events"));
+		assertTrue(response.getText().contains("MCOC Today's upcoming events"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 		System.out.println(response.getText());
 

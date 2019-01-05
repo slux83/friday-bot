@@ -2,6 +2,8 @@ package de.slux.line.friday.test.util;
 
 import java.util.Calendar;
 
+import de.slux.line.friday.FridayBotApplication;
+
 /**
  * Utility class to wait startup and scheduled activities to be done
  * 
@@ -28,6 +30,10 @@ public final class PostConstructHolder {
 
 		Calendar c = Calendar.getInstance();
 		int messagesToBeFound = 2;
+		
+		if (!FridayBotApplication.getInstance().getIsOperational().get())
+			messagesToBeFound = 1;
+		
 		if (c.get(Calendar.HOUR_OF_DAY) < 10)
 			messagesToBeFound = 0;
 
