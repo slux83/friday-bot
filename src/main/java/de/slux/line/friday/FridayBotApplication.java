@@ -73,6 +73,7 @@ import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
 import de.slux.line.friday.command.war.WarDeleteCommand;
 import de.slux.line.friday.command.war.WarDeleteNodeCommand;
+import de.slux.line.friday.command.war.WarDiversityCommand;
 import de.slux.line.friday.command.war.WarHistoryCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
 import de.slux.line.friday.command.war.WarReportDeathCommand;
@@ -201,6 +202,7 @@ public class FridayBotApplication {
 		this.commands.add(new WarAddSummonersCommand(this.lineMessagingClient));
 		this.commands.add(new WarSummonerNodeCommand(this.lineMessagingClient));
 		this.commands.add(new WarSummonerRenameCommand(this.lineMessagingClient));
+		this.commands.add(new WarDiversityCommand(this.lineMessagingClient));
 
 		// Admin commands
 		this.commands.add(new AdminBroadcastCommand(this.lineMessagingClient));
