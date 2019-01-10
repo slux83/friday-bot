@@ -91,6 +91,8 @@ public class WarDiversityCommand extends AbstractCommand {
 			Map<Integer, List<String>> allReports = new HashMap<>();
 			for (Entry<Integer, WarSummoner> entry : placementTable.entrySet()) {
 				for (Entry<Character, WarSummonerPlacement> placement : entry.getValue().getPlacements().entrySet()) {
+					if (placement.getValue().getChampion() == null)
+						continue;
 					if (!allReports.containsKey(placement.getValue().getNode())) {
 						allReports.put(placement.getValue().getNode(), new ArrayList<>());
 					}
@@ -135,8 +137,8 @@ public class WarDiversityCommand extends AbstractCommand {
 			if (diversityList.values().contains(new WarDiversity(-1, "", null)))
 				uniqueChamps--;
 
-			StringBuilder response = new StringBuilder(
-			        "I have calculated " + uniqueChamps + " unique champion(s) placed by the opponent BG.");
+			StringBuilder response = new StringBuilder("I have calculated " + uniqueChamps + "/" + diversityList.size()
+			        + " unique champion(s) placed by the opponent BG.");
 
 			// Add unknown results
 			long unknownElements = diversityList.values().stream().filter(WarDiversity::isUnknown).count();
@@ -155,12 +157,14 @@ public class WarDiversityCommand extends AbstractCommand {
 
 					// Unknown are processed here
 					if (report.getValue().isUnknown()) {
+						String unknownText = new String(Character.toChars(0x100036)) + " "
+						        + report.getValue().getRawInputData();
 						if (!details.containsKey(report.getValue().getRawInputData())) {
 							ArrayList<Integer> nodes = new ArrayList<>();
 							nodes.add(report.getKey());
-							details.put(report.getValue().getRawInputData(), nodes);
+							details.put(unknownText, nodes);
 						} else {
-							details.get(report.getValue().getRawInputData()).add(report.getKey());
+							details.get(unknownText).add(report.getKey());
 						}
 					} else {
 						if (!details.containsKey(report.getValue().getNormalizedChampionName())) {
