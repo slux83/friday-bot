@@ -77,7 +77,7 @@ public class TestDiversityCommand {
 		// Summoner placement command
 		MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarAddSummonersCommand.CMD_PREFIX
-		                + " slux83, John Doe");
+		                + " slux83, John Doe, Fool");
 
 		// Summoner node
 		MessageEvent<TextMessageContent> summonerNodesCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
@@ -88,7 +88,8 @@ public class TestDiversityCommand {
 		        " 1c 54 5* Abomination,"+
 		        " 1d 36 5* Dr Voodoo,"+
 		        " 2a 24 5* dupe Storm,"+
-		        " 2b 15 5* dupe Scarlet");
+		        " 2b 15 5* dupe Scarlet," +
+		        " 3a 35 anotherfake");
 		
 
 		// Diversity command
@@ -102,6 +103,10 @@ public class TestDiversityCommand {
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("successfully registered using the name group1"));
 
+
+		response = friday.handleTextMessageEvent(diversityVerboseCmd);
+		assertTrue(response.getText().contains("nothing found"));
+
 		response = friday.handleTextMessageEvent(death1Cmd);
 		response = friday.handleTextMessageEvent(death2Cmd);
 		response = friday.handleTextMessageEvent(death3Cmd);
@@ -113,17 +118,20 @@ public class TestDiversityCommand {
 		assertTrue(response.getText().contains("6/55"));
 
 		response = friday.handleTextMessageEvent(summonersAddCmd);
-		assertTrue(response.getText().contains("2 new"));
+		assertTrue(response.getText().contains("3 new"));
 		
 		response = friday.handleTextMessageEvent(summonerNodesCmd);
 		assertTrue(response.getText().contains("slux83"));
 		assertTrue(response.getText().contains("5* dupe Scarlet (15)"));
 		
 		response = friday.handleTextMessageEvent(diversityCmd);
-		System.err.println(response.getText());
+		assertTrue(response.getText().contains("7/9"));
 
 		response = friday.handleTextMessageEvent(diversityVerboseCmd);
-		System.err.println(response.getText());
+		assertTrue(response.getText().contains("Abomination : [54]"));
+		assertTrue(response.getText().contains("Domino : [11]"));
+		assertTrue(response.getText().contains("somewrong fake : [14]"));
+		assertTrue(response.getText().contains("anotherfake : [35]"));
 
 	}
 

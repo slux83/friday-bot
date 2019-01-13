@@ -152,6 +152,9 @@ public class WarDiversityCommand extends AbstractCommand {
 			if (verbose) {
 				LOG.info("Verbose analysis requested");
 				response.append("\n\nDetails:");
+				if (diversityList.isEmpty())
+					response.append(" nothing found.");
+				
 				Map<String, ArrayList<Integer>> details = new TreeMap<>();
 				for (Entry<Integer, WarDiversity> report : diversityList.entrySet()) {
 
