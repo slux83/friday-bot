@@ -3,6 +3,7 @@
  */
 package de.slux.line.friday.command.war;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -65,41 +66,59 @@ public class WarReportDeathCommand extends AbstractCommand {
 			        + " " + CMD_PREFIX + " <deaths> <node> <champ>");
 		}
 
-		int deaths = -1;
-		try {
-			deaths = Integer.parseInt(args.get(0).trim());
-		} catch (NumberFormatException e) {
-			return new TextMessage("Number expected for <deaths>. Please use the following:\n"
-			        + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " <deaths> <node> <champ>");
+		// Deal with multi-insert
+		String content = String.join(" ", args);
+		List<String> commands = Arrays.asList(content.split(","));
+		
+		StringBuilder warnings = new StringBuilder();
+		String lastSuccess = "";
+		for (String command : commands) {
+			args = super.extractArgs(command);
+			
+			int deaths = -1;
+			try {
+				deaths = Integer.parseInt(args.get(0).trim());
+			} catch (NumberFormatException e) {
+				warnings.append("- Number expected for <deaths> but found " + args.get(0).trim() + "\n");
+				continue;
+			}
+
+			if (deaths < 0)
+				deaths = 0;
+
+			int node = -1;
+			try {
+				node = Integer.parseInt(args.get(1).trim());
+			} catch (NumberFormatException e) {
+				warnings.append("- Number expected for <node> but found " + args.get(1).trim() + "\n");
+				continue;
+			}
+
+			args.remove(0);
+			args.remove(0);
+			String champName = String.join(" ", args.toArray(new String[] {}));
+			String userName = super.getUserName(senderId, userId);
+
+			try {
+				WarDeathLogic warModel = new WarDeathLogic();
+				warModel.addDeath(senderId, deaths, node, champName.trim(), userName);
+				lastSuccess = warModel.getReport(senderId);
+			} catch (WarDaoUnregisteredException e) {
+				return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
+				        + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
+			} catch (Exception e) {
+				LOG.error("Unexpected error " + e, e);
+				return new TextMessage("Unexpected error: " + e);
+			}
 		}
-
-		if (deaths < 0)
-			deaths = 0;
-
-		int node = -1;
-		try {
-			node = Integer.parseInt(args.get(1).trim());
-		} catch (NumberFormatException e) {
-			return new TextMessage("Number expected for <node>. Please use the following:\n"
-			        + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " <deaths> <node> <champ>");
+		
+		if (warnings.length() > 0) {
+			warnings.insert(0, "\n\nWarnings:\n");
+			warnings.insert(0, lastSuccess);
+			return new TextMessage(warnings.toString());
 		}
-
-		args.remove(0);
-		args.remove(0);
-		String champName = String.join(" ", args.toArray(new String[] {}));
-		String userName = super.getUserName(senderId, userId);
-
-		try {
-			WarDeathLogic warModel = new WarDeathLogic();
-			warModel.addDeath(senderId, deaths, node, champName.trim(), userName);
-			return new TextMessage(warModel.getReport(senderId));
-		} catch (WarDaoUnregisteredException e) {
-			return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
-			        + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
-		} catch (Exception e) {
-			LOG.error("Unexpected error " + e, e);
-			return new TextMessage("Unexpected error: " + e);
-		}
+		
+		return new TextMessage(lastSuccess);
 
 	}
 
@@ -121,10 +140,12 @@ public class WarReportDeathCommand extends AbstractCommand {
 	@Override
 	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CMD_PREFIX + " <deaths> <node> <champ>\n");
+		sb.append(CMD_PREFIX + " <deaths> <node> <champ>, ...\n");
 		if (verbose) {
-			sb.append("Report a new death in AW\n");
+			sb.append("Report new death(s) in AW\n");
 			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " 2 45 Medusa'");
+			sb.append("Example multi-insert '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX
+			        + " 2 45 Medusa, 1 55 Dormammu'");
 		}
 
 		return sb.toString();

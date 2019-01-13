@@ -59,20 +59,17 @@ public class TestDiversityCommand {
 		MessageEvent<TextMessageContent> registerCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group1");
 
-		// Report death command
-		MessageEvent<TextMessageContent> death1Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		// Report death command with multi-insert
+		MessageEvent<TextMessageContent> deathMultiInsertCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX
-		                + " 2 55 5* Dormammu someSummoner");
-		MessageEvent<TextMessageContent> death2Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
-		        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 1 24 6* Sparky slux");
-		MessageEvent<TextMessageContent> death3Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
-		        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 4 28 5* Dorma blasto55");
-		MessageEvent<TextMessageContent> death4Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
-		        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 1 11 5* Domino slux83");
-		MessageEvent<TextMessageContent> death5Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
-		        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 2 14 5* somewrong fake");
-		MessageEvent<TextMessageContent> death6Cmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
-		        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 2 15 5* somemorewrong fake");
+		                + " 2 55 5* Dormammu someSummoner,"+
+		        		" 1 24 6* Sparky slux," +
+		                "4 28 5* Dorma blasto55    , " +
+		        		" 1 11 5* Domino slux83,\n\t" +
+		                " hello, " +
+		                " 2 14 5* somewrong fake,"+
+		        		" 2 15 5* somemorewrong fake, " +
+		                " 0 [ test broken");
 
 		// Summoner placement command
 		MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
@@ -107,15 +104,13 @@ public class TestDiversityCommand {
 		response = friday.handleTextMessageEvent(diversityVerboseCmd);
 		assertTrue(response.getText().contains("nothing found"));
 
-		response = friday.handleTextMessageEvent(death1Cmd);
-		response = friday.handleTextMessageEvent(death2Cmd);
-		response = friday.handleTextMessageEvent(death3Cmd);
-		response = friday.handleTextMessageEvent(death4Cmd);
-		response = friday.handleTextMessageEvent(death5Cmd);
-		response = friday.handleTextMessageEvent(death6Cmd);
+		response = friday.handleTextMessageEvent(deathMultiInsertCmd);
 		assertTrue(response.getText().contains("880"));
 		assertTrue(response.getText().contains("12"));
 		assertTrue(response.getText().contains("6/55"));
+		assertTrue(response.getText().contains("Warnings"));
+		assertTrue(response.getText().contains("found hello"));
+		assertTrue(response.getText().contains("found ["));
 
 		response = friday.handleTextMessageEvent(summonersAddCmd);
 		assertTrue(response.getText().contains("3 new"));
