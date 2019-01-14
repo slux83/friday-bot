@@ -39,7 +39,7 @@ import de.slux.line.friday.scheduler.McocDayInfo.ThreeDaysEvent;
 public class McocSchedulerJob implements Job {
 
 	// Use this to adjust the UTC to the machine timezone
-	public static final int TIMEZONE_ADJUSTMENT_FROM_UTC = 0;
+	public static final int TIMEZONE_ADJUSTMENT_FROM_UTC = 1;
 
 	private static Logger LOG = LoggerFactory.getLogger(McocSchedulerJob.class);
 
