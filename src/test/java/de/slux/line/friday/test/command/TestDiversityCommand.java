@@ -3,12 +3,8 @@
  */
 package de.slux.line.friday.test.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -20,19 +16,10 @@ import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.war.WarAddSummonersCommand;
-import de.slux.line.friday.command.war.WarDeleteCommand;
-import de.slux.line.friday.command.war.WarDeleteNodeCommand;
 import de.slux.line.friday.command.war.WarDiversityCommand;
-import de.slux.line.friday.command.war.WarHistoryCommand;
 import de.slux.line.friday.command.war.WarRegisterCommand;
 import de.slux.line.friday.command.war.WarReportDeathCommand;
-import de.slux.line.friday.command.war.WarResetCommand;
-import de.slux.line.friday.command.war.WarSaveCommand;
-import de.slux.line.friday.command.war.WarSummaryDeathCommand;
 import de.slux.line.friday.command.war.WarSummonerNodeCommand;
-import de.slux.line.friday.command.war.WarSummonerRenameCommand;
-import de.slux.line.friday.command.war.WarUndoDeathCommand;
-import de.slux.line.friday.logic.war.WarDeathLogic;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;

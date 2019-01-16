@@ -362,15 +362,31 @@ public class StatsLogic {
 		double distanceValue = -1.0;
 		Entry<String, String> recognizedAs = null;
 		for (Map.Entry<String, String> ogChamp : champions.entrySet()) {
-			double d = distance.apply(champ, ogChamp.getKey().toLowerCase());
 
+			for (String champFragment : champ.split(" ")) {
+				if (champFragment.length() < 2)
+					continue;
+
+				double d = distance.apply(champFragment, ogChamp.getKey().toLowerCase());
+
+				if (d > distanceValue) {
+					distanceValue = d;
+					recognizedAs = ogChamp;
+				}
+			}
+
+			// We also match it against the whole string. Eg "black panther
+			// civil war"
+			double d = distance.apply(champ, ogChamp.getKey().toLowerCase());
 			if (d > distanceValue) {
 				distanceValue = d;
 				recognizedAs = ogChamp;
 			}
+
 		}
 
-		return new AbstractMap.SimpleEntry<Double, String>(distanceValue, recognizedAs.getValue());
+		return new AbstractMap.SimpleEntry<Double, String>(distanceValue,
+		        recognizedAs == null ? null : recognizedAs.getValue());
 	}
 
 }
