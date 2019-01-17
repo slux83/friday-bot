@@ -143,7 +143,8 @@ public class WarAddSummonersCommand extends AbstractCommand {
 			sb.append("Use '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " " + ARG_COMPACT
 					+ "' only to simply print the placement table but with in a more dense view.\n");
 			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " John Doe, FooBar, slux83'\n");
-			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " John Doe, FooBar, slux83'");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + "\n");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " " + ARG_COMPACT);
 		}
 
 		return sb.toString();
