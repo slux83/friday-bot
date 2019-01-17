@@ -125,7 +125,74 @@ public class WarPlacementLogic {
 	 * </p>
 	 * 
 	 * @param summoners
-	 * @param isCurrent
+	 * @return the string(s) for the map in a compact view
+	 */
+	public static List<String> getSummonersCompactText(Map<Integer, WarSummoner> summoners) {
+		List<String> outcome = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+		for (Entry<Integer, WarSummoner> entry : summoners.entrySet()) {
+			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
+				outcome.add(sb.toString());
+				sb.setLength(0);
+			}
+
+			sb.append(entry.getValue().getName());
+			sb.append("\n");
+
+			for (Entry<Character, WarSummonerPlacement> placement : entry.getValue().getPlacements().entrySet()) {
+				if (placement.getValue().getChampion() != null && placement.getValue().getNode() > 0) {
+					sb.append(" ");
+					sb.append(placement.getValue().getNode().toString());
+					sb.append(". ");
+					sb.append(placement.getValue().getChampion());
+					sb.append("\n");
+				}
+			}
+
+			sb.append("\n");
+		}
+
+		if (summoners.isEmpty()) {
+			sb.append("Nothing to report");
+		} else {
+			// Add the amount of reported nodes
+			Set<Integer> reportedNodes = new HashSet<>();
+
+			for (WarSummoner ws : summoners.values()) {
+				for (WarSummonerPlacement placement : ws.getPlacements().values()) {
+					if (placement.getNode() > 0 && placement.getNode() <= WarGroup.TOTAL_AW_NODES)
+						reportedNodes.add(placement.getNode());
+				}
+			}
+
+			sb.append("Reported Nodes: " + reportedNodes.size() + "/" + WarGroup.TOTAL_AW_NODES);
+
+			if (reportedNodes.size() >= WarGroup.TOTAL_AW_NODES - 10
+			        && reportedNodes.size() < WarGroup.TOTAL_AW_NODES) {
+				// We show the missing nodes if the alliance goes hardcore
+				List<Integer> missingNodes = new ArrayList<>();
+				for (int i = 1; i <= WarGroup.TOTAL_AW_NODES; i++) {
+					if (!reportedNodes.contains(i))
+						missingNodes.add(i);
+				}
+
+				sb.append("\nNodes to report: " + missingNodes);
+			}
+		}
+
+		outcome.add(sb.toString());
+
+		return outcome;
+	}
+
+	/**
+	 * Stringify the map of summoners for printing/posting.
+	 * <p>
+	 * Split the message in multiple ones if bigger than
+	 * {@link FridayBotApplication#MAX_LINE_MESSAGE_SIZE}
+	 * </p>
+	 * 
+	 * @param summoners
 	 * @return the string(s) for the map
 	 */
 	public static List<String> getSummonersText(Map<Integer, WarSummoner> summoners) {
@@ -174,7 +241,8 @@ public class WarPlacementLogic {
 
 			sb.append("Reported Nodes: " + reportedNodes.size() + "/" + WarGroup.TOTAL_AW_NODES);
 
-			if (reportedNodes.size() >= WarGroup.TOTAL_AW_NODES - 10 && reportedNodes.size() < WarGroup.TOTAL_AW_NODES) {
+			if (reportedNodes.size() >= WarGroup.TOTAL_AW_NODES - 10
+			        && reportedNodes.size() < WarGroup.TOTAL_AW_NODES) {
 				// We show the missing nodes if the alliance goes hardcore
 				List<Integer> missingNodes = new ArrayList<>();
 				for (int i = 1; i <= WarGroup.TOTAL_AW_NODES; i++) {

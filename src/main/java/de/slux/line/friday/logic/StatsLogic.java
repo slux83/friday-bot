@@ -33,7 +33,7 @@ import de.slux.line.friday.data.stats.NodeStats;
 public class StatsLogic {
 	private static Logger LOG = LoggerFactory.getLogger(StatsLogic.class);
 	private static final String CHAMPS_LIST_URL = "https://pastebin.com/raw/K8Xvdmtd";
-	public static final double CHAMP_MATCHING_THRESHOLD = 0.76d;
+	public static final double CHAMP_MATCHING_THRESHOLD = 0.87d;
 
 	/** Key=champ_alias, Val=champ_description */
 	private Map<String, String> champions;

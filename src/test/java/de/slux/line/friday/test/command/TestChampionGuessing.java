@@ -79,8 +79,10 @@ public class TestChampionGuessing {
 			}
 		}
 
-		System.err.println(unknown);
-
+		for (String unk : unknown) {
+			System.err.println(unk);
+		}
+		System.err.flush();
 		for (Entry<String, List<String>> guess : guessed.entrySet()) {
 			System.err.println(guess.getKey());
 			for (String raw : guess.getValue()) {

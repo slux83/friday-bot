@@ -47,34 +47,32 @@ public class TestDiversityCommand {
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group1");
 
 		// Report death command with multi-insert
-		MessageEvent<TextMessageContent> deathMultiInsertCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+		MessageEvent<TextMessageContent> deathMultiInsertCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
+		        userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX
-		                + " 2 55 5* Dormammu someSummoner,"+
-		        		" 1 24 6* Sparky slux," +
-		                "4 28 5* Dorma blasto55    , " +
-		        		" 1 11 5* Domino slux83,\n\t" +
-		                " hello, " +
-		                " 2 14 5* somewrong fake,"+
-		        		" 2 15 5* somemorewrong fake, " +
-		                " 0 [ test broken");
+		                + " 2 55 5* Dormammu someSummoner," 
+		        		+ " 1 24 6* Sparky slux," 
+		                + "4 28 5* Dorma blasto55    , "
+		                + " 1 11 5* Domino slux83,\n\t" 
+		                + " hello, " + " 2 14 5* superman,"
+		                + " 2 15 5* badone, " 
+		                + " 0 [ test broken");
 
 		// Summoner placement command
 		MessageEvent<TextMessageContent> summonersAddCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarAddSummonersCommand.CMD_PREFIX
-		                + " slux83, John Doe, Fool");
+		                + " slux83, John Doe, Fool, Jones, Samantha");
+
+		// Summoner placement command
+		MessageEvent<TextMessageContent> summonersCompactSummaryCmd = MessageEventUtil.createMessageEventGroupSource(
+		        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarAddSummonersCommand.CMD_PREFIX + " compact");
 
 		// Summoner node
 		MessageEvent<TextMessageContent> summonerNodesCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId,
-		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + 
-		        " 1a 28 5* Dormammu,"+
-		        " 1b 55 5* dupe IMIW,"+
-		        " 1c 54 5* Abomination,"+
-		        " 1d 36 5* Dr Voodoo,"+
-		        " 2a 24 5* dupe Storm,"+
-		        " 2b 15 5* dupe Scarlet," +
-		        " 3a 35 anotherfake");
-		
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + " 1a 28 5* Dormammu,"
+		                + " 1b 55 5* dupe IMIW," + " 1c 54 5* Abomination," + " 1d 36 5* Dr Voodoo,"
+		                + " 2a 24 5* dupe Storm," + " 2b 15 5* dupe Scarlet," + " 3a 35 anotherfake");
 
 		// Diversity command
 		MessageEvent<TextMessageContent> diversityCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
@@ -86,7 +84,6 @@ public class TestDiversityCommand {
 		/* Start the workflow */
 		TextMessage response = friday.handleTextMessageEvent(registerCmd);
 		assertTrue(response.getText().contains("successfully registered using the name group1"));
-
 
 		response = friday.handleTextMessageEvent(diversityVerboseCmd);
 		assertTrue(response.getText().contains("nothing found"));
@@ -100,20 +97,27 @@ public class TestDiversityCommand {
 		assertTrue(response.getText().contains("found ["));
 
 		response = friday.handleTextMessageEvent(summonersAddCmd);
-		assertTrue(response.getText().contains("3 new"));
-		
+		assertTrue(response.getText().contains("5 new"));
+
 		response = friday.handleTextMessageEvent(summonerNodesCmd);
 		assertTrue(response.getText().contains("slux83"));
 		assertTrue(response.getText().contains("5* dupe Scarlet (15)"));
-		
+
 		response = friday.handleTextMessageEvent(diversityCmd);
 		assertTrue(response.getText().contains("7/9"));
 
 		response = friday.handleTextMessageEvent(diversityVerboseCmd);
 		assertTrue(response.getText().contains("Abomination : [54]"));
 		assertTrue(response.getText().contains("Domino : [11]"));
-		assertTrue(response.getText().contains("somewrong fake : [14]"));
+		assertTrue(response.getText().contains("superman : [14]"));
 		assertTrue(response.getText().contains("anotherfake : [35]"));
+
+		response = friday.handleTextMessageEvent(summonersCompactSummaryCmd);
+		assertTrue(callback.takeAllMessages().isEmpty());
+		assertTrue(response.getText().contains("slux83"));
+		assertTrue(response.getText().contains("Samantha"));
+		assertTrue(response.getText().contains("15. 5* dupe Scarlet"));
+		assertTrue(response.getText().contains("35. anotherfake"));
 
 	}
 

@@ -27,6 +27,7 @@ import de.slux.line.friday.logic.war.WarPlacementLogic;
  */
 public class WarAddSummonersCommand extends AbstractCommand {
 	public static final String CMD_PREFIX = "summoners";
+	private static final String ARG_COMPACT = "compact";
 	private static Logger LOG = LoggerFactory.getLogger(WarAddSummonersCommand.class);
 
 	/**
@@ -62,9 +63,14 @@ public class WarAddSummonersCommand extends AbstractCommand {
 		try {
 			// we can use this command only to print the last version
 			WarPlacementLogic logic = new WarPlacementLogic();
-			List<String> summonerNames = new ArrayList<>();
-			if (!message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX)) {
-				List<String> args = extractArgs(message);
+			List<String> args = extractArgs(message);
+
+			// Summoner insertion
+			if (!message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX) && !message
+			        .equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " " + ARG_COMPACT)) {
+
+				List<String> summonerNames = new ArrayList<>();
+
 				// clear up prefix
 				args.remove(0);
 				args.remove(0);
@@ -84,9 +90,20 @@ public class WarAddSummonersCommand extends AbstractCommand {
 				return new TextMessage("Added " + summonerNames.size() + " new summoner(s)");
 			}
 
-			// Return the placement
+			// clear up prefix
+			args.remove(0);
+			args.remove(0);
+
+			boolean compactView = !args.isEmpty() && args.get(0).equalsIgnoreCase(ARG_COMPACT);
+
+			// Return the placement summary
 			Map<Integer, WarSummoner> updatedSummoners = logic.getSummoners(senderId);
-			List<String> text = WarPlacementLogic.getSummonersText(updatedSummoners);
+			List<String> text = null;
+
+			if (compactView)
+				text = WarPlacementLogic.getSummonersCompactText(updatedSummoners);
+			else
+				text = WarPlacementLogic.getSummonersText(updatedSummoners);
 			return super.pushMultipleMessages(senderId, "*** CURRENT WAR PLACEMENTS ***\n\n", text);
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + HelpCommand.CMD_PREFIX
@@ -117,12 +134,15 @@ public class WarAddSummonersCommand extends AbstractCommand {
 	@Override
 	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CMD_PREFIX + " <name1, name2, ...?>\n");
+		sb.append(CMD_PREFIX + " " + ARG_COMPACT + "? or <name1, name2, ...?>\n");
 		if (verbose) {
 			sb.append("Add summoner names (max " + WarPlacementLogic.MAX_SUMMONERS
 			        + ") to the placement table for the current war.\n");
 			sb.append("Use '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX
 			        + "' only to simply print the placement table.\n");
+			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " John Doe, FooBar, slux83'");
+			sb.append("Use '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " " + ARG_COMPACT
+			        + "' only to simply print the placement table but with a dense view.\n");
 			sb.append("Example '" + AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " John Doe, FooBar, slux83'");
 		}
 
