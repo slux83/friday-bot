@@ -93,7 +93,7 @@ public class StatsTest {
 
 		// Champ stats command valid (group)
 		MessageEvent<TextMessageContent> champStatsValidGroupCmd = MessageEventUtil.createMessageEventGroupSource(
-		        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " dusa");
+		        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " Medus");
 
 		// Champ stats command valid (user)
 		MessageEvent<TextMessageContent> champStatsValidUserCmd = MessageEventUtil.createMessageEventUserSource(userId,

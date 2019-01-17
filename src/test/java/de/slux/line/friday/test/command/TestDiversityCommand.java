@@ -54,7 +54,8 @@ public class TestDiversityCommand {
 		        		+ " 1 24 6* Sparky slux," 
 		                + "4 28 5* Dorma blasto55    , "
 		                + " 1 11 5* Domino slux83,\n\t" 
-		                + " hello, " + " 2 14 5* superman,"
+		                + " hello, " 
+		                + " 2 14 5* aquaman,"
 		                + " 2 15 5* badone, " 
 		                + " 0 [ test broken");
 
@@ -70,9 +71,14 @@ public class TestDiversityCommand {
 		// Summoner node
 		MessageEvent<TextMessageContent> summonerNodesCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId,
-		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX + " 1a 28 5* Dormammu,"
-		                + " 1b 55 5* dupe IMIW," + " 1c 54 5* Abomination," + " 1d 36 5* Dr Voodoo,"
-		                + " 2a 24 5* dupe Storm," + " 2b 15 5* dupe Scarlet," + " 3a 35 anotherfake");
+		        AbstractCommand.ALL_CMD_PREFIX + " " + WarSummonerNodeCommand.CMD_PREFIX 
+		        	+ " 1a 28 5* Dormammu,"
+		            + " 1b 55 5* dupe IMIW," 
+		        	+ " 1c 54 5* Abomination," 
+		            + " 1d 36 5* Dr Voodoo,"
+		            + " 2a 24 5* dupe Storm," 
+		            + " 2b 15 5* dupe Scarlet," 
+		            + " 3a 35 anotherfake");
 
 		// Diversity command
 		MessageEvent<TextMessageContent> diversityCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
@@ -107,9 +113,10 @@ public class TestDiversityCommand {
 		assertTrue(response.getText().contains("7/9"));
 
 		response = friday.handleTextMessageEvent(diversityVerboseCmd);
+		System.err.println(response);
 		assertTrue(response.getText().contains("Abomination : [54]"));
 		assertTrue(response.getText().contains("Domino : [11]"));
-		assertTrue(response.getText().contains("superman : [14]"));
+		assertTrue(response.getText().contains("aquaman : [14]"));
 		assertTrue(response.getText().contains("anotherfake : [35]"));
 
 		response = friday.handleTextMessageEvent(summonersCompactSummaryCmd);
