@@ -5,6 +5,8 @@ package de.slux.line.friday.logic.war;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -139,12 +141,23 @@ public class WarPlacementLogic {
 			sb.append(entry.getValue().getName());
 			sb.append("\n");
 
-			for (Entry<Character, WarSummonerPlacement> placement : entry.getValue().getPlacements().entrySet()) {
-				if (placement.getValue().getChampion() != null && placement.getValue().getNode() > 0) {
+			List<WarSummonerPlacement> placementPlan = new ArrayList<>(entry.getValue().getPlacements().values());
+
+			// Sort summoner placement by node
+			Collections.sort(placementPlan, new Comparator<WarSummonerPlacement>() {
+
+				@Override
+				public int compare(WarSummonerPlacement o1, WarSummonerPlacement o2) {
+					return o1.getNode() - o2.getNode();
+				}
+			});
+
+			for (WarSummonerPlacement placement : placementPlan) {
+				if (placement.getChampion() != null && placement.getNode() > 0) {
 					sb.append(" ");
-					sb.append(placement.getValue().getNode().toString());
+					sb.append(placement.getNode().toString());
 					sb.append(". ");
-					sb.append(placement.getValue().getChampion());
+					sb.append(placement.getChampion());
 					sb.append("\n");
 				}
 			}

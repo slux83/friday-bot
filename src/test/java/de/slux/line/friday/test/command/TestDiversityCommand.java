@@ -120,6 +120,7 @@ public class TestDiversityCommand {
 		assertTrue(response.getText().contains("anotherfake : [35]"));
 
 		response = friday.handleTextMessageEvent(summonersCompactSummaryCmd);
+		System.err.println(response.getText());
 		assertTrue(callback.takeAllMessages().isEmpty());
 		assertTrue(response.getText().contains("slux83"));
 		assertTrue(response.getText().contains("Samantha"));

@@ -179,13 +179,6 @@ public class WarGroup {
 		StringBuilder sb = new StringBuilder("*** WAR DEATH SUMMARY ***\n");
 
 		List<WarDeath> reports = getDeathReports();
-		Collections.sort(reports, new Comparator<WarDeath>() {
-			@Override
-			public int compare(WarDeath o1, WarDeath o2) {
-				return o1.getNodeNumber() - o2.getNodeNumber();
-			}
-
-		});
 
 		// We sort by node number
 		Collections.sort(reports, new Comparator<WarDeath>() {
@@ -202,13 +195,14 @@ public class WarGroup {
 				outcome.add(sb.toString());
 				sb.setLength(0);
 			}
-
-			sb.append(wd.getNodeNumber());
-			sb.append(". ");
-			sb.append(wd.getChampName());
-			sb.append(" : [");
-			sb.append(wd.getNodeDeaths());
-			sb.append("]\n");
+			if (wd.getNodeDeaths() > 0) {
+				sb.append(wd.getNodeNumber());
+				sb.append(". ");
+				sb.append(wd.getChampName());
+				sb.append(" : [");
+				sb.append(wd.getNodeDeaths());
+				sb.append("]\n");
+			}
 		}
 
 		if (reports.isEmpty())
