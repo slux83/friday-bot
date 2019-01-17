@@ -23,6 +23,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
  */
 public class WarSummaryDeathCommand extends AbstractCommand {
 	public static final String CMD_PREFIX = "summary death";
+	private static final String ARG_COMPACT = "compact";
 	private static Logger LOG = LoggerFactory.getLogger(WarSummaryDeathCommand.class);
 
 	/**
@@ -42,7 +43,8 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 	 */
 	@Override
 	public boolean canTrigger(String message) {
-		return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
+		return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX)
+		        || message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX + " " + ARG_COMPACT);
 	}
 
 	/*
@@ -56,7 +58,17 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 	public TextMessage execute(String userId, String senderId, String message) {
 		try {
 			WarDeathLogic warModel = new WarDeathLogic();
-			List<String> summary = warModel.getSummary(senderId);
+
+			List<String> commandArgs = extractArgs(message);
+
+			// clear up prefix
+			commandArgs.remove(0);
+			commandArgs.remove(0);
+			commandArgs.remove(0);
+
+			boolean compactView = !commandArgs.isEmpty() && commandArgs.get(0).equalsIgnoreCase(ARG_COMPACT);
+
+			List<String> summary = warModel.getSummary(senderId, compactView);
 			return super.pushMultipleMessages(senderId, "", summary);
 		} catch (WarDaoUnregisteredException e) {
 			return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
@@ -85,9 +97,10 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 	@Override
 	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CMD_PREFIX + "\n");
+		sb.append(CMD_PREFIX + " " + ARG_COMPACT + "?\n");
 		if (verbose) {
-			sb.append("Prints a detailed summary of deaths for the current war");
+			sb.append("Prints a detailed summary of deaths for the current war.\n");
+			sb.append("\"" + ARG_COMPACT + "\" argument will give you a more dense summary view");
 		}
 
 		return sb.toString();

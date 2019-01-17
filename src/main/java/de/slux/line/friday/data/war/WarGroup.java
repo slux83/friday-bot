@@ -169,6 +169,60 @@ public class WarGroup {
 	}
 
 	/**
+	 * Get the summary text but compact view
+	 * 
+	 * @return the compact human readable version of the getSummary()
+	 */
+	public List<String> getSummaryTextCompact() {
+		List<String> outcome = new ArrayList<String>();
+
+		StringBuilder sb = new StringBuilder("*** WAR DEATH SUMMARY ***\n");
+
+		List<WarDeath> reports = getDeathReports();
+		Collections.sort(reports, new Comparator<WarDeath>() {
+			@Override
+			public int compare(WarDeath o1, WarDeath o2) {
+				return o1.getNodeNumber() - o2.getNodeNumber();
+			}
+
+		});
+
+		// We sort by node number
+		Collections.sort(reports, new Comparator<WarDeath>() {
+			@Override
+			public int compare(WarDeath o1, WarDeath o2) {
+				return o1.getNodeNumber() - o2.getNodeNumber();
+			}
+		});
+
+		for (WarDeath wd : reports) {
+
+			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
+				// We need to split it and clear
+				outcome.add(sb.toString());
+				sb.setLength(0);
+			}
+
+			sb.append(wd.getNodeNumber());
+			sb.append(". ");
+			sb.append(wd.getChampName());
+			sb.append(" : [");
+			sb.append(wd.getNodeDeaths());
+			sb.append("]\n");
+		}
+
+		if (reports.isEmpty())
+			sb.append("Nothing to report\n\n");
+
+		sb.append("\n");
+		sb.append(getReport());
+
+		outcome.add(sb.toString());
+
+		return outcome;
+	}
+
+	/**
 	 * Get the summary as text
 	 * 
 	 * @return the human readable version of the getSummary()
@@ -388,5 +442,4 @@ public class WarGroup {
 	public void setLastActivity(Date lastActivity) {
 		this.lastActivity = lastActivity;
 	}
-
 }

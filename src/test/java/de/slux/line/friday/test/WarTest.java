@@ -140,9 +140,11 @@ public class WarTest {
 		System.out.println(groupModel2.getDeathReports());
 
 		// Test the summary
-		System.out.println(this.warModel.getSummary(GROUP1_ID));
-		System.out.println(this.warModel.getSummary(GROUP2_ID));
-		List<String> bg3summary = this.warModel.getSummary(GROUP3_ID);
+		System.out.println(this.warModel.getSummary(GROUP1_ID, false));
+		System.out.println(this.warModel.getSummary(GROUP2_ID, false));
+		System.out.println(this.warModel.getSummary(GROUP1_ID, true));
+		System.out.println(this.warModel.getSummary(GROUP2_ID, true));
+		List<String> bg3summary = this.warModel.getSummary(GROUP3_ID, false);
 		System.out.println("HUGE SUMMARY:\n" + bg3summary);
 		Assert.assertTrue(bg3summary.size() > 1);
 

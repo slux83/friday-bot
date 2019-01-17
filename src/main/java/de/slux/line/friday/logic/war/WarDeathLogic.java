@@ -233,15 +233,19 @@ public class WarDeathLogic {
 	 * Return the summary report
 	 * 
 	 * @param groupId
+	 * @param compactView 
 	 * @return the summary text
 	 * @throws WarDaoUnregisteredException
 	 *             if the group is not registered
 	 */
-	public List<String> getSummary(String groupId) throws Exception {
+	public List<String> getSummary(String groupId, boolean compactView) throws Exception {
 		int groupKey = checkGroupRegistration(groupId);
 		WarGroup model = getReportModel(groupKey);
 
-		return model.getSummaryText();
+		if (compactView)
+			return model.getSummaryTextCompact();
+		else
+			return model.getSummaryText();
 	}
 
 	/**
