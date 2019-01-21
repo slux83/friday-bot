@@ -373,7 +373,7 @@ public class TestWarCommand {
 		for (int i = 1; i <= 55; i++) {
 			MessageEvent<TextMessageContent> deathCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
 			        AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 1 " + i
-			                + " 5* duped Dormammu" + i);
+			                + " 5* duped Dormammu hohohoho hohohoho hohohohoho" + i);
 
 			response = friday.handleTextMessageEvent(deathCmd);
 			assertTrue(response.getText().contains("Total deaths: " + i));
@@ -507,8 +507,8 @@ public class TestWarCommand {
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarSummaryDeathCommand.CMD_PREFIX);
 
 		// Death summary compact command
-		MessageEvent<TextMessageContent> deathSummaryCompactCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarSummaryDeathCommand.CMD_PREFIX + " compact");
+		MessageEvent<TextMessageContent> deathSummaryCompactCmd = MessageEventUtil.createMessageEventGroupSource(
+		        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarSummaryDeathCommand.CMD_PREFIX + " compact");
 
 		// Undo death command
 		MessageEvent<TextMessageContent> undoDeathCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
@@ -574,14 +574,14 @@ public class TestWarCommand {
 		assertTrue(response.getText().contains("5* dupe KP"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 		assertTrue(response.getText().contains("3/55"));
-		
+
 		response = friday.handleTextMessageEvent(deathSummaryCompactCmd);
 		assertTrue(response.getText().contains("5* dupe KP"));
 		assertTrue(callback.takeAllMessages().isEmpty());
 		assertTrue(response.getText().contains("3/55"));
 		assertTrue(response.getText().contains("[4]"));
 		assertTrue(response.getText().contains("55. 5* dupe"));
-		
+
 		response = friday.handleTextMessageEvent(undoDeathCmd);
 		assertTrue(response.getText().contains("WAR DEATH REPORT"));
 		assertTrue(response.getText().contains("2/55"));
@@ -717,18 +717,21 @@ public class TestWarCommand {
 		assertTrue(callback.takeAllMessages().isEmpty());
 
 		// Add almost all the death reports
-		for (int i = 1; i < 52; i++) {
+		for (int i = 52, j = 1; i > 0; i--) {
 			MessageEvent<TextMessageContent> addDeathCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
-			        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 0 " + i
-			                + " Some Champ");
+			        userId + "_" + j, AbstractCommand.ALL_CMD_PREFIX + " " + WarReportDeathCommand.CMD_PREFIX + " 0 "
+			                + i + " Some Champ very long description blablabla " + i);
 
 			friday.handleTextMessageEvent(addDeathCmd);
+
+			if ((i % 5) == 0)
+				j++;
 		}
 
 		response = friday.handleTextMessageEvent(deathSummaryCmd);
 		assertNull(response);
 		callbackMessages = callback.takeAllMessages();
-		assertTrue(callbackMessages.contains("Nodes to report: [52, 53, 54, 55]"));
+		assertTrue(callbackMessages.contains("Nodes to report: [53, 54, 55]"));
 
 		// Add summoners
 		MessageEvent<TextMessageContent> summonersAddAllCmd = MessageEventUtil.createMessageEventGroupSource(groupId,

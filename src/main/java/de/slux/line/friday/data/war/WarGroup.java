@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.logic.war.WarDeathLogic;
@@ -227,33 +229,48 @@ public class WarGroup {
 		StringBuilder sb = new StringBuilder("*** WAR DEATH SUMMARY ***\n");
 
 		List<WarDeath> reports = getDeathReports();
-		Collections.sort(reports, new Comparator<WarDeath>() {
-			@Override
-			public int compare(WarDeath o1, WarDeath o2) {
-				return o1.getNodeNumber() - o2.getNodeNumber();
-			}
 
-		});
-
+		// We organize by players
+		Map<String, List<WarDeath>> reportsByPlayer = new TreeMap<>();
 		for (WarDeath wd : reports) {
-
-			if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
-				// We need to split it and clear
-				outcome.add(sb.toString());
-				sb.setLength(0);
+			if (!reportsByPlayer.containsKey(wd.getUserName())) {
+				List<WarDeath> playerReports = new ArrayList<>();
+				playerReports.add(wd);
+				reportsByPlayer.put(wd.getUserName(), playerReports);
+			} else {
+				reportsByPlayer.get(wd.getUserName()).add(wd);
 			}
-
-			sb.append("Node: ");
-			sb.append(wd.getNodeNumber());
-			sb.append("\nTotal Deaths: ");
-			sb.append(wd.getNodeDeaths());
-			sb.append("\nChampion: ");
-			sb.append(wd.getChampName());
-			sb.append("\nPlayer: ");
-			sb.append(wd.getUserName());
-			sb.append("\n\n");
 		}
 
+		for (Entry<String, List<WarDeath>> playerReport : reportsByPlayer.entrySet()) {
+			sb.append(playerReport.getKey());
+			sb.append('\n');
+
+			// We sort by node number
+			Collections.sort(playerReport.getValue(), new Comparator<WarDeath>() {
+				@Override
+				public int compare(WarDeath o1, WarDeath o2) {
+					return o1.getNodeNumber() - o2.getNodeNumber();
+				}
+			});
+
+			for (WarDeath wd : playerReport.getValue()) {
+				if (sb.length() > FridayBotApplication.MAX_LINE_MESSAGE_SIZE) {
+					// We need to split it and clear
+					outcome.add(sb.toString());
+					sb.setLength(0);
+				}
+
+				sb.append(wd.getNodeNumber());
+				sb.append(". ");
+				sb.append(wd.getChampName());
+				sb.append(" : [");
+				sb.append(wd.getNodeDeaths());
+				sb.append("]\n");
+			}
+
+			sb.append('\n');
+		}
 		if (reports.isEmpty())
 			sb.append("Nothing to report\n\n");
 
