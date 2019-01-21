@@ -108,7 +108,7 @@ public class WarStatsCommand extends AbstractCommand {
 	 */
 	@Override
 	public CommandType getType() {
-		return CommandType.CommandTypeShared;
+		return CommandType.CommandTypeUser;
 	}
 
 	/*

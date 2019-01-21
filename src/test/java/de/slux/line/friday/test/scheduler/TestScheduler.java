@@ -228,8 +228,6 @@ public class TestScheduler {
 
 			PostConstructHolder.waitForPostConstruct(callback);
 
-			Thread.sleep(15000);
-
 			Scheduler scheduler = friday.getEventScheduler().getScheduler();
 			boolean masterJobFound = false;
 			boolean warStatsJobFound = false;

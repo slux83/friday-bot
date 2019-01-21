@@ -75,48 +75,29 @@ public class StatsTest {
 		String groupId = UUID.randomUUID().toString();
 		String userId = UUID.randomUUID().toString();
 
-		// Node stats command valid (group)
-		MessageEvent<TextMessageContent> nodeStatsValidGroupCmd = MessageEventUtil.createMessageEventGroupSource(
+		// Node stats command invalid valid (group)
+		MessageEvent<TextMessageContent> nodeStatsInvalidGroupCmd = MessageEventUtil.createMessageEventGroupSource(
 		        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " 44");
 
 		// Node stats command valid (user)
 		MessageEvent<TextMessageContent> nodeStatsValidUserCmd = MessageEventUtil.createMessageEventUserSource(userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " 44");
 
-		// Node stats command invalid (group)
-		MessageEvent<TextMessageContent> nodeStatsInvalidGroupCmd = MessageEventUtil.createMessageEventGroupSource(
-		        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " 144");
-
 		// Node stats command invalid (user)
 		MessageEvent<TextMessageContent> nodeStatsInvalidUserCmd = MessageEventUtil.createMessageEventUserSource(userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " 144");
 
-		// Champ stats command valid (group)
-		MessageEvent<TextMessageContent> champStatsValidGroupCmd = MessageEventUtil.createMessageEventGroupSource(
-		        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " Medus");
-
 		// Champ stats command valid (user)
 		MessageEvent<TextMessageContent> champStatsValidUserCmd = MessageEventUtil.createMessageEventUserSource(userId,
 		        AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " medusa1");
-
-		// Champ stats command invalid (group)
-		MessageEvent<TextMessageContent> champStatsInvalidGroupCmd = MessageEventUtil.createMessageEventGroupSource(
-		        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " FAKE NOT VALID");
 
 		// Champ stats command invalid (user)
 		MessageEvent<TextMessageContent> champStatsInvalidUserCmd = MessageEventUtil.createMessageEventUserSource(
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarStatsCommand.CMD_PREFIX + " FAKE NOT VALID");
 
 		// Node stats tests
-		TextMessage response = friday.handleTextMessageEvent(nodeStatsValidGroupCmd);
+		TextMessage response = friday.handleTextMessageEvent(nodeStatsValidUserCmd);
 		String pushedMessages = callback.takeAllMessages();
-		assertTrue(pushedMessages.isEmpty());
-		System.out.println(response.getText());
-		assertTrue(response.getText().contains("Node 44"));
-		assertTrue(response.getText().contains("Mortality"));
-
-		response = friday.handleTextMessageEvent(nodeStatsValidUserCmd);
-		pushedMessages = callback.takeAllMessages();
 		assertTrue(pushedMessages.isEmpty());
 		assertTrue(response.getText().contains("Node 44"));
 		assertTrue(response.getText().contains("Mortality"));
@@ -124,8 +105,7 @@ public class StatsTest {
 		response = friday.handleTextMessageEvent(nodeStatsInvalidGroupCmd);
 		pushedMessages = callback.takeAllMessages();
 		assertTrue(pushedMessages.isEmpty());
-		assertFalse(response.getText().contains("Node 144"));
-		assertTrue(response.getText().contains("Cannot find any War Statistics for node 144"));
+		assertTrue(response.getText().contains("perhaps you mean 'friday war stats'"));
 
 		response = friday.handleTextMessageEvent(nodeStatsInvalidUserCmd);
 		pushedMessages = callback.takeAllMessages();
@@ -133,24 +113,11 @@ public class StatsTest {
 		assertFalse(response.getText().contains("Node 144"));
 		assertTrue(response.getText().contains("Cannot find any War Statistics for node 144"));
 
-		// Champ stats tests
-		response = friday.handleTextMessageEvent(champStatsValidGroupCmd);
-		pushedMessages = callback.takeAllMessages();
-		assertTrue(pushedMessages.isEmpty());
-		assertTrue(response.getText().contains("Medusa"));
-		assertTrue(response.getText().contains("Mortality"));
-
 		response = friday.handleTextMessageEvent(champStatsValidUserCmd);
 		pushedMessages = callback.takeAllMessages();
 		assertTrue(pushedMessages.isEmpty());
 		assertTrue(response.getText().contains("Medusa"));
 		assertTrue(response.getText().contains("Mortality"));
-
-		response = friday.handleTextMessageEvent(champStatsInvalidGroupCmd);
-		pushedMessages = callback.takeAllMessages();
-		assertTrue(pushedMessages.isEmpty());
-		assertFalse(response.getText().contains("Medusa"));
-		assertTrue(response.getText().contains("FAKE NOT VALID"));
 
 		response = friday.handleTextMessageEvent(champStatsInvalidUserCmd);
 		pushedMessages = callback.takeAllMessages();
