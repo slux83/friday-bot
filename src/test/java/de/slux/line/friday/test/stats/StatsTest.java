@@ -105,7 +105,7 @@ public class StatsTest {
 		response = friday.handleTextMessageEvent(nodeStatsInvalidGroupCmd);
 		pushedMessages = callback.takeAllMessages();
 		assertTrue(pushedMessages.isEmpty());
-		assertTrue(response.getText().contains("perhaps you mean 'friday war stats'"));
+		assertTrue(response.getText().contains("I didn't understand"));
 
 		response = friday.handleTextMessageEvent(nodeStatsInvalidUserCmd);
 		pushedMessages = callback.takeAllMessages();

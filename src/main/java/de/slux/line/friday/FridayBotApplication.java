@@ -303,7 +303,8 @@ public class FridayBotApplication {
 			this.commandIncomingMsgCounter.incrementAndGet();
 		} else if (message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX)) {
 			// Try to see if the user was close to one of the existing commands
-			return getClosestCommandSuggestion(message, Arrays.asList(CommandType.CommandTypeAdmin));
+			return getClosestCommandSuggestion(message,
+			        Arrays.asList(CommandType.CommandTypeAdmin, CommandType.CommandTypeUser));
 		}
 
 		return command.execute(userId, groupId, message);
