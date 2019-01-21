@@ -100,7 +100,8 @@ public class WarSummaryDeathCommand extends AbstractCommand {
 		sb.append(CMD_PREFIX + " " + ARG_COMPACT + "?\n");
 		if (verbose) {
 			sb.append("Prints a detailed summary of deaths for the current war.\n");
-			sb.append("\"" + ARG_COMPACT + "\" argument will give you a more dense summary view");
+			sb.append("\"" + ARG_COMPACT
+			        + "\" argument will give you a more dense summary view, showing only the effective deaths");
 		}
 
 		return sb.toString();

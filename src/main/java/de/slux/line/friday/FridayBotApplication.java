@@ -375,7 +375,8 @@ public class FridayBotApplication {
 	private AbstractCommand getGroupCommand(String text) {
 
 		for (AbstractCommand command : this.commands) {
-			if (!command.getType().equals(CommandType.CommandTypeAdmin) && !command.getType().equals(CommandType.CommandTypeUser) && command.canTrigger(text.trim()))
+			if (!command.getType().equals(CommandType.CommandTypeAdmin)
+			        && !command.getType().equals(CommandType.CommandTypeUser) && command.canTrigger(text.trim()))
 				return command;
 		}
 
@@ -409,7 +410,8 @@ public class FridayBotApplication {
 
 		for (AbstractCommand command : this.commands) {
 			if ((command.getType().equals(CommandType.CommandTypeAdmin)
-			        || command.getType().equals(CommandType.CommandTypeShared)) && command.canTrigger(text.trim()))
+			        || command.getType().equals(CommandType.CommandTypeShared)
+			        || command.getType().equals(CommandType.CommandTypeUser)) && command.canTrigger(text.trim()))
 				return command;
 		}
 
