@@ -121,12 +121,24 @@ public class McocSchedulerJob implements Job {
 
 			switch (todayInfo.getAwStatus()) {
 				case PLACEMENT:
-					createAwJob(context, "Remember to place your defenders in AW! This is probably your last chance!",
-					        todayInfo.getAwStatus());
+					// Matching phase
+					createGenericJob(context, "war_placement_matching",
+					        "Reminder for the officers: " + "AW Matching phase is open for the next 4 hours", 19, 0);
+
+					// War defence phase
+					createGenericJob(context, "war_placement_defence_begin",
+					        "AW placement phase has begun. You can now place your defenders!", 22, 59);
 					break;
 
 				case ATTACK:
-					createAwJob(context, "AW Attack Phase should be up by now!", todayInfo.getAwStatus());
+					// Last placement reminder
+					createGenericJob(context, "war_placement_defence_last",
+					        "AW last reminder: this is your last chance to place your defenders!",
+					        18 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0);
+
+					// Attack phase
+					createGenericJob(context, "war_placement_attack", "AW Attack phase is up!",
+					        19 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0);
 					break;
 
 				case MAINTENANCE:
@@ -211,7 +223,7 @@ public class McocSchedulerJob implements Job {
 	}
 
 	/**
-	 * Create a generic one-shot job
+	 * Create a generic one-shot job. Deals with DST already internally
 	 * 
 	 * @param context
 	 * @param eventId
@@ -228,6 +240,8 @@ public class McocSchedulerJob implements Job {
 
 		JobDetail job1 = newJob(LinePushJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 		        .usingJobData(EventScheduler.MESSAGE_KEY, message).usingJobData(EventScheduler.ID_KEY, eventId).build();
+		// FIXME: this won't work if the hour is tomorrow (todayAt is not
+		// tomorrowAt). Workaround, use 22:59
 		int theHour = (hour + TIMEZONE_ADJUSTMENT_FROM_UTC) % 24;
 		Trigger trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
 		        .startAt(DateBuilder.todayAt(theHour, minute, 0)).build();

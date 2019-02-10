@@ -169,7 +169,7 @@ public class TestScheduler {
 
 		assertTrue(masterJobFound);
 	}
-	
+
 	@Test
 	public void testMcocImporter() throws Exception {
 		McocSchedulerImporter importer = new McocSchedulerImporter();
@@ -217,7 +217,7 @@ public class TestScheduler {
 	public void testSchedulerJobsRollingDays() throws Exception {
 
 		// Should be enough to touch all the events
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 10; i++) {
 			MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
 			FridayBotApplication friday = new FridayBotApplication(null);
 			friday.setLineMessagingClient(new LineMessagingClientMock(callback));
@@ -225,6 +225,7 @@ public class TestScheduler {
 			Instant instant = Instant.now().plus(i, ChronoUnit.DAYS);
 			friday.setClockReference(Clock.fixed(instant, ZoneId.systemDefault()));
 			friday.postConstruct();
+			System.out.println("Time now is (instant " + instant.toString() + "): " + friday.getClockReference());
 
 			PostConstructHolder.waitForPostConstruct(callback);
 
@@ -256,7 +257,7 @@ public class TestScheduler {
 
 			assertTrue(masterJobFound);
 			assertTrue(warStatsJobFound);
-
+			Thread.sleep(11000);
 			friday.getEventScheduler().terminate();
 		}
 	}
