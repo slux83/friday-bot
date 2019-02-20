@@ -144,8 +144,11 @@ public class McocSchedulerJob implements Job {
 
 					break;
 				case MAINTENANCE:
-					// Nothing to do
-					LOG.info("AW is in maintenance, nothing to schedule for today");
+					// Last Enlistment reminder
+					createGenericJob(context, "war_enlistment_last",
+					        "Last reminder for the officers: AW Enlistment phase is about to end in 2h!\n"
+					                + "Make sure you enlist your alliance if you want to participate in the matchmaking",
+					        21, 0);
 					break;
 			}
 		} catch (Exception e) {
