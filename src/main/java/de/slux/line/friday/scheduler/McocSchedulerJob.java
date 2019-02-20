@@ -113,34 +113,36 @@ public class McocSchedulerJob implements Job {
 
 		try {
 			// Create AW job if needed
-			if (yesterdayInfo != null && yesterdayInfo.getAwStatus() == AWStatus.MAINTENANCE
-			        && todayInfo.getAwStatus() == AWStatus.PLACEMENT) {
-				createGenericJob(context, "aw officer reminder " + AWStatus.PLACEMENT,
-				        "Reminder for officers:\nAW Matching phase has opened!", 18 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0);
-			}
-
 			switch (todayInfo.getAwStatus()) {
 				case PLACEMENT:
-					// Matching phase
-					createGenericJob(context, "war_placement_matching",
-					        "Reminder for the officers: " + "AW Matching phase is open for the next 4 hours", 19, 0);
+					// First Enlistment reminder
+					createGenericJob(context, "war_enlistement_first",
+					        "Reminder for the officers: AW Enlistment phase has started!\n"
+					                + "Make sure you enlist your alliance if you want to participate in the matchmaking",
+					        3, 0);
 
 					// War defence phase
 					createGenericJob(context, "war_placement_defence_begin",
-					        "AW placement phase has begun. You can now place your defenders!", 22, 59);
+					        "AW placement phase has begun. You can now place your defenders!", 3, 1);
+
+					// Last placement reminder
+					createGenericJob(context, "war_placement_defence_last",
+					        "AW last reminder: this is your last chance to place your defenders! Attack phase starts in 2h!",
+					        21, 0);
+
+					// Attack phase started
+					createGenericJob(context, "war_placement_attack", "AW Attack phase has begun!", 23, 0);
+
 					break;
 
 				case ATTACK:
-					// Last placement reminder
-					createGenericJob(context, "war_placement_defence_last",
-					        "AW last reminder: this is your last chance to place your defenders!",
-					        18 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0);
+					// Last Enlistment reminder
+					createGenericJob(context, "war_enlistment_last",
+					        "Last reminder for the officers: AW Enlistment phase is about to end in 2h!\n"
+					                + "Make sure you enlist your alliance if you want to participate in the matchmaking",
+					        21, 0);
 
-					// Attack phase
-					createGenericJob(context, "war_placement_attack", "AW Attack phase is up!",
-					        19 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0);
 					break;
-
 				case MAINTENANCE:
 					// Nothing to do
 					LOG.info("AW is in maintenance, nothing to schedule for today");
@@ -257,6 +259,8 @@ public class McocSchedulerJob implements Job {
 	 * @param awStatus
 	 * @throws SchedulerException
 	 */
+	@SuppressWarnings("unused")
+	@Deprecated
 	private void createAwJob(JobExecutionContext context, String awMessage, AWStatus awStatus)
 	        throws SchedulerException {
 		Scheduler s = context.getScheduler();

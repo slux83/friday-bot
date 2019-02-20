@@ -136,7 +136,7 @@ public class EventScheduler {
 		JobDetail job1 = newJob(McocSchedulerJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
 		        .usingJobData(ID_KEY, eventId).build();
 		Trigger trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId).startNow()
-		        .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(3, 0)).build();
+		        .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(0, 5)).build();
 
 		this.scheduler.scheduleJob(job1, trigger1);
 
@@ -146,7 +146,7 @@ public class EventScheduler {
 		c.setTimeInMillis(System.currentTimeMillis());
 		int hourOfDay = c.get(Calendar.HOUR_OF_DAY);
 
-		if (hourOfDay >= 3) {
+		if (hourOfDay >= 0) {
 			LOG.info("Adding event (NOW): " + eventId);
 			// Trigger the mcoc scheduler now (one shot)
 			// Every night we check for events for the day
