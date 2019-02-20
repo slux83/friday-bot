@@ -131,7 +131,7 @@ public class McocSchedulerJob implements Job {
 					        21, 0);
 
 					// Attack phase started
-					createGenericJob(context, "war_placement_attack", "AW Attack phase has begun!", 23, 0);
+					createGenericJob(context, "war_placement_attack", "AW Attack phase has begun!", 22, 59);
 
 					break;
 
