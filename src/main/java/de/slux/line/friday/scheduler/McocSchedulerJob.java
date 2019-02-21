@@ -130,9 +130,6 @@ public class McocSchedulerJob implements Job {
 					        "AW last reminder: this is your last chance to place your defenders! Attack phase starts in 2h!",
 					        21, 0);
 
-					// Attack phase started
-					createGenericJob(context, "war_placement_attack", "AW Attack phase has begun!", 22, 59);
-
 					break;
 
 				case ATTACK:
@@ -142,6 +139,8 @@ public class McocSchedulerJob implements Job {
 					                + "Make sure you enlist your alliance if you want to participate in the matchmaking",
 					        21, 0);
 
+					// Attack phase started
+					createGenericJob(context, "war_placement_attack", "AW Attack phase has begun!", 22, 59);
 					break;
 				case MAINTENANCE:
 					// Last Enlistment reminder
