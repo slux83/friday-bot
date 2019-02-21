@@ -4,10 +4,16 @@
 package de.slux.line.friday.command.admin;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,6 +136,32 @@ public class AdminStatusCommand extends AbstractCommand {
 		LOG.info("Total groups: " + groupCounter);
 		LOG.info("Status: "
 		        + (FridayBotApplication.getInstance().getIsOperational().get() ? "OPERATIONAL" : "MAINTENANCE"));
+
+		sb.append("Scheduled jobs:\n");
+		Scheduler scheduler = FridayBotApplication.getInstance().getEventScheduler().getScheduler();
+		try {
+			for (String groupName : scheduler.getJobGroupNames()) {
+
+				for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+
+					String jobName = jobKey.getName();
+					String jobGroup = jobKey.getGroup();
+
+					// get job's trigger
+					@SuppressWarnings("unchecked")
+					List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+					Date nextFireTime = triggers.get(0).getNextFireTime();
+
+					sb.append("# ");
+					sb.append(FridayBotApplication.SDF.format(nextFireTime));
+					sb.append(" ");
+					sb.append(jobName);
+					sb.append("\n");
+				}
+			}
+		} catch (SchedulerException e) {
+			sb.append("ERROR - Cannot get the scheduled jobs: " + e + "\n");
+		}
 
 		return new TextMessage(sb.toString());
 	}
