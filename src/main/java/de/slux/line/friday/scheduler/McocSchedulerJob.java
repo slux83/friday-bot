@@ -140,7 +140,7 @@ public class McocSchedulerJob implements Job {
 					        21, 0);
 
 					// Attack phase started
-					createGenericJob(context, "war_placement_attack", "AW Attack phase has begun!", 22, 59);
+					createGenericJob(context, "war_attack_begin", "AW Attack phase has begun!", 22, 59);
 					break;
 				case MAINTENANCE:
 					// Last Enlistment reminder
