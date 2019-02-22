@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.slux.line.friday.FridayBotApplication;
-import de.slux.line.friday.scheduler.McocDayInfo.AWStatus;
 import de.slux.line.friday.scheduler.McocDayInfo.CatalystArena;
 import de.slux.line.friday.scheduler.McocDayInfo.OneDayEvent;
 import de.slux.line.friday.scheduler.McocDayInfo.ThreeDaysEvent;
@@ -113,8 +112,12 @@ public class McocSchedulerJob implements Job {
 
 		try {
 			// Create AW job if needed
-			switch (todayInfo.getAwStatus()) {
-				case PLACEMENT:
+			c.setTime(todaysDate);// Reset the time
+
+			switch (c.get(Calendar.DAY_OF_WEEK)) {
+				case Calendar.SUNDAY:
+				case Calendar.WEDNESDAY:
+				case Calendar.FRIDAY:
 					// First Enlistment reminder
 					createGenericJob(context, "war_enlistement_first",
 					        "Reminder for the officers: AW Enlistment phase has started!\n"
@@ -133,17 +136,12 @@ public class McocSchedulerJob implements Job {
 					// Attack phase started
 					createGenericJob(context, "war_attack_begin", "AW Attack phase has begun!", 22, 59);
 					break;
-
-				case ATTACK:
-
-					// Last Enlistment reminder
-					createGenericJob(context, "war_enlistment_last",
-					        "Last reminder for the officers: AW Enlistment phase is about to end in 2h!\n"
-					                + "Make sure you enlist your alliance if you want to participate in the matchmaking",
-					        21, 0);
-
+				case Calendar.MONDAY:
+					// Nothing on Mondays
 					break;
-				case MAINTENANCE:
+				case Calendar.TUESDAY:
+				case Calendar.THURSDAY:
+				case Calendar.SATURDAY:
 					// Last Enlistment reminder
 					createGenericJob(context, "war_enlistment_last",
 					        "Last reminder for the officers: AW Enlistment phase is about to end in 2h!\n"
@@ -250,41 +248,6 @@ public class McocSchedulerJob implements Job {
 		int theHour = (hour + TIMEZONE_ADJUSTMENT_FROM_UTC) % 24;
 		Trigger trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
 		        .startAt(DateBuilder.todayAt(theHour, minute, 0)).build();
-
-		s.scheduleJob(job1, trigger1);
-
-	}
-
-	/**
-	 * Create the AW job for the day
-	 * 
-	 * @param context
-	 * @param awStatus
-	 * @throws SchedulerException
-	 */
-	@SuppressWarnings("unused")
-	@Deprecated
-	private void createAwJob(JobExecutionContext context, String awMessage, AWStatus awStatus)
-	        throws SchedulerException {
-		Scheduler s = context.getScheduler();
-
-		String eventId = "aw reminder " + awStatus;
-		LOG.info("Adding event: " + eventId);
-
-		// One shot AW reminder
-		JobDetail job1 = newJob(LinePushJob.class).withIdentity(eventId + ":" + UUID.randomUUID().toString())
-		        .usingJobData(EventScheduler.MESSAGE_KEY, awMessage).usingJobData(EventScheduler.ID_KEY, eventId)
-		        .build();
-
-		Trigger trigger1 = null;
-
-		if (awStatus.equals(AWStatus.PLACEMENT)) {
-			trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
-			        .startAt(DateBuilder.tomorrowAt(17 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0, 0)).build();
-		} else { // Attack
-			trigger1 = newTrigger().withIdentity(UUID.randomUUID().toString() + "_trigger_" + eventId)
-			        .startAt(DateBuilder.tomorrowAt(2 + TIMEZONE_ADJUSTMENT_FROM_UTC, 0, 0)).build();
-		}
 
 		s.scheduleJob(job1, trigger1);
 
