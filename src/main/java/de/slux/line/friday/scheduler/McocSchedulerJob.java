@@ -115,9 +115,9 @@ public class McocSchedulerJob implements Job {
 			c.setTime(todaysDate);// Reset the time
 
 			switch (c.get(Calendar.DAY_OF_WEEK)) {
-				case Calendar.SUNDAY:
-				case Calendar.WEDNESDAY:
-				case Calendar.FRIDAY:
+				case Calendar.MONDAY:
+				case Calendar.THURSDAY:
+				case Calendar.SATURDAY:
 					// First Enlistment reminder
 					createGenericJob(context, "war_enlistement_first",
 					        "Reminder for the officers: AW Enlistment phase has started!\n"
@@ -136,12 +136,12 @@ public class McocSchedulerJob implements Job {
 					// Attack phase started
 					createGenericJob(context, "war_attack_begin", "AW Attack phase has begun!", 22, 59);
 					break;
-				case Calendar.MONDAY:
-					// Nothing on Mondays
-					break;
 				case Calendar.TUESDAY:
-				case Calendar.THURSDAY:
-				case Calendar.SATURDAY:
+					// Maintenance
+					break;
+				case Calendar.WEDNESDAY:
+				case Calendar.FRIDAY:
+				case Calendar.SUNDAY:
 					// Last Enlistment reminder
 					createGenericJob(context, "war_enlistment_last",
 					        "Last reminder for the officers: AW Enlistment phase is about to end in 2h!\n"
