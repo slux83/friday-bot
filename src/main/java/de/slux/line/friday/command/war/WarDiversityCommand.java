@@ -113,7 +113,7 @@ public class WarDiversityCommand extends AbstractCommand {
 				for (String champ : report.getValue()) {
 					Entry<Double, String> guess = StatsLogic.guessChampion(champ, championsList);
 
-					String guessedChamp = null;
+					String guessedChamp = WarDiversity.UNKNOWN_CHAMP;
 					if (guess.getKey() >= StatsLogic.CHAMP_MATCHING_THRESHOLD) {
 						guessedChamp = guess.getValue();
 					}
