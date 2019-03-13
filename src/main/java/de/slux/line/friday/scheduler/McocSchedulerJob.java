@@ -126,15 +126,15 @@ public class McocSchedulerJob implements Job {
 
 					// War defence phase
 					createGenericJob(context, "war_placement_defence_begin",
-					        "AW placement phase has begun. You can now place your defenders!", 3, 1);
+					        "AW placement phase should be up by now. You can now place your defenders!", 0, 1);
 
 					// Last placement reminder
 					createGenericJob(context, "war_placement_defence_last",
-					        "AW last reminder: this is your last chance to place your defenders! Attack phase starts in 2h!",
-					        21, 0);
+					        "AW last reminder: this is your last chance to place your defenders! Attack phase will start soon!",
+					        19, 0);
 
 					// Attack phase started
-					createGenericJob(context, "war_attack_begin", "AW Attack phase has begun!", 22, 59);
+					createGenericJob(context, "war_attack_begin", "AW Attack phase should be up by now!", 20, 30);
 					break;
 				case Calendar.TUESDAY:
 					// Maintenance
