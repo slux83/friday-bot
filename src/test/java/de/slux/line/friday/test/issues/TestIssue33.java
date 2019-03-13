@@ -102,8 +102,8 @@ public class TestIssue33 {
 		assertTrue(response.getText().contains("Reported nodes: 49/55"));
 
 		response = friday.handleTextMessageEvent(diversityCmd);
-		System.err.println(response.getText());
-
+		assertTrue(response.getText().contains("Dormammu"));
+		assertTrue(response.getText().contains("Hyperion"));
 	}
 
 }
