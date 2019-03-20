@@ -45,6 +45,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
 import de.slux.line.friday.scheduler.GroupActivityJob;
 import de.slux.line.friday.scheduler.LinePushJob;
 import de.slux.line.friday.scheduler.McocSchedulerImporter;
+import de.slux.line.friday.scheduler.McocSchedulerJob;
 import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
@@ -63,6 +64,9 @@ public class TestScheduler {
 		Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 		ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) root;
 		logbackLogger.setLevel(ch.qos.logback.classic.Level.INFO);
+
+		// Adjust timezone via sys property
+		System.setProperty(McocSchedulerJob.TIMEZONE_SYSPROP_ADJUSTMENT_FROM_UTC, "0");
 
 		// Make sure we have more than 50 groups registered
 		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();

@@ -23,6 +23,7 @@ java -Dline.bot.channelSecret="$LINE_CHANNEL_SECRET" \
      -Dfriday.db.port="$DB_PORT" \
      -Dfriday.db.name="$DB_NAME" \
      -Dfriday.maintenance=true \
+     -Dfriday.scheduler.timefix=0 \
      $JAVA_OPTS \
      -cp "${DIR}/target/friday-bot-${FRIDAY_VERSION}.jar:${DIR}/target/libs/*" ${MAIN} > /dev/null 2>&1 &
 

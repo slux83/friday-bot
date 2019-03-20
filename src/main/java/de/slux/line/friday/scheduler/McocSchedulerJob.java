@@ -37,10 +37,24 @@ import de.slux.line.friday.scheduler.McocDayInfo.ThreeDaysEvent;
  */
 public class McocSchedulerJob implements Job {
 
-	// Use this to adjust the UTC to the machine timezone
-	public static final int TIMEZONE_ADJUSTMENT_FROM_UTC = 1;
+	public static final String TIMEZONE_SYSPROP_ADJUSTMENT_FROM_UTC = "friday.scheduler.timefix";
+
+	// Used to adjust the UTC to the machine timezone (default)
+	public static int TIMEZONE_ADJUSTMENT_FROM_UTC = 1;
 
 	private static Logger LOG = LoggerFactory.getLogger(McocSchedulerJob.class);
+
+	static {
+		String prop = System.getProperty(TIMEZONE_SYSPROP_ADJUSTMENT_FROM_UTC);
+		if (prop != null) {
+			try {
+				TIMEZONE_ADJUSTMENT_FROM_UTC = Integer.parseInt(prop);
+				LOG.warn("Adjusting scheduler timezone to " + TIMEZONE_ADJUSTMENT_FROM_UTC + " hour(s)");
+			} catch (NumberFormatException e) {
+				LOG.error("Invalid value for system property " + TIMEZONE_SYSPROP_ADJUSTMENT_FROM_UTC + "=" + prop);
+			}
+		}
+	}
 
 	/**
 	 * Ctor
@@ -131,7 +145,7 @@ public class McocSchedulerJob implements Job {
 					// Last placement reminder
 					createGenericJob(context, "war_placement_defence_last",
 					        "AW last reminder: this is your last chance to place your defenders! Attack phase will start soon!",
-					        19, 0);
+					        18, 0);
 
 					// Attack phase started
 					createGenericJob(context, "war_attack_begin", "AW Attack phase should be up by now!", 20, 30);
