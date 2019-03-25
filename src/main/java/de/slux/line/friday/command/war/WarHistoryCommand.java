@@ -4,7 +4,9 @@
 package de.slux.line.friday.command.war;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,6 +20,7 @@ import com.linecorp.bot.model.message.TextMessage;
 
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.HelpCommand;
+import de.slux.line.friday.csv.PastebinUtil;
 import de.slux.line.friday.dao.exception.WarDaoUnregisteredException;
 import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.data.war.WarSummoner;
@@ -31,6 +34,7 @@ import de.slux.line.friday.logic.war.WarPlacementLogic;
  */
 public class WarHistoryCommand extends AbstractCommand {
 	public static final String CMD_PREFIX = "history";
+	public static final String CMD_ARG_EXPORT = "export";
 	private static Logger LOG = LoggerFactory.getLogger(WarHistoryCommand.class);
 
 	/**
@@ -76,8 +80,12 @@ public class WarHistoryCommand extends AbstractCommand {
 				return new TextMessage("Unexpected error: " + e);
 			}
 		} else {
-			// Get the summary of a specific day
+			// Get the summary of a specific day (export in case)
 			List<String> argsAsList = super.extractArgs(message);
+			boolean export = argsAsList.stream().anyMatch(s -> s.equalsIgnoreCase(CMD_ARG_EXPORT));
+
+			// Cleanup
+			argsAsList.removeIf(s -> s.equalsIgnoreCase(CMD_ARG_EXPORT));
 
 			String day = argsAsList.get(2);
 			try {
@@ -99,18 +107,55 @@ public class WarHistoryCommand extends AbstractCommand {
 					super.messagingClient.pushMessage(pushMessage).get();
 				}
 
-				for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
-					List<String> summaryText = historyEntry.getValue().getSummaryText();
-					super.pushMultipleMessages(senderId,
-					        "*** " + day.trim() + " - " + historyEntry.getKey() + " ***\n\n", summaryText, true);
-				}
+				if (!export) {
+					for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
+						List<String> summaryText = historyEntry.getValue().getSummaryText();
+						super.pushMultipleMessages(senderId,
+						        "*** " + day.trim() + " - " + historyEntry.getKey() + " ***\n\n", summaryText, true);
+					}
 
-				for (Entry<String, Map<Integer, WarSummoner>> placements : historyPlacement.entrySet()) {
-					String allyTag = placements.getKey();
-					Map<Integer, WarSummoner> placementTable = placements.getValue();
-					List<String> text = WarPlacementLogic.getSummonersText(placementTable);
-					super.pushMultipleMessages(senderId, "*** " + day.trim() + " - " + allyTag + " ***\n\n", text,
-					        true);
+					for (Entry<String, Map<Integer, WarSummoner>> placements : historyPlacement.entrySet()) {
+						String allyTag = placements.getKey();
+						Map<Integer, WarSummoner> placementTable = placements.getValue();
+						List<String> text = WarPlacementLogic.getSummonersText(placementTable);
+						super.pushMultipleMessages(senderId, "*** " + day.trim() + " - " + allyTag + " ***\n\n", text,
+						        true);
+					}
+				} else {
+					// Export data
+					super.pushMultipleMessages(senderId, "", Arrays.asList("Exporting data..."), true);
+
+					Map<String, String> postedUrls = new HashMap<>();
+					for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
+						String summaryTextCsv = historyEntry.getValue().getSummaryTextCsv();
+						String title = day.trim() + " - " + historyEntry.getKey() + " (deaths)";
+
+						String url = PastebinUtil.pasteData(title, summaryTextCsv);
+						postedUrls.put(title, url);
+					}
+
+					for (Entry<String, Map<Integer, WarSummoner>> placements : historyPlacement.entrySet()) {
+						String allyTag = placements.getKey();
+						Map<Integer, WarSummoner> placementTable = placements.getValue();
+						String text = WarPlacementLogic.getSummonersTextCsv(placementTable);
+						String title = day.trim() + " - " + allyTag + " (placements)";
+
+						String url = PastebinUtil.pasteData(title, text);
+						postedUrls.put(title, url);
+					}
+
+					StringBuilder sb = new StringBuilder("The following files have been created as CSV export (expires in 10 min):\n");
+					if (postedUrls.isEmpty())
+						sb.append("None");
+
+					for (Map.Entry<String, String> entry : postedUrls.entrySet()) {
+						sb.append(entry.getKey());
+						sb.append(": ");
+						sb.append(entry.getValue());
+						sb.append("\n");
+					}
+
+					return new TextMessage(sb.toString());
 				}
 
 			} catch (ParseException e) {

@@ -219,6 +219,53 @@ public class WarGroup {
 	}
 
 	/**
+	 * Get the summary as text CSV export
+	 * 
+	 * @return the human readable version of the getSummary()
+	 */
+	public String getSummaryTextCsv() {
+		StringBuilder sb = new StringBuilder("Node,Deaths,Champion,Summoner\n");
+
+		List<WarDeath> reports = getDeathReports();
+
+		// We organize by players
+		Map<String, List<WarDeath>> reportsByPlayer = new TreeMap<>();
+		for (WarDeath wd : reports) {
+			if (!reportsByPlayer.containsKey(wd.getUserName())) {
+				List<WarDeath> playerReports = new ArrayList<>();
+				playerReports.add(wd);
+				reportsByPlayer.put(wd.getUserName(), playerReports);
+			} else {
+				reportsByPlayer.get(wd.getUserName()).add(wd);
+			}
+		}
+
+		for (Entry<String, List<WarDeath>> playerReport : reportsByPlayer.entrySet()) {
+			// We sort by node number
+			Collections.sort(playerReport.getValue(), new Comparator<WarDeath>() {
+				@Override
+				public int compare(WarDeath o1, WarDeath o2) {
+					return o1.getNodeNumber() - o2.getNodeNumber();
+				}
+			});
+
+			for (WarDeath wd : playerReport.getValue()) {
+				
+				sb.append(wd.getNodeNumber());
+				sb.append(",");
+				sb.append(wd.getNodeDeaths());
+				sb.append(",");
+				sb.append(wd.getChampName());
+				sb.append(",");
+				sb.append(playerReport.getKey());
+				sb.append("\n");
+			}
+		}
+		
+		return sb.toString();
+	}
+	
+	/**
 	 * Get the summary as text
 	 * 
 	 * @return the human readable version of the getSummary()

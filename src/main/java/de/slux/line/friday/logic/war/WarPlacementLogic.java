@@ -272,4 +272,31 @@ public class WarPlacementLogic {
 		return outcome;
 	}
 
+	/**
+	 * CSV Export of the map of summoners for posting.
+	 * 
+	 * @param summoners
+	 * @return the string of the export
+	 */
+	public static String getSummonersTextCsv(Map<Integer, WarSummoner> summoners) {
+		StringBuilder sb = new StringBuilder("Summoner,Node,Champion\n");
+		for (Entry<Integer, WarSummoner> entry : summoners.entrySet()) {
+
+			for (Entry<Character, WarSummonerPlacement> placement : entry.getValue().getPlacements().entrySet()) {
+				sb.append(entry.getValue().getName());
+				if (placement.getValue().getChampion() != null && placement.getValue().getNode() > 0) {
+					sb.append(",");
+					sb.append(placement.getValue().getNode().toString());
+					sb.append(",");
+					sb.append(placement.getValue().getChampion());
+					sb.append("\n");
+				} else {
+					sb.append(",,\n");
+				}
+			}
+		}
+
+		return sb.toString();
+	}
+
 }
