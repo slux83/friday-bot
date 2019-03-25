@@ -544,6 +544,11 @@ public class TestWarCommand {
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarHistoryCommand.CMD_PREFIX + " "
 		                + WarDeathLogic.SDF.format(new Date()));
 
+		// Specific history command CVS export
+		MessageEvent<TextMessageContent> specificHistoryWarExportCmd = MessageEventUtil.createMessageEventGroupSource(
+		        groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarHistoryCommand.CMD_PREFIX + " "
+		                + WarHistoryCommand.CMD_ARG_EXPORT + " " + WarDeathLogic.SDF.format(new Date()));
+
 		// Delete history command
 		MessageEvent<TextMessageContent> deleteHistoryWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
 		        userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarDeleteCommand.CMD_PREFIX + " "
@@ -562,6 +567,12 @@ public class TestWarCommand {
 		String history = callback.takeAllMessages();
 		assertTrue(history.contains("No death reports found for"));
 		assertTrue(history.contains("No placement reports found for"));
+
+		response = friday.handleTextMessageEvent(specificHistoryWarExportCmd);
+		history = callback.takeAllMessages();
+		// XXX
+		System.out.println(history);
+		System.out.println(response.getText());
 
 		response = friday.handleTextMessageEvent(death1Cmd);
 		response = friday.handleTextMessageEvent(death2Cmd);
@@ -764,6 +775,17 @@ public class TestWarCommand {
 		response = friday.handleTextMessageEvent(summonersReadAllCmd);
 		assertTrue(response.getText().contains("Reported Nodes: 47/55"));
 		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(saveWarCmd);
+		assertTrue(response.getText().contains("DH DM"));
+		assertFalse(response.getText(), response.getText().contains("war DH DM"));
+		assertTrue(callback.takeAllMessages().isEmpty());
+		
+		response = friday.handleTextMessageEvent(specificHistoryWarExportCmd);
+		history = callback.takeAllMessages();
+		// XXX
+		System.out.println(history);
+		System.out.println(response.getText());
 	}
 
 	/**
