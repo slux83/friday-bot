@@ -95,19 +95,19 @@ public class WarHistoryCommand extends AbstractCommand {
 				Map<String, Map<Integer, WarSummoner>> historyPlacement = warModel.getHistorySummaryForReports(senderId,
 				        warDate);
 
-				if (historyDeaths.isEmpty()) {
-					PushMessage pushMessage = new PushMessage(senderId,
-					        new TextMessage("No death reports found for " + day));
-					super.messagingClient.pushMessage(pushMessage).get();
-				}
-
-				if (historyPlacement.isEmpty()) {
-					PushMessage pushMessage = new PushMessage(senderId,
-					        new TextMessage("No placement reports found for " + day));
-					super.messagingClient.pushMessage(pushMessage).get();
-				}
-
 				if (!export) {
+					if (historyDeaths.isEmpty()) {
+						PushMessage pushMessage = new PushMessage(senderId,
+						        new TextMessage("No death reports found for " + day));
+						super.messagingClient.pushMessage(pushMessage).get();
+					}
+
+					if (historyPlacement.isEmpty()) {
+						PushMessage pushMessage = new PushMessage(senderId,
+						        new TextMessage("No placement reports found for " + day));
+						super.messagingClient.pushMessage(pushMessage).get();
+					}
+
 					for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
 						List<String> summaryText = historyEntry.getValue().getSummaryText();
 						super.pushMultipleMessages(senderId,
@@ -144,7 +144,8 @@ public class WarHistoryCommand extends AbstractCommand {
 						postedUrls.put(title, url);
 					}
 
-					StringBuilder sb = new StringBuilder("The following files have been created as CSV export (expires in 10 min):\n");
+					StringBuilder sb = new StringBuilder(
+					        "The following files have been created as CSV export (expires in 10 min):\n");
 					if (postedUrls.isEmpty())
 						sb.append("None");
 
@@ -191,9 +192,10 @@ public class WarHistoryCommand extends AbstractCommand {
 	@Override
 	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CMD_PREFIX + " <date?>\n");
+		sb.append(CMD_PREFIX + "<" + CMD_ARG_EXPORT + "?> <date?>\n");
 		if (verbose) {
 			sb.append("Prints all the saved wars or a specific one, if <date> is provided.\n");
+			sb.append("Use " + CMD_ARG_EXPORT + " argument to export as CVS\n");
 			sb.append("Date format is yyyy-MM-dd e.g. 2018-05-24");
 		}
 

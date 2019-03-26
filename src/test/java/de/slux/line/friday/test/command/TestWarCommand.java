@@ -570,9 +570,8 @@ public class TestWarCommand {
 
 		response = friday.handleTextMessageEvent(specificHistoryWarExportCmd);
 		history = callback.takeAllMessages();
-		// XXX
-		System.out.println(history);
-		System.out.println(response.getText());
+		assertTrue(history.contains("Exporting data..."));
+		assertTrue(response.getText().contains("None"));
 
 		response = friday.handleTextMessageEvent(death1Cmd);
 		response = friday.handleTextMessageEvent(death2Cmd);
@@ -783,9 +782,8 @@ public class TestWarCommand {
 		
 		response = friday.handleTextMessageEvent(specificHistoryWarExportCmd);
 		history = callback.takeAllMessages();
-		// XXX
-		System.out.println(history);
-		System.out.println(response.getText());
+		assertTrue(history.contains("Exporting data..."));
+		assertTrue(response.getText().contains("https://pastebin.com"));
 	}
 
 	/**
