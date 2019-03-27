@@ -784,6 +784,7 @@ public class TestWarCommand {
 		history = callback.takeAllMessages();
 		assertTrue(history.contains("Exporting data..."));
 		assertTrue(response.getText().contains("https://pastebin.com"));
+		System.out.println(response.getText());
 	}
 
 	/**
