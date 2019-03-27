@@ -192,7 +192,7 @@ public class WarHistoryCommand extends AbstractCommand {
 	@Override
 	public String getHelp(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CMD_PREFIX + "<" + CMD_ARG_EXPORT + "?> <date?>\n");
+		sb.append(CMD_PREFIX + " <" + CMD_ARG_EXPORT + "?> <date?>\n");
 		if (verbose) {
 			sb.append("Prints all the saved wars or a specific one, if <date> is provided.\n");
 			sb.append("Use " + CMD_ARG_EXPORT + " argument to export as CVS\n");
