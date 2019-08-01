@@ -23,13 +23,13 @@ import org.slf4j.LoggerFactory;
  */
 public class McocSchedulerImporter {
 	private static Logger LOG = LoggerFactory.getLogger(McocSchedulerImporter.class);
-	private static final String MCOC_SCHEDULER_URL = "https://pastebin.com/raw/9MhEghze";
-	private static final int DATE_INDEX = 1;
-	private static final int AQ_INDEX = 7;
-	private static final int AW_INDEX = 10;
+	private static final String MCOC_SCHEDULER_URL = "https://pastebin.com/raw/tpUuZnBQ";
+	private static final int DATE_INDEX = 2;
+	private static final int AQ_INDEX = 10;
+	private static final int AW_INDEX = 12;
 	private static final int CATALYST_ARENA_INDEX = 6;
-	private static final int THREE_DAYS_EVENT_INDEX = 9;
-	private static final int ONE_DAY_EVENT_INDEX = 8;
+	private static final int THREE_DAYS_EVENT_INDEX = 8;
+	private static final int ONE_DAY_EVENT_INDEX = 7;
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd yyyy", Locale.ENGLISH);
 
 	private Map<String, McocDayInfo> mcocScheduler;
