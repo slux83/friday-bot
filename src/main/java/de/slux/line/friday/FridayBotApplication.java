@@ -314,7 +314,7 @@ public class FridayBotApplication {
 	 * Get the closest group command suggestion if any
 	 * 
 	 * @param message
-	 * @param command
+	 * @param exclude
 	 *            types to exclude
 	 * @return
 	 */
