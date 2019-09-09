@@ -126,11 +126,13 @@ public class WarTest {
 		groupModel1 = this.warModel.getReportModel(group1Key);
 		TotalDeathReport totalDeathReport = groupModel1.calculateDeathReport();
 		Assert.assertEquals(20, totalDeathReport.getTotalDeaths());
+		Assert.assertEquals(11, totalDeathReport.getTrueDeaths());
 		Assert.assertEquals(880, totalDeathReport.getTotalLostPoints());
 
 		WarGroup groupModel2 = this.warModel.getReportModel(group2Key);
 		totalDeathReport = groupModel2.calculateDeathReport();
 		Assert.assertEquals(18, totalDeathReport.getTotalDeaths());
+		Assert.assertEquals(12, totalDeathReport.getTrueDeaths());
 		Assert.assertEquals(960, totalDeathReport.getTotalLostPoints());
 
 		Assert.assertEquals(groupModel1.getDeathReports().size(), 7);

@@ -18,7 +18,7 @@ import de.slux.line.friday.logic.war.WarDeathLogic;
 /**
  * The status of the war of a specific group. This is also used to gather group
  * information in general
- * 
+ *
  * @author slux
  */
 public class WarGroup {
@@ -96,7 +96,7 @@ public class WarGroup {
 
 	/**
 	 * Add death report
-	 * 
+	 *
 	 * @param deaths
 	 * @param node
 	 * @param champName
@@ -109,7 +109,7 @@ public class WarGroup {
 
 	/**
 	 * Get the war death report
-	 * 
+	 *
 	 * @return string that describes the report
 	 */
 	public String getReport() {
@@ -124,6 +124,7 @@ public class WarGroup {
 
 		report.append("\nTotal lost points: " + totDeathReport.getTotalLostPoints());
 		report.append("\nTotal deaths: " + totDeathReport.getTotalDeaths());
+		report.append("\nTrue deaths: " + totDeathReport.getTrueDeaths());
 		report.append("\nReported nodes: " + reportedNodes.size() + "/" + TOTAL_AW_NODES);
 
 		if (reportedNodes.size() >= TOTAL_AW_NODES - 10 && reportedNodes.size() < TOTAL_AW_NODES) {
@@ -141,12 +142,13 @@ public class WarGroup {
 
 	/**
 	 * Calculate the current death report
-	 * 
+	 *
 	 * @return the current death report
 	 */
 	public TotalDeathReport calculateDeathReport() {
 		int totalLostPoints = 0;
 		int totalDeaths = 0;
+		int trueDeaths = 0;
 		// Node, deaths
 		Map<Integer, Integer> totalDeathsPerNode = new HashMap<Integer, Integer>();
 		for (WarDeath wdr : this.deathReports) {
@@ -167,12 +169,17 @@ public class WarGroup {
 			totalDeaths += deaths;
 
 		}
-		return new TotalDeathReport(totalLostPoints, totalDeaths);
+
+		for (Map.Entry<Integer, Integer> deathsPerNode : totalDeathsPerNode.entrySet()) {
+			 trueDeaths += Math.min(deathsPerNode.getValue(), 3);
+		}
+
+		return new TotalDeathReport(totalLostPoints, totalDeaths, trueDeaths);
 	}
 
 	/**
 	 * Get the summary text but compact view
-	 * 
+	 *
 	 * @return the compact human readable version of the getSummary()
 	 */
 	public List<String> getSummaryTextCompact() {
@@ -220,7 +227,7 @@ public class WarGroup {
 
 	/**
 	 * Get the summary as text CSV export
-	 * 
+	 *
 	 * @return the human readable version of the getSummary()
 	 */
 	public String getSummaryTextCsv() {
@@ -250,7 +257,7 @@ public class WarGroup {
 			});
 
 			for (WarDeath wd : playerReport.getValue()) {
-				
+
 				sb.append(wd.getNodeNumber());
 				sb.append(",");
 				sb.append(wd.getNodeDeaths());
@@ -261,13 +268,13 @@ public class WarGroup {
 				sb.append("\n");
 			}
 		}
-		
+
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Get the summary as text
-	 * 
+	 *
 	 * @return the human readable version of the getSummary()
 	 */
 	public List<String> getSummaryText() {
@@ -340,22 +347,25 @@ public class WarGroup {
 	/**
 	 * Internal class to get the overall current death report status. This is an
 	 * immutable class
-	 * 
+	 *
 	 * @author Slux
 	 *
 	 */
 	public class TotalDeathReport {
+		int trueDeaths;
 		int totalLostPoints;
 		int totalDeaths;
 
 		/**
 		 * @param totalLostPoints
 		 * @param totalDeaths
+		 * @param trueDeaths
 		 */
-		public TotalDeathReport(int totalLostPoints, int totalDeaths) {
+		public TotalDeathReport(int totalLostPoints, int totalDeaths, int trueDeaths) {
 			super();
 			this.totalLostPoints = totalLostPoints;
 			this.totalDeaths = totalDeaths;
+			this.trueDeaths = trueDeaths;
 		}
 
 		/**
@@ -371,6 +381,11 @@ public class WarGroup {
 		public int getTotalDeaths() {
 			return totalDeaths;
 		}
+
+		/**
+		 * @return the trueDeaths
+		 */
+		public int getTrueDeaths() { return trueDeaths; }
 
 	}
 
@@ -436,7 +451,7 @@ public class WarGroup {
 
 	/**
 	 * get the status from the integer
-	 * 
+	 *
 	 * @param status
 	 * @return the status enum or null
 	 */
@@ -454,7 +469,7 @@ public class WarGroup {
 
 	/**
 	 * get the feature from the integer
-	 * 
+	 *
 	 * @param feature
 	 * @return the feature enum or null
 	 */
@@ -476,7 +491,7 @@ public class WarGroup {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
