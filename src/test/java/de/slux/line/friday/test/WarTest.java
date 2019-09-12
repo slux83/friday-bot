@@ -146,6 +146,8 @@ public class WarTest {
 		System.out.println(this.warModel.getSummary(GROUP2_ID, false));
 		System.out.println(this.warModel.getSummary(GROUP1_ID, true));
 		System.out.println(this.warModel.getSummary(GROUP2_ID, true));
+		Assert.assertEquals(true, this.warModel.getSummary(GROUP2_ID, true).toString().contains("Skizz"));
+		Assert.assertEquals(false, this.warModel.getSummary(GROUP1_ID, true).toString().contains("Skizz"));
 		List<String> bg3summary = this.warModel.getSummary(GROUP3_ID, false);
 		System.out.println("HUGE SUMMARY:\n" + bg3summary);
 		Assert.assertTrue(bg3summary.size() > 1);

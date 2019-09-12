@@ -210,7 +210,9 @@ public class WarGroup {
 				sb.append(wd.getChampName());
 				sb.append(" : [");
 				sb.append(wd.getNodeDeaths());
-				sb.append("]\n");
+				sb.append("] ");
+				sb.append(wd.getUserName());
+				sb.append("\n");
 			}
 		}
 
