@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.slux.line.friday.dao.war;
 
@@ -40,7 +40,7 @@ public class WarGroupDao {
 
 	private static final String UPDATE_LAST_ACTIVITY_DATA_STATEMENT = "UPDATE war_group SET last_activity = ? WHERE group_id = ?";
 
-	private static final String UPDATE_FEATURES_DATA_STATEMENT = "UPDATE war_group SET group_features = ? WHERE group_id = ?";
+	private static final String UPDATE_FEATURES_DATA_STATEMENT = "UPDATE war_group SET group_status= ?,  group_features = ? WHERE group_id = ?";
 
 	private static final String RETRIEVE_ALL_DATA_STATEMENT = "SELECT group_id, group_name, group_status, group_features, last_activity FROM war_group";
 
@@ -50,7 +50,7 @@ public class WarGroupDao {
 
 	/**
 	 * Store a new group, updating the name if already exists
-	 * 
+	 *
 	 * @param groupId
 	 * @param groupName
 	 * @throws SQLException
@@ -89,7 +89,7 @@ public class WarGroupDao {
 
 	/**
 	 * Update the name of the group
-	 * 
+	 *
 	 * @param groupId
 	 * @param groupName
 	 * @throws SQLException
@@ -123,7 +123,7 @@ public class WarGroupDao {
 
 	/**
 	 * Update the name of the group
-	 * 
+	 *
 	 * @param groupId
 	 * @param groupName
 	 * @throws SQLException
@@ -156,7 +156,7 @@ public class WarGroupDao {
 
 	/**
 	 * Update the last activity of the groups with now time
-	 * 
+	 *
 	 * @param groupIds
 	 * @return affected uptades
 	 * @throws SQLException
@@ -167,7 +167,7 @@ public class WarGroupDao {
 
 	/**
 	 * Update the last activity of the group with a given time
-	 * 
+	 *
 	 * @param groupIds
 	 * @param lastActivity
 	 * @return affected uptades
@@ -212,7 +212,7 @@ public class WarGroupDao {
 
 	/**
 	 * get the key of the table by groupId
-	 * 
+	 *
 	 * @param groupId
 	 * @return the key or -1 if none
 	 * @throws SQLException
@@ -259,7 +259,7 @@ public class WarGroupDao {
 
 	/**
 	 * get all the uuid of the active groups
-	 * 
+	 *
 	 * @return the map of groups (with key=guid and value=name)
 	 * @throws SQLException
 	 */
@@ -320,8 +320,11 @@ public class WarGroupDao {
 		PreparedStatement stmt = null;
 		try {
 			stmt = conn.prepareStatement(UPDATE_FEATURES_DATA_STATEMENT);
-			stmt.setInt(1, feature.getValue());
-			stmt.setString(2, groupId);
+
+			// We are forcing the active statuts of this group
+			stmt.setInt(1, GroupStatus.GroupStatusActive.getValue());
+			stmt.setInt(2, feature.getValue());
+			stmt.setString(3, groupId);
 			stmt.executeUpdate();
 
 		} finally {

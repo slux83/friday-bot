@@ -41,6 +41,10 @@ public class ScheduleEventsLogic {
 			// We need to update it adding both
 			LOG.info("Registering (update) the group " + groupId + " to receive schedule events");
 			updateGroupFeature(groupId, GroupFeature.GroupFeatureWarEvent);
+		} else if (existingGroup.getGroupStatus().equals(WarGroup.GroupStatus.GroupStatusInactive)) {
+			// Group exists but it's inactive (leave+join event)
+			LOG.info("Re-activating the group " + groupId);
+			updateGroupFeature(groupId, existingGroup.getGroupFeature());
 		} else {
 			// Nothing to do.. the group is already registered
 			return false;
@@ -87,9 +91,10 @@ public class ScheduleEventsLogic {
 
 	}
 
+
 	/**
 	 * Update the group feature
-	 * 
+	 *
 	 * @param groupId
 	 * @param feature
 	 *            the new feature
@@ -105,5 +110,4 @@ public class ScheduleEventsLogic {
 		dao.updateGroupFeatures(groupId, feature);
 
 	}
-
 }

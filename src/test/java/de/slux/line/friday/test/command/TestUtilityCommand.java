@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.slux.line.friday.test.command;
 
@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import de.slux.line.friday.dao.war.WarGroupDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ import de.slux.line.friday.test.util.PostConstructHolder;
 public class TestUtilityCommand {
 	/**
 	 * Reduce logging level
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@BeforeClass
@@ -240,6 +241,156 @@ public class TestUtilityCommand {
 		assertTrue(pushedMessages.contains("Hello Summoner!"));
 
 	}
+
+	@Test
+	public void testLeaveAndRejoinScenario() throws Exception {
+		MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+		FridayBotApplication friday = new FridayBotApplication(null);
+		friday.setLineMessagingClient(new LineMessagingClientMock(callback));
+		friday.postConstruct();
+
+		PostConstructHolder.waitForPostConstruct(callback);
+
+		String groupId = UUID.randomUUID().toString();
+		String userId = UUID.randomUUID().toString();
+
+		// Join event
+		JoinEvent joinEvent = MessageEventUtil.createJoinEvent(groupId, userId);
+
+		// Register war command
+		MessageEvent<TextMessageContent> registerWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+				AbstractCommand.ALL_CMD_PREFIX + " " + WarRegisterCommand.CMD_PREFIX + " group1");
+
+		// Register events command
+		MessageEvent<TextMessageContent> registerEventsCmd = MessageEventUtil.createMessageEventGroupSource(groupId, userId,
+				AbstractCommand.ALL_CMD_PREFIX + " " + RegisterEventsCommand.CMD_PREFIX);
+
+		// Leave event
+		LeaveEvent leaveEventRegistered = MessageEventUtil.createLeaveEvent(groupId, userId);
+
+		// Start the test
+		friday.handleDefaultMessageEvent(joinEvent);
+
+		TextMessage response = friday.handleTextMessageEvent(registerWarCmd);
+		assertTrue(response.getText().contains("successfully registered using the name group1"));
+
+		response = friday.handleTextMessageEvent(registerEventsCmd);
+		System.out.println(response.getText());
+		assertTrue(response.getText().contains("From now on this group will receive"));
+
+		// Assert the data in the DB of the group
+		Connection conn = DbConnectionPool.getConnection();
+		WarGroupDao dao = new WarGroupDao(conn);
+		Map<String, WarGroup> allGroups = dao.getAll();
+		assertNotNull(allGroups);
+		assertFalse(allGroups.isEmpty());
+		WarGroup thisGroup = allGroups.get(groupId);
+		assertNotNull(thisGroup);
+		assertEquals(GroupStatus.GroupStatusActive, thisGroup.getGroupStatus());
+		assertEquals(GroupFeature.GroupFeatureWarEvent, thisGroup.getGroupFeature());
+
+		// Leave the group
+		friday.handleDefaultMessageEvent(leaveEventRegistered);
+
+		// Check data
+		conn = DbConnectionPool.getConnection();
+		dao = new WarGroupDao(conn);
+		allGroups = dao.getAll();
+		assertNotNull(allGroups);
+		assertFalse(allGroups.isEmpty());
+		thisGroup = allGroups.get(groupId);
+		assertNotNull(thisGroup);
+		assertEquals(GroupStatus.GroupStatusInactive, thisGroup.getGroupStatus());
+		assertEquals(GroupFeature.GroupFeatureWarEvent, thisGroup.getGroupFeature());
+
+		// Join back event
+		friday.handleDefaultMessageEvent(joinEvent);
+
+		// Check data
+		conn = DbConnectionPool.getConnection();
+		dao = new WarGroupDao(conn);
+		allGroups = dao.getAll();
+		assertNotNull(allGroups);
+		assertFalse(allGroups.isEmpty());
+		thisGroup = allGroups.get(groupId);
+		assertNotNull(thisGroup);
+		assertEquals(GroupStatus.GroupStatusInactive, thisGroup.getGroupStatus());
+		assertEquals(GroupFeature.GroupFeatureWarEvent, thisGroup.getGroupFeature());
+
+		// Register again to receive the events
+		response = friday.handleTextMessageEvent(registerEventsCmd);
+		assertTrue(response.getText().contains("From now on this group will receive"));
+
+		// Check data
+		conn = DbConnectionPool.getConnection();
+		dao = new WarGroupDao(conn);
+		allGroups = dao.getAll();
+		assertNotNull(allGroups);
+		assertFalse(allGroups.isEmpty());
+		thisGroup = allGroups.get(groupId);
+		assertNotNull(thisGroup);
+		assertEquals(GroupStatus.GroupStatusActive, thisGroup.getGroupStatus());
+		assertEquals(GroupFeature.GroupFeatureWarEvent, thisGroup.getGroupFeature());
+
+		// Leave the group again
+		friday.handleDefaultMessageEvent(leaveEventRegistered);
+
+		// Check data
+		conn = DbConnectionPool.getConnection();
+		dao = new WarGroupDao(conn);
+		allGroups = dao.getAll();
+		assertNotNull(allGroups);
+		assertFalse(allGroups.isEmpty());
+		thisGroup = allGroups.get(groupId);
+		assertNotNull(thisGroup);
+		assertEquals(GroupStatus.GroupStatusInactive, thisGroup.getGroupStatus());
+		assertEquals(GroupFeature.GroupFeatureWarEvent, thisGroup.getGroupFeature());
+
+		// Join back event
+		friday.handleDefaultMessageEvent(joinEvent);
+
+		// Check data
+		conn = DbConnectionPool.getConnection();
+		dao = new WarGroupDao(conn);
+		allGroups = dao.getAll();
+		assertNotNull(allGroups);
+		assertFalse(allGroups.isEmpty());
+		thisGroup = allGroups.get(groupId);
+		assertNotNull(thisGroup);
+		assertEquals(GroupStatus.GroupStatusInactive, thisGroup.getGroupStatus());
+		assertEquals(GroupFeature.GroupFeatureWarEvent, thisGroup.getGroupFeature());
+
+		// Register but only for wars
+		response = friday.handleTextMessageEvent(registerWarCmd);
+		assertTrue(response.getText().contains("successfully registered using the name group1"));
+
+		// Check data
+		conn = DbConnectionPool.getConnection();
+		dao = new WarGroupDao(conn);
+		allGroups = dao.getAll();
+		assertNotNull(allGroups);
+		assertFalse(allGroups.isEmpty());
+		thisGroup = allGroups.get(groupId);
+		assertNotNull(thisGroup);
+		assertEquals(GroupStatus.GroupStatusActive, thisGroup.getGroupStatus());
+		assertEquals(GroupFeature.GroupFeatureWarEvent, thisGroup.getGroupFeature());
+
+		// Register again to receive the events
+		response = friday.handleTextMessageEvent(registerEventsCmd);
+		assertTrue(response.getText().contains("This group is already registered to receive notifications"));
+
+		// Check data
+		conn = DbConnectionPool.getConnection();
+		dao = new WarGroupDao(conn);
+		allGroups = dao.getAll();
+		assertNotNull(allGroups);
+		assertFalse(allGroups.isEmpty());
+		thisGroup = allGroups.get(groupId);
+		assertNotNull(thisGroup);
+		assertEquals(GroupStatus.GroupStatusActive, thisGroup.getGroupStatus());
+		assertEquals(GroupFeature.GroupFeatureWarEvent, thisGroup.getGroupFeature());
+	}
+
 
 	@Test
 	public void testLeaveEvent() throws Exception {
