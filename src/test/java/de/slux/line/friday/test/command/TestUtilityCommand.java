@@ -701,6 +701,7 @@ public class TestUtilityCommand {
 		response = friday.handleTextMessageEvent(adminStatusCmd);
 		assertNotNull(response);
 		assertTrue(response.getText().contains("Version"));
+		assertTrue(response.getText().contains("WarSummonerNodeCommand: 0"));
 		System.out.println(response);
 		assertNotEquals(statusResponse, response.getText().substring(response.getText().indexOf("Active/Total")));
 		assertTrue(callback.takeAllMessages().isEmpty());

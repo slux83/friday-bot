@@ -263,6 +263,7 @@ public class FridayBotApplication {
 
 		if (!(command instanceof DefaultCommand)) {
 			this.commandIncomingMsgCounter.incrementAndGet();
+			command.addHit();
 		} else if (message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX)) {
 			// Try to see if the user was close to one of the existing commands
 			List<CommandType> adminExcludedCommands = Arrays.asList(CommandType.CommandTypeUtility,
@@ -301,6 +302,7 @@ public class FridayBotApplication {
 
 		if (!(command instanceof DefaultCommand)) {
 			this.commandIncomingMsgCounter.incrementAndGet();
+			command.addHit();
 		} else if (message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX)) {
 			// Try to see if the user was close to one of the existing commands
 			return getClosestCommandSuggestion(message,

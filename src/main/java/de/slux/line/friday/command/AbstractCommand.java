@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,8 @@ import com.linecorp.bot.model.profile.UserProfileResponse;
 public abstract class AbstractCommand {
 	private static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 	public static final String ALL_CMD_PREFIX = "friday";
+
+	protected AtomicInteger hits;
 
 	/**
 	 * The type of the command
@@ -41,6 +44,7 @@ public abstract class AbstractCommand {
 	 * @param messagingClient
 	 */
 	public AbstractCommand(LineMessagingClient messagingClient) {
+		this.hits = new AtomicInteger();
 		this.messagingClient = messagingClient;
 	}
 
@@ -166,5 +170,20 @@ public abstract class AbstractCommand {
 	 */
 	protected TextMessage pushMultipleMessages(String senderId, String header, List<String> messages) throws Exception {
 		return pushMultipleMessages(senderId, header, messages, false);
+	}
+
+	/**
+	 * Get the number of times this command has been hit
+	 * @return number of hits
+	 */
+	public int getHits() {
+		return this.hits.get();
+	}
+
+	/**
+	 * Hit this command adding one to the counter
+	 */
+	public void addHit() {
+		this.hits.incrementAndGet();
 	}
 }

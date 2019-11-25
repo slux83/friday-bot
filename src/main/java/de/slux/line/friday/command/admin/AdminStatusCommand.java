@@ -4,10 +4,7 @@
 package de.slux.line.friday.command.admin;
 
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -161,6 +158,25 @@ public class AdminStatusCommand extends AbstractCommand {
 			}
 		} catch (SchedulerException e) {
 			sb.append("ERROR - Cannot get the scheduled jobs: " + e + "\n");
+		}
+
+		// Retrieve command stats
+		sb.append("Command stats (hits):\n");
+		List<AbstractCommand> allCommands = new ArrayList<>();
+		allCommands.addAll(FridayBotApplication.getInstance().getCommands());
+		allCommands.sort(new Comparator<AbstractCommand>() {
+			@Override
+			public int compare(AbstractCommand o1, AbstractCommand o2) {
+				return o2.getHits() - o1.getHits();
+			}
+		});
+
+		for (AbstractCommand c : allCommands) {
+			sb.append("# ");
+			sb.append(c.getClass().getSimpleName());
+			sb.append(": ");
+			sb.append(c.getHits());
+			sb.append("\n");
 		}
 
 		return new TextMessage(sb.toString());
