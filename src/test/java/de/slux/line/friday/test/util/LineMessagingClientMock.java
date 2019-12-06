@@ -4,16 +4,19 @@
 package de.slux.line.friday.test.util;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.MessageContentResponse;
+import com.linecorp.bot.model.Broadcast;
 import com.linecorp.bot.model.Multicast;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.ReplyMessage;
 import com.linecorp.bot.model.profile.MembersIdsResponse;
 import com.linecorp.bot.model.profile.UserProfileResponse;
-import com.linecorp.bot.model.response.BotApiResponse;
+import com.linecorp.bot.model.response.*;
+import com.linecorp.bot.model.response.demographics.GetFriendsDemographicsResponse;
 import com.linecorp.bot.model.richmenu.RichMenu;
 import com.linecorp.bot.model.richmenu.RichMenuIdResponse;
 import com.linecorp.bot.model.richmenu.RichMenuListResponse;
@@ -72,6 +75,11 @@ public class LineMessagingClientMock implements LineMessagingClient {
 		return null;
 	}
 
+	@Override
+	public CompletableFuture<BotApiResponse> broadcast(Broadcast broadcast) {
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -82,6 +90,36 @@ public class LineMessagingClientMock implements LineMessagingClient {
 	@Override
 	public CompletableFuture<MessageContentResponse> getMessageContent(String messageId) {
 
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<MessageQuotaResponse> getMessageQuota() {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<QuotaConsumptionResponse> getMessageQuotaConsumption() {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<NumberOfMessagesResponse> getNumberOfSentReplyMessages(String date) {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<NumberOfMessagesResponse> getNumberOfSentPushMessages(String date) {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<NumberOfMessagesResponse> getNumberOfSentMulticastMessages(String date) {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<NumberOfMessagesResponse> getNumberOfSentBroadcastMessages(String date) {
 		return null;
 	}
 
@@ -239,6 +277,11 @@ public class LineMessagingClientMock implements LineMessagingClient {
 		return null;
 	}
 
+	@Override
+	public CompletableFuture<BotApiResponse> linkRichMenuIdToUsers(List<String> userIds, String richMenuId) {
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -249,6 +292,11 @@ public class LineMessagingClientMock implements LineMessagingClient {
 	@Override
 	public CompletableFuture<BotApiResponse> unlinkRichMenuIdFromUser(String userId) {
 
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<BotApiResponse> unlinkRichMenuIdFromUsers(List<String> userIds) {
 		return null;
 	}
 
@@ -286,6 +334,41 @@ public class LineMessagingClientMock implements LineMessagingClient {
 	@Override
 	public CompletableFuture<RichMenuListResponse> getRichMenuList() {
 
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<BotApiResponse> setDefaultRichMenu(String richMenuId) {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<RichMenuIdResponse> getDefaultRichMenuId() {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<BotApiResponse> cancelDefaultRichMenu() {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<IssueLinkTokenResponse> issueLinkToken(String userId) {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<GetNumberOfMessageDeliveriesResponse> getNumberOfMessageDeliveries(String date) {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<GetNumberOfFollowersResponse> getNumberOfFollowersResponse(String date) {
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<GetFriendsDemographicsResponse> getFriendsDemographics() {
 		return null;
 	}
 
