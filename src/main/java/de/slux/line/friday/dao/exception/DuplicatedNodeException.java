@@ -5,24 +5,24 @@ package de.slux.line.friday.dao.exception;
  */
 public class DuplicatedNodeException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4124983374245477789L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -4124983374245477789L;
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public DuplicatedNodeException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public DuplicatedNodeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	/**
-	 * @param message
-	 */
-	public DuplicatedNodeException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public DuplicatedNodeException(String message) {
+        super(message);
+    }
 
 }

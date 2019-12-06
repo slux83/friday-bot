@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.slux.line.friday.dao.exception;
 
@@ -9,12 +9,12 @@ package de.slux.line.friday.dao.exception;
  */
 public class WarDaoUnregisteredException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param message
-	 */
-	public WarDaoUnregisteredException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public WarDaoUnregisteredException(String message) {
+        super(message);
+    }
 }

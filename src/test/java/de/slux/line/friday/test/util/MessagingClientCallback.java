@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.slux.line.friday.test.util;
 
@@ -8,11 +8,11 @@ package de.slux.line.friday.test.util;
  */
 public interface MessagingClientCallback {
 
-	/**
-	 * The message
-	 * 
-	 * @param message
-	 */
-	void pushMessageGenerated(String message);
+    /**
+     * The message
+     *
+     * @param message
+     */
+    void pushMessageGenerated(String message);
 
 }
