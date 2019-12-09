@@ -79,9 +79,9 @@ public class SendAllCommand extends AbstractCommand {
                 Duration durationBetweenTwoDates = Duration.between(nowLocal, lastSentMulticastLocal);
 
                 // Can't spam multicast messages
-                if (durationBetweenTwoDates.get(ChronoUnit.MINUTES) < 60) {
+                if (durationBetweenTwoDates.abs().toMinutes() < 60) {
                     return new TextMessage("Sorry, you can't spam multicast messages. You will be able to send another multicast message in " +
-                            (60 - durationBetweenTwoDates.get(ChronoUnit.MINUTES)) + " minute(s)");
+                            (60 - durationBetweenTwoDates.abs().toMinutes()) + " minute(s)");
                 }
             }
 

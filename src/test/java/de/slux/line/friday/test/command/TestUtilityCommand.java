@@ -761,6 +761,11 @@ public class TestUtilityCommand {
                 LineMessagingClientMock.GROUP_1_MEMBER_ID, LineMessagingClientMock.KNOWN_USER_ID,
                 AbstractCommand.ALL_CMD_PREFIX + " " + SendAllCommand.CMD_PREFIX);
 
+        // Register command send all with no text
+        MessageEvent<TextMessageContent> eventSpammerTest = MessageEventUtil.createMessageEventGroupSource(
+                LineMessagingClientMock.GROUP_20_MEMBERS_ID, LineMessagingClientMock.KNOWN_USER_ID,
+                AbstractCommand.ALL_CMD_PREFIX + " " + SendAllCommand.CMD_PREFIX + " I'm the spammer");
+
         clientMock.cleanupMulticast();
         TextMessage response = friday.handleTextMessageEvent(event180);
         // System.out.println(response);
@@ -793,5 +798,9 @@ public class TestUtilityCommand {
         clientMock.cleanupMulticast();
         response = friday.handleTextMessageEvent(eventNoText);
         Assert.assertEquals("Please provide a message to send to all the members of this chat group", response.getText());
+
+        clientMock.cleanupMulticast();
+        response = friday.handleTextMessageEvent(eventSpammerTest);
+        Assert.assertEquals("Sorry, you can't spam multicast messages. You will be able to send another multicast message in 60 minute(s)", response.getText());
     }
 }
