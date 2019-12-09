@@ -29,6 +29,7 @@ import de.slux.line.friday.test.util.LineMessagingClientMock;
 import de.slux.line.friday.test.util.MessageEventUtil;
 import de.slux.line.friday.test.util.MessagingClientCallbackImpl;
 import de.slux.line.friday.test.util.PostConstructHolder;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -726,5 +727,71 @@ public class TestUtilityCommand {
                 assertTrue(callback.takeAllMessages().isEmpty());
             }
         }
+    }
+
+    @Test
+    public void testSendAllCommand() throws Exception {
+        MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
+        FridayBotApplication friday = new FridayBotApplication(null);
+        LineMessagingClientMock clientMock = new LineMessagingClientMock(callback);
+        friday.setLineMessagingClient(clientMock);
+        friday.postConstruct();
+        friday.getCommandIncomingMsgCounter().set(1000);
+        friday.getTotalIncomingMsgCounter().set(10000);
+
+        PostConstructHolder.waitForPostConstruct(callback);
+
+        // Register command send all for 180 users
+        MessageEvent<TextMessageContent> event180 = MessageEventUtil.createMessageEventGroupSource(
+                LineMessagingClientMock.GROUP_180_MEMBERS_ID, LineMessagingClientMock.KNOWN_USER_ID,
+                AbstractCommand.ALL_CMD_PREFIX + " " + SendAllCommand.CMD_PREFIX + " Hello World");
+
+        // Register command send all for 20 users
+        MessageEvent<TextMessageContent> event20 = MessageEventUtil.createMessageEventGroupSource(
+                LineMessagingClientMock.GROUP_20_MEMBERS_ID, LineMessagingClientMock.KNOWN_USER_ID,
+                AbstractCommand.ALL_CMD_PREFIX + " " + SendAllCommand.CMD_PREFIX + " Hello World");
+
+        // Register command send all for 1 user
+        MessageEvent<TextMessageContent> event1 = MessageEventUtil.createMessageEventGroupSource(
+                LineMessagingClientMock.GROUP_1_MEMBER_ID, LineMessagingClientMock.KNOWN_USER_ID,
+                AbstractCommand.ALL_CMD_PREFIX + " " + SendAllCommand.CMD_PREFIX + " Hello World");
+
+        // Register command send all with no text
+        MessageEvent<TextMessageContent> eventNoText = MessageEventUtil.createMessageEventGroupSource(
+                LineMessagingClientMock.GROUP_1_MEMBER_ID, LineMessagingClientMock.KNOWN_USER_ID,
+                AbstractCommand.ALL_CMD_PREFIX + " " + SendAllCommand.CMD_PREFIX);
+
+        clientMock.cleanupMulticast();
+        TextMessage response = friday.handleTextMessageEvent(event180);
+        // System.out.println(response);
+        // System.out.println(clientMock.getRecordedMulticast());
+        Assert.assertEquals("Message sent privately to 180 user(s)", response.getText());
+        Assert.assertEquals(2, clientMock.getRecordedMulticast().size());
+        Assert.assertTrue(clientMock.getRecordedMulticast().get(0).getMessages().toString().contains("slux sent this message from"));
+        Assert.assertTrue(clientMock.getRecordedMulticast().get(0).getMessages().toString().contains("Hello World"));
+        Assert.assertEquals(100, clientMock.getRecordedMulticast().get(0).getTo().size());
+        Assert.assertFalse(clientMock.getRecordedMulticast().get(0).getTo().contains(LineMessagingClientMock.SPLIT_USER_ID));
+        Assert.assertTrue(clientMock.getRecordedMulticast().get(1).getMessages().toString().contains("slux sent this message from"));
+        Assert.assertTrue(clientMock.getRecordedMulticast().get(1).getMessages().toString().contains("Hello World"));
+        Assert.assertEquals(80, clientMock.getRecordedMulticast().get(1).getTo().size());
+        Assert.assertTrue(clientMock.getRecordedMulticast().get(1).getTo().contains(LineMessagingClientMock.SPLIT_USER_ID));
+
+        clientMock.cleanupMulticast();
+        response = friday.handleTextMessageEvent(event20);
+        Assert.assertEquals("Message sent privately to 20 user(s)", response.getText());
+        Assert.assertEquals(1, clientMock.getRecordedMulticast().size());
+        Assert.assertTrue(clientMock.getRecordedMulticast().get(0).getMessages().toString().contains("slux sent this message from"));
+        Assert.assertTrue(clientMock.getRecordedMulticast().get(0).getMessages().toString().contains("Hello World"));
+        Assert.assertEquals(20, clientMock.getRecordedMulticast().get(0).getTo().size());
+        Assert.assertFalse(clientMock.getRecordedMulticast().get(0).getTo().contains(LineMessagingClientMock.SPLIT_USER_ID));
+
+        clientMock.cleanupMulticast();
+        response = friday.handleTextMessageEvent(event1);
+        Assert.assertEquals("It looks like you are the only one in this room. Operation aborted.", response.getText());
+        Assert.assertEquals(0, clientMock.getRecordedMulticast().size());
+
+        clientMock.cleanupMulticast();
+        response = friday.handleTextMessageEvent(eventNoText);
+        Assert.assertEquals("Please provide a message to send to all the members of this chat group", response.getText());
     }
 }

@@ -50,7 +50,7 @@ public class SendAllCommand extends AbstractCommand {
      */
     @Override
     public boolean canTrigger(String message) {
-        return message.equalsIgnoreCase(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
+        return message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX + " " + CMD_PREFIX);
     }
 
     /*
@@ -98,7 +98,8 @@ public class SendAllCommand extends AbstractCommand {
 
             if (userName.startsWith("unknown_"))
                 return new TextMessage("Cannot get user profile. Your Line user is not registered properly " +
-                        "(maybe you did not accept the Line rules). Sorry but you can't use this command.");
+                        "(maybe you did not accept the Line rules). " +
+                        "Sorry but you can't use this command until you register your user properly.");
 
             Set<String> userIds = FridayBotApplication.getInstance().getGroupUserIds(senderId);
             userIds.remove(userId);    // Remove the caller
@@ -116,7 +117,7 @@ public class SendAllCommand extends AbstractCommand {
             return new TextMessage("Something went wrong: " + e);
         }
 
-        return new TextMessage("Message sent privately to " + reachedUsers + "  user(s)");
+        return new TextMessage("Message sent privately to " + reachedUsers + " user(s)");
     }
 
     /*

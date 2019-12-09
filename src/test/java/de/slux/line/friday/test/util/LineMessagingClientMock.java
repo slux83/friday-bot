@@ -18,19 +18,27 @@ import com.linecorp.bot.model.richmenu.RichMenuIdResponse;
 import com.linecorp.bot.model.richmenu.RichMenuListResponse;
 import com.linecorp.bot.model.richmenu.RichMenuResponse;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author slux
  */
 public class LineMessagingClientMock implements LineMessagingClient {
 
+    public static String KNOWN_USER_ID = "aaaaaaaa-bbbb-cccc-dddd-uuuuuuuuuuu0";
+    public static String SPLIT_USER_ID = "aaaaaaaa-bbbb-cccc-dddd-uuuuuuuuuuu1";
+    public static String GROUP_180_MEMBERS_ID = "aaaaaaaa-bbbb-cccc-dddd-ggggggggggg0";
+    public static String GROUP_20_MEMBERS_ID = "aaaaaaaa-bbbb-cccc-dddd-ggggggggggg1";
+    public static String GROUP_1_MEMBER_ID = "aaaaaaaa-bbbb-cccc-dddd-ggggggggggg2";
+
     private MessagingClientCallback callback;
+    private List<Multicast> recordedMulticast;
 
     public LineMessagingClientMock(MessagingClientCallback callback) {
         this.callback = callback;
+        this.recordedMulticast = new CopyOnWriteArrayList<>();
     }
 
     /*
@@ -71,8 +79,8 @@ public class LineMessagingClientMock implements LineMessagingClient {
      */
     @Override
     public CompletableFuture<BotApiResponse> multicast(Multicast multicast) {
-
-        return null;
+        this.recordedMulticast.add(multicast);
+        return CompletableFuture.completedFuture(new BotApiResponse("multicast " + multicast.getTo().size(), null));
     }
 
     @Override
@@ -131,6 +139,10 @@ public class LineMessagingClientMock implements LineMessagingClient {
      */
     @Override
     public CompletableFuture<UserProfileResponse> getProfile(String userId) {
+        if (KNOWN_USER_ID.equals(userId)) {
+            UserProfileResponse userProfile = new UserProfileResponse("slux", userId, null, "my status");
+            return CompletableFuture.completedFuture(userProfile);
+        }
 
         return null;
     }
@@ -144,8 +156,7 @@ public class LineMessagingClientMock implements LineMessagingClient {
      */
     @Override
     public CompletableFuture<UserProfileResponse> getGroupMemberProfile(String groupId, String userId) {
-
-        return null;
+        return this.getProfile(userId);
     }
 
     /*
@@ -170,8 +181,30 @@ public class LineMessagingClientMock implements LineMessagingClient {
      */
     @Override
     public CompletableFuture<MembersIdsResponse> getGroupMembersIds(String groupId, String start) {
+        if (GROUP_1_MEMBER_ID.equals(groupId)) {
+            return CompletableFuture.completedFuture(new MembersIdsResponse(Arrays.asList(KNOWN_USER_ID), null));
+        } else if (GROUP_20_MEMBERS_ID.equals(groupId)) {
+            List<String> users = new ArrayList<>();
+            for (int i = 0; i < 20; i++) {
+                users.add(UUID.randomUUID().toString());
+            }
+            return CompletableFuture.completedFuture(new MembersIdsResponse(users, null));
+        } else if (GROUP_180_MEMBERS_ID.equals(groupId)) {
+            List<String> users = new ArrayList<>();
 
-        return null;
+            for (int i = 0; i < (start == null ? 150 : 29); i++) {
+                users.add(UUID.randomUUID().toString());
+            }
+
+            if (start == null) {
+                return CompletableFuture.completedFuture(new MembersIdsResponse(users, SPLIT_USER_ID));
+            } else {
+                users.add(0, SPLIT_USER_ID);
+                return CompletableFuture.completedFuture(new MembersIdsResponse(users, null));
+            }
+        } else {
+            return CompletableFuture.completedFuture(new MembersIdsResponse(Collections.emptyList(), null));
+        }
     }
 
     /*
@@ -372,4 +405,11 @@ public class LineMessagingClientMock implements LineMessagingClient {
         return null;
     }
 
+    public List<Multicast> getRecordedMulticast() {
+        return recordedMulticast;
+    }
+
+    public void cleanupMulticast() {
+        this.recordedMulticast.clear();
+    }
 }

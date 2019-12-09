@@ -124,7 +124,18 @@ public abstract class AbstractCommand {
             userProfile = userProfileFuture.get();
             userName = userProfile.getDisplayName();
         } catch (Exception e) {
-            LOG.warn("Cannot retrieve profile for user (id=" + userId + "): " + e.getMessage());
+            LOG.warn("Cannot retrieve profile (via group chat) for user (id=" + userId + "): " + e.getMessage());
+        }
+
+        // Second attempt to get the user name from the profile itself.
+        if (userName.startsWith("unknown_")) {
+            CompletableFuture<UserProfileResponse> userProfileDirectFuture = this.messagingClient.getProfile(userId);
+            try {
+                userProfile = userProfileDirectFuture.get();
+                userName = userProfile.getDisplayName();
+            } catch (Exception e) {
+                LOG.warn("Cannot retrieve profile (directly) for user (id=" + userId + "): " + e.getMessage());
+            }
         }
 
         LOG.debug("Got username " + userName + " for userId=" + userId);
