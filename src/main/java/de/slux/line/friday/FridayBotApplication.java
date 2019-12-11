@@ -63,7 +63,7 @@ import java.util.stream.Collectors;
 @SpringBootApplication
 @LineMessageHandler
 public class FridayBotApplication {
-    public static String FRIDAY_VERSION = "0.2.0";
+    public static String FRIDAY_VERSION = "0.2.1";
     public static final int MAX_LINE_MESSAGE_SIZE = 1500;
 
     private static Logger LOG = LoggerFactory.getLogger(FridayBotApplication.class);
