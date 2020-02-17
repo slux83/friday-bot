@@ -48,9 +48,9 @@ public class EventScheduler {
      * @throws SchedulerException
      */
     private void initScheduler() throws SchedulerException {
-        addDailyMcocMasterJob();
+        //addDailyMcocMasterJob();
         addWarStatsJob();
-        addGroupsActivityJob();
+        //addGroupsActivityJob();
     }
 
     private void addWarStatsJob() throws SchedulerException {

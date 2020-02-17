@@ -165,6 +165,29 @@ public abstract class AbstractCommand {
         return null;
     }
 
+    protected String pushMultipleMessages2(String senderId, String header, List<String> messages)
+            throws Exception {
+
+        if (messages.isEmpty())
+            return "";
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(header + messages.get(0) + "\n");
+
+        for (int i = 1; i < messages.size(); i++) {
+            sb.append(messages.get(i) + "\n");
+        }
+
+        if (sb.length() > 2000)
+        {
+            sb.delete(1950, sb.length());
+            sb.append("...");
+        }
+
+        return sb.toString();
+    }
+
     /**
      * Pushes the messages with a header to the senderId
      *

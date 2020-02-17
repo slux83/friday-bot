@@ -29,7 +29,7 @@ public final class PostConstructHolder {
         StringBuilder allMsg = new StringBuilder();
 
         Calendar c = Calendar.getInstance();
-        int messagesToBeFound = 2;
+        int messagesToBeFound = 1;
 
         if (!FridayBotApplication.getInstance().getIsOperational().get())
             messagesToBeFound = 1;
@@ -40,12 +40,13 @@ public final class PostConstructHolder {
         if (c.get(Calendar.HOUR_OF_DAY) >= 10 && c.get(Calendar.HOUR_OF_DAY) < 11)
             messagesToBeFound = 1;
 
-        while (messagesToBeFound > 0) {
+        for (int i = 0; i < 10; i++) {
+            if (messagesToBeFound == 0) break;
             System.out.println("Waiting for stats to become available...");
             String messages = callback.takeAllMessages();
 
-            if (messages.contains("Groups Inactivity Report"))
-                messagesToBeFound--;
+            //if (messages.contains("Groups Inactivity Report"))
+            //    messagesToBeFound--;
 
             if (messages.contains("War node stats"))
                 messagesToBeFound--;
@@ -54,7 +55,10 @@ public final class PostConstructHolder {
             Thread.sleep(1000);
         }
 
-        System.out.println("Callbacks received");
+        if (messagesToBeFound > 0)
+            System.err.println("given up waiting for the initialization: " + messagesToBeFound);
+        else
+            System.out.println("Callbacks received");
 
         return allMsg.toString();
     }

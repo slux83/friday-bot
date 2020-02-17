@@ -65,7 +65,7 @@ public class WarHistoryCommand extends AbstractCommand {
             // Get all history
             try {
                 List<String> history = warModel.getHistoryText(senderId);
-                return super.pushMultipleMessages(senderId, "", history);
+                return new TextMessage(super.pushMultipleMessages2(senderId, "", history));
             } catch (WarDaoUnregisteredException e) {
                 return new TextMessage("This group is unregistered! Please use '" + AbstractCommand.ALL_CMD_PREFIX + " "
                         + HelpCommand.CMD_PREFIX + "' for info on how to register your chat room");
@@ -90,35 +90,31 @@ public class WarHistoryCommand extends AbstractCommand {
                         warDate);
 
                 if (!export) {
+                    StringBuilder sb = new StringBuilder();
                     if (historyDeaths.isEmpty()) {
-                        PushMessage pushMessage = new PushMessage(senderId,
-                                new TextMessage("No death reports found for " + day));
-                        super.messagingClient.pushMessage(pushMessage).get();
+                        sb.append("No death reports found for " + day + "\n");
                     }
 
                     if (historyPlacement.isEmpty()) {
-                        PushMessage pushMessage = new PushMessage(senderId,
-                                new TextMessage("No placement reports found for " + day));
-                        super.messagingClient.pushMessage(pushMessage).get();
+                        sb.append("No placement reports found for " + day + "\n");
                     }
 
                     for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
                         List<String> summaryText = historyEntry.getValue().getSummaryText();
-                        super.pushMultipleMessages(senderId,
-                                "*** " + day.trim() + " - " + historyEntry.getKey() + " ***\n\n", summaryText, true);
+                        sb.append(super.pushMultipleMessages2(senderId,
+                                "*** " + day.trim() + " - " + historyEntry.getKey() + " ***\n\n", summaryText));
                     }
 
                     for (Entry<String, Map<Integer, WarSummoner>> placements : historyPlacement.entrySet()) {
                         String allyTag = placements.getKey();
                         Map<Integer, WarSummoner> placementTable = placements.getValue();
                         List<String> text = WarPlacementLogic.getSummonersText(placementTable);
-                        super.pushMultipleMessages(senderId, "*** " + day.trim() + " - " + allyTag + " ***\n\n", text,
-                                true);
+                        sb.append(super.pushMultipleMessages2(senderId, "*** " + day.trim() + " - " + allyTag + " ***\n\n", text));
                     }
+
+                    return new TextMessage(sb.toString());
                 } else {
                     // Export data
-                    super.pushMultipleMessages(senderId, "", Arrays.asList("Exporting data..."), true);
-
                     Map<String, String> postedUrls = new HashMap<>();
                     for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
                         String summaryTextCsv = historyEntry.getValue().getSummaryTextCsv();
@@ -164,8 +160,6 @@ public class WarHistoryCommand extends AbstractCommand {
                 return new TextMessage("Unexpected error: " + e);
             }
         }
-
-        return null;
     }
 
     /*

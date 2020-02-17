@@ -546,14 +546,15 @@ public class TestWarCommand {
         assertTrue(callback.takeAllMessages().isEmpty());
 
         response = friday.handleTextMessageEvent(specificHistoryWarCmd);
-        assertNull(response);
+        assertNotNull(response);
         String history = callback.takeAllMessages();
-        assertTrue(history.contains("No death reports found for"));
-        assertTrue(history.contains("No placement reports found for"));
+        assertEquals("", history);
+        assertTrue(response.getText().contains("No death reports found for"));
+        assertTrue(response.getText().contains("No placement reports found for"));
 
         response = friday.handleTextMessageEvent(specificHistoryWarExportCmd);
         history = callback.takeAllMessages();
-        assertTrue(history.contains("Exporting data..."));
+        assertEquals("", history);
         assertTrue(response.getText().contains("None"));
 
         response = friday.handleTextMessageEvent(death1Cmd);
@@ -685,13 +686,14 @@ public class TestWarCommand {
         assertTrue(callback.takeAllMessages().isEmpty());
 
         response = friday.handleTextMessageEvent(specificHistoryWarCmd);
-        assertNull(response);
+        assertNotNull(response);
         history = callback.takeAllMessages();
-        assertTrue(history.contains("6* NC"));
-        assertTrue(history.contains("4. Tony 88"));
-        assertTrue(history.contains("A. 5* dupe IMIW (55)"));
-        assertTrue(history.contains("Reported nodes: 1/55")); // deaths report
-        assertTrue(history.contains("Reported Nodes: 4/55")); // summoners
+        assertEquals("", history);
+        assertTrue(response.getText().contains("6* NC"));
+        assertTrue(response.getText().contains("4. Tony 88"));
+        assertTrue(response.getText().contains("A. 5* dupe IMIW (55)"));
+        assertTrue(response.getText().contains("Reported nodes: 1/55")); // deaths report
+        assertTrue(response.getText().contains("Reported Nodes: 4/55")); // summoners
         // report
 
         response = friday.handleTextMessageEvent(deleteHistoryWarCmd);
@@ -765,7 +767,7 @@ public class TestWarCommand {
 
         response = friday.handleTextMessageEvent(specificHistoryWarExportCmd);
         history = callback.takeAllMessages();
-        assertTrue(history.contains("Exporting data..."));
+        assertEquals("", history);
         assertTrue(response.getText().contains("https://pastebin.com"));
         System.out.println(response.getText());
     }
