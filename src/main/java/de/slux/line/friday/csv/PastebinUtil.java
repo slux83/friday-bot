@@ -36,6 +36,8 @@ public class PastebinUtil {
      */
     private static String makePostRequest(String url, Map<String, String> parameters) {
         try {
+            Thread.sleep(1000);  // To avoid flooding
+
             StringBuilder sb = new StringBuilder();
 
             // we need this cookie to submit form

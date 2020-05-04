@@ -4,7 +4,6 @@
 package de.slux.line.friday.command.war;
 
 import com.linecorp.bot.client.LineMessagingClient;
-import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.HelpCommand;
@@ -17,6 +16,7 @@ import de.slux.line.friday.logic.war.WarPlacementLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.text.html.Option;
 import java.text.ParseException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -81,54 +81,75 @@ public class WarHistoryCommand extends AbstractCommand {
             // Cleanup
             argsAsList.removeIf(s -> s.equalsIgnoreCase(CMD_ARG_EXPORT));
 
-            String day = argsAsList.get(2);
+            String dayBegin = argsAsList.get(2);
+            String dayEnd = (argsAsList.size() > 3) ? argsAsList.get(3) : null;
             try {
-                Date warDate = WarDeathLogic.SDF.parse(day.trim());
+                Date warDateBegin = WarDeathLogic.SDF.parse(dayBegin.trim());
 
-                Map<String, WarGroup> historyDeaths = warModel.getHistorySummaryForDeaths(senderId, warDate);
+                Map<Long, Map<String, WarGroup>> historyDeaths = warModel.getHistorySummaryForDeaths(senderId, warDateBegin, warDateBegin);
                 Map<String, Map<Integer, WarSummoner>> historyPlacement = warModel.getHistorySummaryForReports(senderId,
-                        warDate);
+                        warDateBegin);
 
                 if (!export) {
                     StringBuilder sb = new StringBuilder();
                     if (historyDeaths.isEmpty()) {
-                        sb.append("No death reports found for " + day + "\n");
+                        sb.append("No death reports found for " + dayBegin + "\n");
                     }
 
                     if (historyPlacement.isEmpty()) {
-                        sb.append("No placement reports found for " + day + "\n");
+                        sb.append("No placement reports found for " + dayBegin + "\n");
                     }
 
-                    for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
-                        List<String> summaryText = historyEntry.getValue().getSummaryText();
-                        sb.append(super.pushMultipleMessages2(senderId,
-                                "*** " + day.trim() + " - " + historyEntry.getKey() + " ***\n\n", summaryText));
+                    if (historyDeaths.size() > 1) {
+                        LOG.error("History deaths higher than 1. Getting only the first one. This is clearly a bug");
+                    }
+
+                    Optional<Entry<Long, Map<String, WarGroup>>> firstEntry = historyDeaths.entrySet().stream().findFirst();
+
+                    if (firstEntry.isPresent()) {
+                        for (Entry<String, WarGroup> historyEntry : firstEntry.get().getValue().entrySet()) {
+                            List<String> summaryText = historyEntry.getValue().getSummaryText();
+                            sb.append(super.pushMultipleMessages2(senderId,
+                                    "*** " + dayBegin.trim() + " - " + historyEntry.getKey() + " ***\n\n", summaryText));
+                        }
                     }
 
                     for (Entry<String, Map<Integer, WarSummoner>> placements : historyPlacement.entrySet()) {
                         String allyTag = placements.getKey();
                         Map<Integer, WarSummoner> placementTable = placements.getValue();
                         List<String> text = WarPlacementLogic.getSummonersText(placementTable);
-                        sb.append(super.pushMultipleMessages2(senderId, "*** " + day.trim() + " - " + allyTag + " ***\n\n", text));
+                        sb.append(super.pushMultipleMessages2(senderId, "*** " + dayBegin.trim() + " - " + allyTag + " ***\n\n", text));
                     }
 
                     return new TextMessage(sb.toString());
                 } else {
                     // Export data
                     Map<String, String> postedUrls = new HashMap<>();
-                    for (Entry<String, WarGroup> historyEntry : historyDeaths.entrySet()) {
-                        String summaryTextCsv = historyEntry.getValue().getSummaryTextCsv();
-                        String title = day.trim() + " - " + historyEntry.getKey() + " (deaths)";
 
-                        String url = PastebinUtil.pasteData(title, summaryTextCsv);
-                        postedUrls.put(title, url);
+                    if (dayEnd != null) {
+                        Date warDateEnd = WarDeathLogic.SDF.parse(dayEnd.trim());
+                        historyDeaths = warModel.getHistorySummaryForDeaths(senderId, warDateBegin, warDateEnd);
+                    }
+
+                    String titleDeaths = "From " + dayBegin.trim() + " to " + (dayEnd != null ? dayEnd : dayBegin) + " - War Deaths Report";
+                    StringBuilder deathCsvBuilder = new StringBuilder("Date,Opponent Alliance,Node,Deaths,Champion,Summoner\n");
+                    for (Entry<Long, Map<String, WarGroup>> entry : historyDeaths.entrySet()) {
+
+                        for (Entry<String, WarGroup> historyEntry : entry.getValue().entrySet()) {
+                            deathCsvBuilder.append(historyEntry.getValue().getSummaryTextCsv(new Date(entry.getKey()), historyEntry.getKey()));
+
+                        }
+                    }
+                    if (!historyDeaths.isEmpty()) {
+                        String urlDeaths = PastebinUtil.pasteData(titleDeaths, deathCsvBuilder.toString());
+                        postedUrls.put(titleDeaths, urlDeaths);
                     }
 
                     for (Entry<String, Map<Integer, WarSummoner>> placements : historyPlacement.entrySet()) {
                         String allyTag = placements.getKey();
                         Map<Integer, WarSummoner> placementTable = placements.getValue();
                         String text = WarPlacementLogic.getSummonersTextCsv(placementTable);
-                        String title = day.trim() + " - " + allyTag + " (placements)";
+                        String title = dayBegin.trim() + " - " + allyTag + " (placements)";
 
                         String url = PastebinUtil.pasteData(title, text);
                         postedUrls.put(title, url);
@@ -180,11 +201,12 @@ public class WarHistoryCommand extends AbstractCommand {
     @Override
     public String getHelp(boolean verbose) {
         StringBuilder sb = new StringBuilder();
-        sb.append(CMD_PREFIX + " <" + CMD_ARG_EXPORT + "?> <date?>\n");
+        sb.append(CMD_PREFIX + " <" + CMD_ARG_EXPORT + "?> <date?> <date?>\n");
         if (verbose) {
-            sb.append("Prints all the saved wars or a specific one, if <date> is provided.\n");
-            sb.append("Use " + CMD_ARG_EXPORT + " argument to export as CVS\n");
-            sb.append("Date format is yyyy-MM-dd e.g. 2018-05-24");
+            sb.append("Prints all the saved wars or a specific one, if <date> is provided\n");
+            sb.append("A range of dates can be provided but works only for the CSV exporter\n");
+            sb.append("Use " + CMD_ARG_EXPORT + " argument to export as CSV\n");
+            sb.append("Date format is yyyy-MM-dd e.g. 2019-05-24");
         }
 
         return sb.toString();

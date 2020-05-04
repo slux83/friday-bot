@@ -223,8 +223,8 @@ public class WarGroup {
      *
      * @return the human readable version of the getSummary()
      */
-    public String getSummaryTextCsv() {
-        StringBuilder sb = new StringBuilder("Node,Deaths,Champion,Summoner\n");
+    public String getSummaryTextCsv(Date date, String opponent) {
+        StringBuilder sb = new StringBuilder();
 
         List<WarDeath> reports = getDeathReports();
 
@@ -251,6 +251,10 @@ public class WarGroup {
 
             for (WarDeath wd : playerReport.getValue()) {
 
+                sb.append(WarDeathLogic.SDF.format(date));
+                sb.append(",");
+                sb.append(opponent);
+                sb.append(",");
                 sb.append(wd.getNodeNumber());
                 sb.append(",");
                 sb.append(wd.getNodeDeaths());

@@ -156,9 +156,7 @@ public class WarDeathLogic {
 
         WarDeathDao dao = new WarDeathDao(conn);
 
-        WarGroup reportModel = dao.retrieveData(groupKey);
-
-        return reportModel;
+        return dao.retrieveData(groupKey);
 
     }
 
@@ -410,6 +408,44 @@ public class WarDeathLogic {
         c.set(Calendar.MILLISECOND, 0);
 
         return dao.getAllDataForDeaths(groupKey, new Timestamp(c.getTimeInMillis()));
+    }
+
+    /**
+     * Retrieve the summaries of deaths for a given time range
+     *
+     * @param groupId
+     * @param dayBegin
+     * @param dayEnd
+     * @return the war groups for the day (key is the alliance tag)
+     * @throws Exception
+     */
+    public Map<Long, Map<String, WarGroup>> getHistorySummaryForDeaths(String groupId, Date dayBegin, Date dayEnd) throws Exception {
+
+        int groupKey = checkGroupRegistration(groupId);
+
+        Connection conn = DbConnectionPool.getConnection();
+
+        LOG.debug("Connection to the DB valid");
+
+        WarHistoryDao dao = new WarHistoryDao(conn);
+
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(dayBegin.getTime());
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        Timestamp begin = new Timestamp(c.getTimeInMillis());
+
+        c = Calendar.getInstance();
+        c.setTimeInMillis(dayEnd.getTime());
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        Timestamp end = new Timestamp(c.getTimeInMillis());
+
+        return dao.getAllDataForDeaths(groupKey, begin, end);
     }
 
     /**

@@ -532,6 +532,11 @@ public class TestWarCommand {
                 groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarHistoryCommand.CMD_PREFIX + " "
                         + WarHistoryCommand.CMD_ARG_EXPORT + " " + WarDeathLogic.SDF.format(new Date()));
 
+        // Specific history command CVS export
+        MessageEvent<TextMessageContent> rangeHistoryWarExportCmd = MessageEventUtil.createMessageEventGroupSource(
+                groupId, userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarHistoryCommand.CMD_PREFIX + " "
+                        + WarHistoryCommand.CMD_ARG_EXPORT + " " + WarDeathLogic.SDF.format(new Date()) + " " + WarDeathLogic.SDF.format(new Date()));
+
         // Delete history command
         MessageEvent<TextMessageContent> deleteHistoryWarCmd = MessageEventUtil.createMessageEventGroupSource(groupId,
                 userId, AbstractCommand.ALL_CMD_PREFIX + " " + WarDeleteCommand.CMD_PREFIX + " "
@@ -766,6 +771,12 @@ public class TestWarCommand {
         assertTrue(callback.takeAllMessages().isEmpty());
 
         response = friday.handleTextMessageEvent(specificHistoryWarExportCmd);
+        history = callback.takeAllMessages();
+        assertEquals("", history);
+        assertTrue(response.getText().contains("https://pastebin.com"));
+        System.out.println(response.getText());
+
+        response = friday.handleTextMessageEvent(rangeHistoryWarExportCmd);
         history = callback.takeAllMessages();
         assertEquals("", history);
         assertTrue(response.getText().contains("https://pastebin.com"));

@@ -33,6 +33,10 @@ public class WarHistoryDao {
             + "FROM_BASE64(champion) AS champ, FROM_BASE64(player) AS player_name "
             + "FROM war_history WHERE group_id = ? AND war_date = ? AND history_type = ? ORDER BY id";
 
+    private static final String GET_DATA_BY_RANGE = "SELECT war_date, FROM_BASE64(opponent_tag) AS ally_tag, node, num_deaths, "
+            + "FROM_BASE64(champion) AS champ, FROM_BASE64(player) AS player_name "
+            + "FROM war_history WHERE group_id = ? AND war_date >= ? AND war_date <= ? AND history_type = ? ORDER BY war_date, ally_tag, node";
+
     private static final String GET_STATS_DATA = "SELECT node, num_deaths, CAST(FROM_BASE64(champion) AS CHAR) AS champ FROM war_history WHERE node > 0 AND node <= 55";
 
     private static final String DELETE_DATA = "DELETE FROM war_history WHERE group_id = ? AND war_date = ? AND opponent_tag = TO_BASE64(?)";
@@ -131,6 +135,75 @@ public class WarHistoryDao {
                 }
 
                 outcome.get(allianceName).addDeath(numDeaths, node, champ, player);
+            }
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+            } catch (SQLException e) {
+                LOG.error("Unexpected error " + e, e);
+            }
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                LOG.error("Unexpected error " + e, e);
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                LOG.error("Unexpected error " + e, e);
+            }
+        }
+
+        return outcome;
+    }
+
+    /**
+     * get all the history for a give range of dates (death reports)
+     *
+     * @param groupKey
+     * @param warDateBegin
+     * @param warDateEnd
+     * @return map where key=timestamp_war value=ally_tag+data
+     * @throws SQLException
+     */
+    public Map<Long, Map<String, WarGroup>> getAllDataForDeaths(int groupKey, Timestamp warDateBegin, Timestamp warDateEnd) throws SQLException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Map<Long, Map<String, WarGroup>> outcome = new TreeMap<>();
+        try {
+
+            stmt = conn.prepareStatement(GET_DATA_BY_RANGE);
+            stmt.setInt(1, groupKey);
+            stmt.setTimestamp(2, warDateBegin);
+            stmt.setTimestamp(3, warDateEnd);
+            stmt.setInt(4, HistoryType.HistoryTypeDeathReport.getValue());
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Timestamp warDate = rs.getTimestamp("war_date");
+                String allianceName = rs.getString("ally_tag");
+                int node = rs.getInt("node");
+                int numDeaths = rs.getInt("num_deaths");
+                String champ = rs.getString("champ");
+                String player = rs.getString("player_name");
+
+                Map<String, WarGroup> warMap = null;
+                if (!outcome.containsKey(warDate.getTime())) {
+                    warMap = new TreeMap<>();
+                    outcome.put(warDate.getTime(), warMap);
+                } else {
+                    warMap = outcome.get(warDate.getTime());
+                }
+
+                if (!warMap.containsKey(allianceName)) {
+                    WarGroup warGroup = new WarGroup();
+                    warMap.put(allianceName, warGroup);
+                }
+
+                warMap.get(allianceName).addDeath(numDeaths, node, champ, player);
             }
         } finally {
             try {

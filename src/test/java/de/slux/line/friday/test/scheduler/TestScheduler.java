@@ -26,6 +26,7 @@ import de.slux.line.friday.test.util.PostConstructHolder;
 import de.slux.line.friday.test.util.scheduler.ContextDummy;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -131,6 +132,7 @@ public class TestScheduler {
     }
 
     @Test
+    @Ignore
     public void testSchedulerJobs() throws Exception {
         MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
         FridayBotApplication friday = new FridayBotApplication(null);
@@ -172,6 +174,7 @@ public class TestScheduler {
     }
 
     @Test
+    @Ignore
     public void testSchedulerJobsInvalidDate() throws Exception {
         MessagingClientCallbackImpl callback = new MessagingClientCallbackImpl();
         FridayBotApplication friday = new FridayBotApplication(null);
@@ -209,6 +212,7 @@ public class TestScheduler {
     }
 
     @Test
+    @Ignore
     public void testSchedulerJobsRollingDays() throws Exception {
 
         // Should be enough to touch all the events
@@ -374,6 +378,7 @@ public class TestScheduler {
     }
 
     @Test
+    @Ignore
     public void testScheduledGroupsActivityChecker() throws Exception {
         // We make sure we have 3 obsolete groups and 2 warnings
         String[] newGroups = groupsToDelete.toArray(new String[0]);

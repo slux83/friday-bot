@@ -102,9 +102,7 @@ public abstract class AbstractCommand {
         // Replace stupid C2A0 bytes in UTF8 (html white space)
         String msg = message.replaceAll("[\\p{Zs}\\s]+", " ");
         String[] args = msg.trim().split(" ");
-        List<String> argsAsList = new ArrayList<String>(Arrays.asList(args));
-
-        return argsAsList;
+        return new ArrayList<String>(Arrays.asList(args));
     }
 
     /**
