@@ -13,7 +13,7 @@ import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.*;
 import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
-import de.slux.line.friday.command.admin.AdminPushNotificationCommand;
+import de.slux.line.friday.command.admin.AdminNotificationCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.*;
 import de.slux.line.friday.dao.DbConnectionPool;
@@ -514,10 +514,13 @@ public class TestUtilityCommand {
                 FridayBotApplication.SLUX_ID,
                 AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX + " hello everyone!");
 
-        // Admin push notification command
-        MessageEvent<TextMessageContent> adminPushCmd = MessageEventUtil.createMessageEventUserSource(
+        // Admin notification command
+        MessageEvent<TextMessageContent> adminNotificationWithMessageCmd = MessageEventUtil.createMessageEventUserSource(
                 FridayBotApplication.SLUX_ID,
-                AbstractCommand.ALL_CMD_PREFIX + " " + AdminPushNotificationCommand.CMD_PREFIX + " hello everyone!");
+                AbstractCommand.ALL_CMD_PREFIX + " " + AdminNotificationCommand.CMD_PREFIX + " This is a nice notification");
+        MessageEvent<TextMessageContent> adminNotificationWithNoMessageCmd = MessageEventUtil.createMessageEventUserSource(
+                FridayBotApplication.SLUX_ID,
+                AbstractCommand.ALL_CMD_PREFIX + " " + AdminNotificationCommand.CMD_PREFIX);
 
         MessageEvent<TextMessageContent> adminBroadcastNoArgCmd = MessageEventUtil.createMessageEventUserSource(
                 FridayBotApplication.SLUX_ID, AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX);
@@ -666,18 +669,12 @@ public class TestUtilityCommand {
         assertTrue(response.getText().contains("MCoC event notifications"));
         assertTrue(callback.takeAllMessages().isEmpty());
 
-        groups = new WarDeathLogic().getAllGroups();
-        groups.entrySet().removeIf(g -> g.getValue().getGroupStatus().equals(GroupStatus.GroupStatusInactive));
-        groups.entrySet().removeIf(g -> g.getValue().getGroupFeature().equals(GroupFeature.GroupFeatureWar));
-        totalActiveGroups = groups.size();
-        response = friday.handleTextMessageEvent(adminPushCmd);
+        response = friday.handleTextMessageEvent(adminNotificationWithMessageCmd);
         assertNotNull(response);
         System.out.println(response.getText());
-        assertTrue(response.getText().contains("Notification pushed"));
-        assertTrue(response.getText().contains("pushed(" + totalActiveGroups + ")"));
-        assertTrue(response.getText().contains("sent(" + totalActiveGroups + ")"));
-        assertTrue(response.getText().contains("active_groups(" + totalActiveGroups + ")"));
-        assertTrue(callback.takeAllMessages().contains("hello everyone!"));
+        assertTrue(response.getText().contains("Notification saved"));
+        assertTrue(response.getText().contains("This is a nice notification"));
+        assertTrue(callback.takeAllMessages().isEmpty());
 
         response = friday.handleTextMessageEvent(adminStatusCmd);
         assertNotNull(response);
@@ -703,7 +700,7 @@ public class TestUtilityCommand {
                 assertFalse(help.isEmpty());
                 assertFalse(help.contains(AdminStatusCommand.CMD_PREFIX));
                 assertTrue(help.contains(c.getCommandPrefix()));
-                assertEquals(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true), help);
+                assertTrue(help.contains(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true)));
                 assertTrue(callback.takeAllMessages().isEmpty());
             }
         }
@@ -723,10 +720,17 @@ public class TestUtilityCommand {
                 System.out.println();
                 assertFalse(help.isEmpty());
                 assertTrue(help.contains(c.getCommandPrefix()));
-                assertEquals(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true), help);
+                assertTrue(help.contains(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true)));
                 assertTrue(callback.takeAllMessages().isEmpty());
             }
         }
+
+        response = friday.handleTextMessageEvent(adminNotificationWithNoMessageCmd);
+        assertNotNull(response);
+        System.out.println(response.getText());
+        assertTrue(response.getText().startsWith("The notification:"));
+        assertTrue(response.getText().contains("This is a nice notification"));
+        assertTrue(callback.takeAllMessages().isEmpty());
     }
 
     @Test

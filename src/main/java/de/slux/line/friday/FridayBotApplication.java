@@ -23,6 +23,8 @@ import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.GroupSource;
+import com.linecorp.bot.model.event.source.RoomSource;
+import com.linecorp.bot.model.event.source.UnknownSource;
 import com.linecorp.bot.model.event.source.UserSource;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.profile.MembersIdsResponse;
@@ -32,7 +34,7 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import de.slux.line.friday.command.*;
 import de.slux.line.friday.command.AbstractCommand.CommandType;
 import de.slux.line.friday.command.admin.AdminBroadcastCommand;
-import de.slux.line.friday.command.admin.AdminPushNotificationCommand;
+import de.slux.line.friday.command.admin.AdminNotificationCommand;
 import de.slux.line.friday.command.admin.AdminStatusCommand;
 import de.slux.line.friday.command.war.*;
 import de.slux.line.friday.data.stats.HistoryStats;
@@ -75,6 +77,7 @@ public class FridayBotApplication {
 
     public static final int MAX_MESSAGE_BURST = 50;
     public static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private AdminNotificationCommand notificationCommand;
 
     public static synchronized FridayBotApplication getInstance() {
         return INSTANCE;
@@ -179,7 +182,7 @@ public class FridayBotApplication {
 
         // Admin commands
         this.commands.add(new AdminBroadcastCommand(this.lineMessagingClient));
-        this.commands.add(new AdminPushNotificationCommand(this.lineMessagingClient));
+        this.commands.add(this.notificationCommand = new AdminNotificationCommand(this.lineMessagingClient));
         this.commands.add(new AdminStatusCommand(this.lineMessagingClient));
 
         LOG.info("Commands initialized. Total command(s): " + this.commands.size());
@@ -200,15 +203,30 @@ public class FridayBotApplication {
         if (userId == null)
             userId = event.getSource().getSenderId();
 
+        TextMessage messageToSend = null;
+        AdminNotificationCommand.SourceType type = AdminNotificationCommand.SourceType.Unknown;
         if (event.getSource() instanceof GroupSource) {
-            return handleGroupSource(message, userId, event, ((GroupSource) event.getSource()).getGroupId());
+            messageToSend = handleGroupSource(message, userId, event, ((GroupSource) event.getSource()).getGroupId());
+            type = AdminNotificationCommand.SourceType.Group;
         }
 
         if (event.getSource() instanceof UserSource) {
-            return handleUserSource(message, userId, event);
+            messageToSend = handleUserSource(message, userId, event);
+            type = AdminNotificationCommand.SourceType.User;
         }
 
-        return null;
+        if (event.getSource() instanceof RoomSource) {
+            type = AdminNotificationCommand.SourceType.Room;
+        }
+
+        // Append notification if needed
+        String notification = this.notificationCommand.getLatestNotificationMessage(userId, type);
+        if (notification != null) {
+            if (messageToSend == null) messageToSend = new TextMessage("");
+            messageToSend = new TextMessage(notification + messageToSend.getText());
+        }
+
+        return messageToSend;
     }
 
     /**
