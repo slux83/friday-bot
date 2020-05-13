@@ -83,7 +83,7 @@ public class AdminNotificationCommand extends AbstractCommand {
                 sb.append(countIdsBySource(SourceType.Group));
                 sb.append(" group(s)\n");
                 sb.append(countIdsBySource(SourceType.Room));
-                sb.append(" rooms(s)\n");
+                sb.append(" room(s)\n");
                 sb.append(countIdsBySource(SourceType.Unknown));
                 sb.append(" unknown(s)");
             }

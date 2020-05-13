@@ -220,9 +220,12 @@ public class FridayBotApplication {
         }
 
         // Append notification if needed
-        String notification = this.notificationCommand.getLatestNotificationMessage(userId, type);
+        String sourceId = (type == AdminNotificationCommand.SourceType.User ? event.getSource().getUserId() : event.getSource().getSenderId());
+        String notification = this.notificationCommand.getLatestNotificationMessage(sourceId, type);
         if (notification != null) {
-            if (messageToSend == null) messageToSend = new TextMessage("");
+            if (messageToSend == null) {
+                messageToSend = new TextMessage("");
+            }
             messageToSend = new TextMessage(notification + messageToSend.getText());
         }
 

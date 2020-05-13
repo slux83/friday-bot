@@ -9,6 +9,7 @@ import com.linecorp.bot.model.event.LeaveEvent;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.GroupSource;
+import com.linecorp.bot.model.event.source.RoomSource;
 import com.linecorp.bot.model.event.source.Source;
 import com.linecorp.bot.model.event.source.UserSource;
 
@@ -38,6 +39,24 @@ public class MessageEventUtil {
                                                                                  String message) {
 
         Source source = new GroupSource(groupId, userId);
+        Instant timestamp = Instant.now();
+
+        TextMessageContent messageText = new TextMessageContent(UUID.randomUUID().toString(), message);
+        return new MessageEvent<TextMessageContent>(UUID.randomUUID().toString(), source, messageText, timestamp);
+    }
+
+    /**
+     * Create a message event with {@link com.linecorp.bot.model.event.source.RoomSource}
+     *
+     * @param roomId
+     * @param userId
+     * @param message
+     * @return message event of type {@link TextMessageContent}
+     */
+    public static MessageEvent<TextMessageContent> createMessageEventRoomSource(String roomId, String userId,
+                                                                                String message) {
+
+        Source source = new RoomSource(userId, roomId);
         Instant timestamp = Instant.now();
 
         TextMessageContent messageText = new TextMessageContent(UUID.randomUUID().toString(), message);
