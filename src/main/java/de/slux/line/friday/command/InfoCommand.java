@@ -17,7 +17,7 @@ public class InfoCommand extends AbstractCommand {
 
     // Replace $GUID with the groupID
     private static final String PAYPAL_LINK = "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=slux83@gmail.com&lc=US&item_name=friday%3A$GUID&no_note=0&cn=&currency_code=USD&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted";
-    private static final String FRIDAY_USERS_LINE_GROUP_LINK = "https://line.me/R/ti/g/oNF5Riui79";
+    private static final String FRIDAY_USERS_LINE_GROUP_LINK = "https://line.me/R/ti/g/l2pd-jBqcD";
 
     /**
      * Ctor
