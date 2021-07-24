@@ -5,6 +5,7 @@ package de.slux.line.friday.command.war;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
+import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.dao.exception.WarDaoUnregisteredException;
@@ -26,8 +27,8 @@ public class WarResetCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public WarResetCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public WarResetCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

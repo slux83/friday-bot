@@ -6,6 +6,7 @@ package de.slux.line.friday.command;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.event.LeaveEvent;
 import com.linecorp.bot.model.message.TextMessage;
+import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.data.war.WarGroup.GroupStatus;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 import org.slf4j.Logger;
@@ -25,8 +26,8 @@ public class GoodbyeGroupCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public GoodbyeGroupCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public GoodbyeGroupCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

@@ -37,8 +37,8 @@ public class SendAllCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public SendAllCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public SendAllCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
         this.spammersLog = new ConcurrentHashMap<>();
     }
 

@@ -24,7 +24,6 @@ import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.GroupSource;
 import com.linecorp.bot.model.event.source.RoomSource;
-import com.linecorp.bot.model.event.source.UnknownSource;
 import com.linecorp.bot.model.event.source.UserSource;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.profile.MembersIdsResponse;
@@ -46,6 +45,7 @@ import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -70,7 +70,6 @@ public class FridayBotApplication {
 
     private static Logger LOG = LoggerFactory.getLogger(FridayBotApplication.class);
     private static FridayBotApplication INSTANCE = null;
-    public static final String SLUX_ID = "Ufea80d366e42a0e4b7e3d228ed133e89";
 
     // If we need to start under maintenance
     public static final String FRIDAY_MAINTENANCE_KEY = "friday.maintenance";
@@ -86,6 +85,9 @@ public class FridayBotApplication {
     public static synchronized void setInstance(FridayBotApplication app) {
         INSTANCE = app;
     }
+
+    @Value("${friday.owner.line-id}")
+    private String botOwnerLineId;
 
     @Autowired
     private LineMessagingClient lineMessagingClient;
@@ -152,38 +154,38 @@ public class FridayBotApplication {
         this.commands = new ArrayList<>();
 
         // Event based commands (not part of the help)
-        this.commands.add(new HelloUserCommand(this.lineMessagingClient));
-        this.commands.add(new HelloGroupCommand(this.lineMessagingClient));
-        this.commands.add(new GoodbyeGroupCommand(this.lineMessagingClient));
+        this.commands.add(new HelloUserCommand(this.lineMessagingClient, this));
+        this.commands.add(new HelloGroupCommand(this.lineMessagingClient, this));
+        this.commands.add(new GoodbyeGroupCommand(this.lineMessagingClient, this));
 
         // Utility commands
-        this.commands.add(new HelpCommand(this.lineMessagingClient));
-        this.commands.add(new InfoCommand(this.lineMessagingClient));
-        this.commands.add(new EventInfoCommand(this.lineMessagingClient, this.scheduler));
-        this.commands.add(new RegisterEventsCommand(this.lineMessagingClient));
-        this.commands.add(new UnregisterEventsCommand(this.lineMessagingClient));
-        this.commands.add(new WarStatsCommand(this.lineMessagingClient));
-        this.commands.add(new SendAllCommand(this.lineMessagingClient));
+        this.commands.add(new HelpCommand(this.lineMessagingClient, this));
+        this.commands.add(new InfoCommand(this.lineMessagingClient, this));
+        this.commands.add(new EventInfoCommand(this.lineMessagingClient, this.scheduler, this));
+        this.commands.add(new RegisterEventsCommand(this.lineMessagingClient, this));
+        this.commands.add(new UnregisterEventsCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarStatsCommand(this.lineMessagingClient, this));
+        this.commands.add(new SendAllCommand(this.lineMessagingClient, this));
 
         // War commands
-        this.commands.add(new WarRegisterCommand(this.lineMessagingClient));
-        this.commands.add(new WarReportDeathCommand(this.lineMessagingClient));
-        this.commands.add(new WarUndoDeathCommand(this.lineMessagingClient));
-        this.commands.add(new WarDeleteNodeCommand(this.lineMessagingClient));
-        this.commands.add(new WarSummaryDeathCommand(this.lineMessagingClient));
-        this.commands.add(new WarSaveCommand(this.lineMessagingClient));
-        this.commands.add(new WarHistoryCommand(this.lineMessagingClient));
-        this.commands.add(new WarDeleteCommand(this.lineMessagingClient));
-        this.commands.add(new WarResetCommand(this.lineMessagingClient));
-        this.commands.add(new WarAddSummonersCommand(this.lineMessagingClient));
-        this.commands.add(new WarSummonerNodeCommand(this.lineMessagingClient));
-        this.commands.add(new WarSummonerRenameCommand(this.lineMessagingClient));
-        this.commands.add(new WarDiversityCommand(this.lineMessagingClient));
+        this.commands.add(new WarRegisterCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarReportDeathCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarUndoDeathCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarDeleteNodeCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarSummaryDeathCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarSaveCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarHistoryCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarDeleteCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarResetCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarAddSummonersCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarSummonerNodeCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarSummonerRenameCommand(this.lineMessagingClient, this));
+        this.commands.add(new WarDiversityCommand(this.lineMessagingClient, this));
 
         // Admin commands
-        this.commands.add(new AdminBroadcastCommand(this.lineMessagingClient));
-        this.commands.add(this.notificationCommand = new AdminNotificationCommand(this.lineMessagingClient));
-        this.commands.add(new AdminStatusCommand(this.lineMessagingClient));
+        this.commands.add(new AdminBroadcastCommand(this.lineMessagingClient, this));
+        this.commands.add(this.notificationCommand = new AdminNotificationCommand(this.lineMessagingClient, this));
+        this.commands.add(new AdminStatusCommand(this.lineMessagingClient, this));
 
         LOG.info("Commands initialized. Total command(s): " + this.commands.size());
 
@@ -243,7 +245,7 @@ public class FridayBotApplication {
     private TextMessage handleUserSource(String message, String userId, MessageEvent<TextMessageContent> event) {
         AbstractCommand command = null;
 
-        if (SLUX_ID.equals(userId)) {
+        if (this.botOwnerLineId.equals(userId)) {
             // Admin commands
             command = getAdminCommand(message);
         } else {
@@ -251,7 +253,7 @@ public class FridayBotApplication {
             command = getUserCommand(message);
         }
 
-        if (!this.isOperational.get() && !SLUX_ID.equals(userId)) {
+        if (!this.isOperational.get() && !this.botOwnerLineId.equals(userId)) {
             return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
         }
 
@@ -266,7 +268,7 @@ public class FridayBotApplication {
                     CommandType.CommandTypeAdmin, CommandType.CommandTypeWar);
 
             return getClosestCommandSuggestion(message,
-                    SLUX_ID.equals(userId) ? adminExcludedCommands : userExcludedCommands);
+                    this.botOwnerLineId.equals(userId) ? adminExcludedCommands : userExcludedCommands);
         }
 
         return command.execute(userId, null, message);
@@ -290,7 +292,7 @@ public class FridayBotApplication {
         AbstractCommand command = getGroupCommand(message);
 
         if (!this.isOperational.get() && message.toLowerCase().startsWith(AbstractCommand.ALL_CMD_PREFIX)
-                && !SLUX_ID.equals(userId)) {
+                && !this.botOwnerLineId.equals(userId)) {
             return new TextMessage("Sorry, FRIDAY is currently in standby for scheduled maintenance.");
         }
 
@@ -376,7 +378,7 @@ public class FridayBotApplication {
                 return command;
         }
 
-        return new DefaultCommand(this.lineMessagingClient);
+        return new DefaultCommand(this.lineMessagingClient, this);
     }
 
     /**
@@ -393,7 +395,7 @@ public class FridayBotApplication {
                 return command;
         }
 
-        return new DefaultCommand(this.lineMessagingClient);
+        return new DefaultCommand(this.lineMessagingClient, this);
     }
 
     /**
@@ -411,7 +413,7 @@ public class FridayBotApplication {
                 return command;
         }
 
-        return new DefaultCommand(this.lineMessagingClient);
+        return new DefaultCommand(this.lineMessagingClient, this);
     }
 
     /**
@@ -473,14 +475,14 @@ public class FridayBotApplication {
     }
 
     /**
-     * Push a message to the administrator {@link FridayBotApplication#SLUX_ID}
+     * Push a message to the administrator {@link FridayBotApplication#getBotOwnerLineId()}
      *
      * @param message
      */
     public void pushMessageToAdmin(String message) {
         WarGroup wg = new WarGroup();
-        wg.setGroupId(SLUX_ID);
-        wg.setGroupName("SLUX");
+        wg.setGroupId(this.botOwnerLineId);
+        wg.setGroupName("Owner");
 
         pushMultiMessages(Arrays.asList(wg), message);
     }
@@ -695,5 +697,12 @@ public class FridayBotApplication {
      */
     public Set<String> getGroupActivities() {
         return groupActivities;
+    }
+
+    /**
+     * @return The bot owner - Line Unique ID
+     */
+    public String getBotOwnerLineId() {
+        return botOwnerLineId;
     }
 }

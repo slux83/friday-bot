@@ -31,8 +31,8 @@ public class AdminBroadcastCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public AdminBroadcastCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public AdminBroadcastCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

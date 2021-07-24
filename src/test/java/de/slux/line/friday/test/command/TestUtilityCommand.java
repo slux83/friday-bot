@@ -465,7 +465,7 @@ public class TestUtilityCommand {
 
         PostConstructHolder.waitForPostConstruct(callback);
 
-        String userId = FridayBotApplication.SLUX_ID;
+        String userId = friday.getBotOwnerLineId();
         String groupId = UUID.randomUUID().toString();
 
         // Register command
@@ -511,23 +511,23 @@ public class TestUtilityCommand {
 
         // Admin broadcast command
         MessageEvent<TextMessageContent> adminBroadcastCmd = MessageEventUtil.createMessageEventUserSource(
-                FridayBotApplication.SLUX_ID,
+                friday.getBotOwnerLineId(),
                 AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX + " hello everyone!");
 
         // Admin notification command
         MessageEvent<TextMessageContent> adminNotificationWithMessageCmd = MessageEventUtil.createMessageEventUserSource(
-                FridayBotApplication.SLUX_ID,
+                friday.getBotOwnerLineId(),
                 AbstractCommand.ALL_CMD_PREFIX + " " + AdminNotificationCommand.CMD_PREFIX + " This is a nice notification");
         MessageEvent<TextMessageContent> adminNotificationWithNoMessageCmd = MessageEventUtil.createMessageEventUserSource(
-                FridayBotApplication.SLUX_ID,
+                friday.getBotOwnerLineId(),
                 AbstractCommand.ALL_CMD_PREFIX + " " + AdminNotificationCommand.CMD_PREFIX);
 
         MessageEvent<TextMessageContent> adminBroadcastNoArgCmd = MessageEventUtil.createMessageEventUserSource(
-                FridayBotApplication.SLUX_ID, AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX);
+                friday.getBotOwnerLineId(), AbstractCommand.ALL_CMD_PREFIX + " " + AdminBroadcastCommand.CMD_PREFIX);
 
         // Admin and User invalid (but close) commands
         MessageEvent<TextMessageContent> adminCloseCmd = MessageEventUtil
-                .createMessageEventUserSource(FridayBotApplication.SLUX_ID, AbstractCommand.ALL_CMD_PREFIX + " broad");
+                .createMessageEventUserSource(friday.getBotOwnerLineId(), AbstractCommand.ALL_CMD_PREFIX + " broad");
         MessageEvent<TextMessageContent> userCloseCmd = MessageEventUtil
                 .createMessageEventUserSource(UUID.randomUUID().toString(), AbstractCommand.ALL_CMD_PREFIX + " hel");
         MessageEvent<TextMessageContent> userNotCloseCmd = MessageEventUtil
@@ -708,7 +708,7 @@ public class TestUtilityCommand {
         for (AbstractCommand c : friday.getCommands()) {
             // Help command with option (admin)
             MessageEvent<TextMessageContent> helpDetailedCmd = MessageEventUtil.createMessageEventUserSource(
-                    FridayBotApplication.SLUX_ID,
+                    friday.getBotOwnerLineId(),
                     AbstractCommand.ALL_CMD_PREFIX + " " + HelpCommand.CMD_PREFIX + " " + c.getCommandPrefix());
 
             if (c.getType().equals(CommandType.CommandTypeShared) || c.getType().equals(CommandType.CommandTypeAdmin)) {

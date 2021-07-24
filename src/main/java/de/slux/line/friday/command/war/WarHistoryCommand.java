@@ -5,6 +5,7 @@ package de.slux.line.friday.command.war;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
+import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.command.HelpCommand;
 import de.slux.line.friday.csv.PastebinUtil;
@@ -36,8 +37,8 @@ public class WarHistoryCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public WarHistoryCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public WarHistoryCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

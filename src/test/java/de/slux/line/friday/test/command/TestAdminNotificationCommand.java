@@ -32,10 +32,10 @@ public class TestAdminNotificationCommand {
 
         // Admin notification command
         MessageEvent<TextMessageContent> adminNotificationWithMessage1Cmd = MessageEventUtil.createMessageEventUserSource(
-                FridayBotApplication.SLUX_ID,
+                friday.getBotOwnerLineId(),
                 AbstractCommand.ALL_CMD_PREFIX + " " + AdminNotificationCommand.CMD_PREFIX + " This is a nice notification");
         MessageEvent<TextMessageContent> adminNotificationWithNoMessageCmd = MessageEventUtil.createMessageEventUserSource(
-                FridayBotApplication.SLUX_ID,
+                friday.getBotOwnerLineId(),
                 AbstractCommand.ALL_CMD_PREFIX + " " + AdminNotificationCommand.CMD_PREFIX);
 
         // User messages

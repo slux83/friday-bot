@@ -35,8 +35,8 @@ public class WarDiversityCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public WarDiversityCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public WarDiversityCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

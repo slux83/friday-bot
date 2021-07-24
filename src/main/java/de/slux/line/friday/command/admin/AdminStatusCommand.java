@@ -36,8 +36,8 @@ public class AdminStatusCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public AdminStatusCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public AdminStatusCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

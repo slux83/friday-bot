@@ -4,6 +4,7 @@ import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.profile.UserProfileResponse;
+import de.slux.line.friday.FridayBotApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class AbstractCommand {
     private static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
     public static final String ALL_CMD_PREFIX = "friday";
+    protected final FridayBotApplication app;
 
     protected AtomicInteger hits;
 
@@ -42,9 +44,10 @@ public abstract class AbstractCommand {
      *
      * @param messagingClient
      */
-    public AbstractCommand(LineMessagingClient messagingClient) {
+    public AbstractCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
         this.hits = new AtomicInteger();
         this.messagingClient = messagingClient;
+        this.app = app;
     }
 
     /**

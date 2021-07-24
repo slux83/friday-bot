@@ -5,6 +5,7 @@ package de.slux.line.friday.command;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
+import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.data.war.WarGroup;
 import de.slux.line.friday.logic.ScheduleEventsLogic;
 import de.slux.line.friday.logic.war.WarDeathLogic;
@@ -27,8 +28,8 @@ public class UnregisterEventsCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public UnregisterEventsCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public UnregisterEventsCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

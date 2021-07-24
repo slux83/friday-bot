@@ -33,8 +33,8 @@ public class EventInfoCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public EventInfoCommand(LineMessagingClient messagingClient, McocSchedulerImporter schedulerImporter) {
-        super(messagingClient);
+    public EventInfoCommand(LineMessagingClient messagingClient, McocSchedulerImporter schedulerImporter, FridayBotApplication app) {
+        super(messagingClient, app);
         this.schedulerImporter = schedulerImporter;
     }
 

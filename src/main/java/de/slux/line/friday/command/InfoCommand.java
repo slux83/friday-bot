@@ -24,8 +24,8 @@ public class InfoCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public InfoCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public InfoCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

@@ -5,6 +5,7 @@ package de.slux.line.friday.command.war;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
+import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
 import de.slux.line.friday.logic.war.WarDeathLogic;
 import org.slf4j.Logger;
@@ -26,8 +27,8 @@ public class WarRegisterCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public WarRegisterCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public WarRegisterCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

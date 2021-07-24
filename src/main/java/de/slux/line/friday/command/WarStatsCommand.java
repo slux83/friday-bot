@@ -29,8 +29,8 @@ public class WarStatsCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public WarStatsCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public WarStatsCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

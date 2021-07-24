@@ -8,6 +8,7 @@ import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.event.JoinEvent;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.response.BotApiResponse;
+import de.slux.line.friday.FridayBotApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +27,8 @@ public class HelloGroupCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public HelloGroupCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public HelloGroupCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*

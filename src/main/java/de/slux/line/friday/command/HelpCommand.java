@@ -26,8 +26,8 @@ public class HelpCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public HelpCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public HelpCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*
@@ -75,14 +75,14 @@ public class HelpCommand extends AbstractCommand {
                 }
 
                 // Help for normal users only
-                if (c.canTrigger(optionWithPrefix) && senderId == null && !FridayBotApplication.SLUX_ID.equals(userId)
+                if (c.canTrigger(optionWithPrefix) && senderId == null && !app.getBotOwnerLineId().equals(userId)
                         && (c.getType().equals(CommandType.CommandTypeUser)
                         || c.getType().equals(CommandType.CommandTypeShared))) {
                     return new TextMessage(AbstractCommand.ALL_CMD_PREFIX + " " + c.getHelp(true));
                 }
 
                 // Help for admin only
-                if (c.canTrigger(optionWithPrefix) && senderId == null && FridayBotApplication.SLUX_ID.equals(userId)
+                if (c.canTrigger(optionWithPrefix) && senderId == null && app.getBotOwnerLineId().equals(userId)
                         && (c.getType().equals(CommandType.CommandTypeUser)
                         || c.getType().equals(CommandType.CommandTypeShared)
                         || c.getType().equals(CommandType.CommandTypeAdmin))) {
@@ -110,14 +110,14 @@ public class HelpCommand extends AbstractCommand {
             }
 
             // Help for normal users only
-            if (senderId == null && !FridayBotApplication.SLUX_ID.equals(userId)
+            if (senderId == null && !app.getBotOwnerLineId().equals(userId)
                     && (c.getType().equals(CommandType.CommandTypeUser)
                     || c.getType().equals(CommandType.CommandTypeShared))) {
                 sb.append("  " + c.getHelp(false));
             }
 
             // Help for admin only
-            if (senderId == null && FridayBotApplication.SLUX_ID.equals(userId)
+            if (senderId == null && app.getBotOwnerLineId().equals(userId)
                     && (c.getType().equals(CommandType.CommandTypeUser)
                     || c.getType().equals(CommandType.CommandTypeShared)
                     || c.getType().equals(CommandType.CommandTypeAdmin))) {

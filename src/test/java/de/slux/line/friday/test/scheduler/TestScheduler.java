@@ -277,7 +277,7 @@ public class TestScheduler {
 
         // Admin status command
         MessageEvent<TextMessageContent> adminStatusCmd = MessageEventUtil.createMessageEventUserSource(
-                FridayBotApplication.SLUX_ID, AbstractCommand.ALL_CMD_PREFIX + " " + AdminStatusCommand.CMD_PREFIX);
+                friday.getBotOwnerLineId(), AbstractCommand.ALL_CMD_PREFIX + " " + AdminStatusCommand.CMD_PREFIX);
 
         // Register command new group
         MessageEvent<TextMessageContent> registerNewCmd = MessageEventUtil.createMessageEventGroupSource(group1Id,

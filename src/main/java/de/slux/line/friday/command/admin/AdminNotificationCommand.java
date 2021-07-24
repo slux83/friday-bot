@@ -5,6 +5,7 @@ package de.slux.line.friday.command.admin;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
+import de.slux.line.friday.FridayBotApplication;
 import de.slux.line.friday.command.AbstractCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +41,8 @@ public class AdminNotificationCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public AdminNotificationCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public AdminNotificationCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
         this.latestNotificationMessage = new AtomicReference<>();
         this.notifiedIDs = new ConcurrentHashMap<>();
     }

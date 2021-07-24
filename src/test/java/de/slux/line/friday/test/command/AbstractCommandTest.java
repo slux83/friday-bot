@@ -23,7 +23,7 @@ public class AbstractCommandTest {
     public class MyCommand extends AbstractCommand {
 
         public MyCommand(LineMessagingClient messagingClient) {
-            super(messagingClient);
+            super(messagingClient, null);
         }
 
         @Override

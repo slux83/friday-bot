@@ -5,6 +5,7 @@ package de.slux.line.friday.command;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.message.TextMessage;
+import de.slux.line.friday.FridayBotApplication;
 
 /**
  * This command does nothing
@@ -18,8 +19,8 @@ public class DefaultCommand extends AbstractCommand {
      *
      * @param messagingClient
      */
-    public DefaultCommand(LineMessagingClient messagingClient) {
-        super(messagingClient);
+    public DefaultCommand(LineMessagingClient messagingClient, FridayBotApplication app) {
+        super(messagingClient, app);
     }
 
     /*
